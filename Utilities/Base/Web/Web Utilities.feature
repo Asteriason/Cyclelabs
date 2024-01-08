@@ -95,7 +95,7 @@ When I "login to the WMS web screen"
 	And I press keys "ENTER" in web browser
 	
 And I "check to make sure I've logged in to the correct warehouse for my test"
-	Once I see element "xPath://label[contains(text(),'Hello')]" in web browser
+	Once I see element "xPath://span[contains(text(),'Description')]" in web browser
 	And I assign "check_default_warehouse.msql" to variable "msql_file"
 	When I execute scenario "Perform MSQL Execution"
 	If I verify MOCA status is 510
@@ -192,6 +192,7 @@ And I "search for the new screen"
 	
 When I "navigate to the screen"
 	If I verify variable "wms_parent_menu" is assigned
+    	When I echo $wms_parent_menu
 		Then I assign variable "elt" by combining "xPath://*[substring(normalize-space(text()),1,string-length('" $wms_parent_menu "'))='" $wms_parent_menu "' and substring(normalize-space(text()),string-length(normalize-space(text()))-string-length('-> " $wms_screen_to_open "')+1)='-> " $wms_screen_to_open "']"
 	Else I assign variable "elt" by combining "xPath://*[substring(normalize-space(text()),string-length(normalize-space(text()))-string-length('-> " $wms_screen_to_open "')+1)='-> " $wms_screen_to_open "']"
 	EndIf
@@ -235,7 +236,7 @@ When I "change Warehouse in Web"
 	And I click element $elt in web browser within $max_response seconds
 
 Then I "finished changing warehouses and make sure we are on main screen with Hello message"
-	Once I see element "xPath://label[contains(text(),'Hello')]" in web browser
+	Once I see element "xPath://span[contains(text(),'Description')]" in web browser
     
 @wip @public
 Scenario: Web Select Workstation

@@ -135,12 +135,28 @@ Scenario: Web Open Inbound Shipments Screen
 
 Given I "open the Inbound Shipments screen"
 	And I assign "Inbound Shipments" to variable "wms_screen_to_open"
-	And I assign "Receiving" to variable "wms_parent_menu"
+	And I assign "ABB Receiving" to variable "wms_parent_menu"
 	And I execute scenario "Web Screen Search"
 	Once I see "Inbound Orders" in web browser
 
 And I unassign variables "wms_screen_to_open,wms_parent_menu"
-    
+
+
+@wip @public
+Scenario: Web Check Over Receipt Inbound Shipment
+When I assign variable "elt" by combining "xPath://span[contains(text(), '" $trknum "')]"
+Once I see element $elt in web browser within $wait_med seconds
+If I see element "xPath://div[@class='progress-bar over']" in web browser
+	Then I assign "Shipment is Over Receipt" to variable "result"
+EndIf
+If I see element "xPath://div[@class='progress-bar under']" in web browser
+	Then I assign "Shipment is in progress" to variable "result"
+EndIf
+If I see element "xPath://div[@class='progress-bar complete']" in web browser
+	Then I assign "Shipment is complete" to variable "result"
+EndIf
+
+
 @wip @public
 Scenario: Web Open Receiving Door Activity Screen
 #############################################################
