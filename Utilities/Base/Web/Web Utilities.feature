@@ -266,7 +266,7 @@ Given I "select a workstation to use"
 	Then I press keys TAB in web browser
 	And I press keys "ENTER" in web browser
     
-And I unassign variable "my_workstation"
+#And I unassign variable "my_workstation"
 
 Scenario: Web Set Calendar Date
 #############################################################

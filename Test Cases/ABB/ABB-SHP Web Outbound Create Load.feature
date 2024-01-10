@@ -11,7 +11,6 @@
 # or distributed except as authorized by the license.
 ############################################################ 
 # Test Case: BASE-SHP-1100 Web Outbound Create Load.feature
-#
 # Functional Area: Outbound
 # Author: Tryon Solutions
 # Blue Yonder WMS Version: Consult Bundle Release Notes

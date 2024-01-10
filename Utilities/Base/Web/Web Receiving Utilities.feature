@@ -762,6 +762,51 @@ And I "perform receiving and putaway operations"
 	Then I execute scenario "Web Receiving Perform Receiving and Putaway"
     
 And I unassign variable "shipment"
+
+@wip @public
+Scenario: Web Receiving Validate Only OSD States
+#############################################################
+# Description: After a Receive and Putaway for Under, Over,
+# and Damage product receive conditions, navigate to shipment screen,
+# view and validate the View LPNs and OSD Tabs
+# MSQL Files:
+#	None
+# Inputs:
+# 	Required:
+#		trlr_num - trailer number
+#		prtnum - part number
+#		rcvqty - quantity that was received
+#		damaged_flag - did the receive mark goods as Damaged Product
+#		rec_loc - location where product was directed during putaway
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "am on the Inbound Shipment screen"
+	Once I see "Inbound Shipments" in web browser
+
+And I "click into the shipment with the shipment link"
+	Then I assign variable "elt" by combining "xPath://span[@class='rpux-link-grid-column-link' and text()='" $trlr_num "']"
+ 	And I click element $elt in web browser within $max_response seconds
+	Once I see "View LPNs" in web browser
+	Once I see "OSD/Complete" in web browser
+
+And I "click on the OSD/Complete button and verify contents"
+	Then I assign variable "elt" by combining "xPath://span[text()='OSD/Complete']/..//span[2]"
+	And I click element $elt in web browser within $max_response seconds
+	Once I see "All LPNs" in web browser
+    
+And I "click on the OSD button and verify screen"
+	Then I assign variable "elt" by combining "xPath://span[text()='OSD']/..//span[2]"
+	And I click element $elt in web browser within $max_response seconds
+	Once I see "Over" in web browser
+    Once I see "Short" in web browser
+    Once I see "Damaged" in web browser
+
+And I "select Over, Short, and Damaged TABs and verify contents"
+	Then I execute scenario "Web Receiving Verify OSD TAB States"
         
 @wip @public
 Scenario: Web Receiving Validate OSD States
@@ -1467,6 +1512,70 @@ And I "complete the shipment"
     Then I execute scenario "Web Receiving Complete Shipment"
 
 @wip @private
+Scenario: Web Receiving Verify OSD TAB States
+#############################################################
+# Description: After a Receive and Putaway for Under, Over,
+# and Damage product receive conditions and on OSD Tab, validate the
+# States for Short, Over, and Damaged by clicking into each TAB
+# and validating the screens giving information about state.
+# MSQL Files:
+#	None
+# Inputs:
+# 	Required:
+#		trlr_num - trailer number
+#		prtnum - part number
+#		rcvqty - quantity that was received
+#		expqty - expected quantity
+#		rec_loc - location where product was directed during putaway
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "verify I am on proper screen"
+	Once I see "Inbound Shipments" in web browser
+    Once I see "OSD" in web browser
+
+And I "set numeric quantities to compare against"
+	if I verify variable "damaged_flag" is assigned
+	And I verify text $damaged_flag is equal to "TRUE" ignoring case
+    	Then I assign $rcvqty to variable "damage_qty"
+    Else I assign "0" to variable "damage_qty"
+    Endif
+    
+    Then I convert string variable "damage_qty" to integer variable "damage_qty_num"
+    And I convert string variable "rcvqty" to integer variable "rcvqty_num"
+    And I convert string variable "expqty" to integer variable "expqty_num"
+
+And I "verify Over state (TAB data)"
+	Then I assign variable "elt" by combining "xPath://span[text()='Over']/ancestor::a"
+	And I click element $elt in web browser within $max_response seconds
+    
+	If I see "Receipt Line" in web browser
+    	Then I assign 1 to variable "over_qty"
+	Else I assign 0 to variable "over_qty"
+    EndIf
+    
+And I "verify Short state (TAB data)"
+    Then I assign variable "elt" by combining "xPath://span[text()='Short']/ancestor::a"
+	And I click element $elt in web browser within $max_response seconds
+
+	If I see "Receipt Line" in web browser
+    	Then I assign 1 to variable "shorts_qty"
+	Else I assign 0 to variable "shorts_qty"
+    EndIf
+
+And I "verify Damaged state (TAB data)"
+    Then I assign variable "elt" by combining "xPath://span[text()='Damaged']/ancestor::a"
+	And I click element $elt in web browser within $max_response seconds
+    
+	If I see "Receipt Line" in web browser
+    	Then I assign 1 to variable "dmg_qty"
+	Else I assign 0 to variable "dmg_qty"
+    EndIf
+
+@wip @private
 Scenario: Web Receiving Verify OSB TAB States
 #############################################################
 # Description: After a Receive and Putaway for Under, Over,
@@ -1507,61 +1616,28 @@ And I "verify Over state (TAB data)"
 	Then I assign variable "elt" by combining "xPath://span[text()='Over']/ancestor::a"
 	And I click element $elt in web browser within $max_response seconds
     
-	if I verify number $damage_qty_num is greater than 0
-		Then I assign variable "exp_result" by combining "0 expected | " $rcvqty " over | Damaged Product"
-		Once I see $exp_result in web browser
-		Once I see $prtnum in web browser
-	EndIf
-    
-	if I verify number $rcvqty_num is greater than $expqty_num
-    	Then I assign $rcvqty to variable "over_by"
-        And I convert string variable "over_by" to integer variable "over_by_num"
-        And I decrease variable "over_by_num" by $expqty_num
-        And I convert number variable "over_by_num" to string variable "over_by"
-    	Then I assign variable "exp_result" by combining $expqty " expected | " $over_by " over | Available"
-		Once I see $exp_result in web browser
-		Once I see $prtnum in web browser
-	EndIf
-    
-	if I verify number $rcvqty_num is less than $expqty_num
-		Once I see "No Planned Inbound Order Lines affected" in web browser
-	EndIf
+	If I see element "xPath://span[starts-with(@id,'button-') and contains(@id,'-btnWrap')]" in web browser
+    	Then I assign 1 to variable "over_qty"
+	Else I assign 0 to variable "over_qty"
+    EndIf
     
 And I "verify Short state (TAB data)"
     Then I assign variable "elt" by combining "xPath://span[text()='Short']/ancestor::a"
 	And I click element $elt in web browser within $max_response seconds
-    
-    if I verify number $damage_qty_num is greater than 0
-		Then I assign variable "exp_result" by combining $rcvqty " expected | " $rcvqty " short | Available"
-		Once I see $exp_result in web browser
-		Once I see $prtnum in web browser
-	EndIf
-    
-	if I verify number $rcvqty_num is less than $expqty_num
-    	Then I assign $expqty to variable "under_by"
-        And I convert string variable "under_by" to integer variable "under_by_num"
-        And I decrease variable "under_by_num" by $rcvqty_num
-        And I convert number variable "under_by_num" to string variable "under_by"
-    	Then I assign variable "exp_result" by combining $expqty " expected | " $under_by " short | Available"
-		Once I see $exp_result in web browser
- 		Once I see $prtnum in web browser
-	EndIf
-    
-    if I verify number $rcvqty_num is greater than $expqty_num
-    	Once I see "No Planned Inbound Order Lines affected" in web browser
+
+	If I see element "xPath://span[starts-with(@id,'button-') and contains(@id,'-btnWrap')]" in web browser
+    	Then I assign 1 to variable "shorts_qty"
+	Else I assign 0 to variable "shorts_qty"
     EndIf
 
 And I "verify Damaged state (TAB data)"
     Then I assign variable "elt" by combining "xPath://span[text()='Damaged']/ancestor::a"
 	And I click element $elt in web browser within $max_response seconds
     
-    if I verify number $damage_qty_num is greater than 0
-		Then I assign variable "exp_result" by combining "0 expected | " $rcvqty " damaged | Damaged Product"
-		Once I see $exp_result in web browser
-		Once I see $prtnum in web browser
-	Else I "see no planned inbound order lines affected"
-    	Once I see "No Planned Inbound Order Lines affected" in web browser
-	EndIf
+	If I see element "xPath://span[starts-with(@id,'button-') and contains(@id,'-btnWrap')]" in web browser
+    	Then I assign 1 to variable "dmg_qty"
+	Else I assign 0 to variable "dmg_qty"
+    EndIf
     
 And I unassign variables "exp_result,damage_qty_num,damage_qty,rcvqty_num,expqty_num"
 

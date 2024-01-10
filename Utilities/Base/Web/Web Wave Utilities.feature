@@ -442,7 +442,7 @@ Scenario: Web Navigate to Outbound Planner Waves and Picks
 
 Given I "open the Outbound Plannner Waves and Picks screen"
 	Then I assign "Waves and Picks" to variable "wms_screen_to_open"
-	And I assign "Outbound Planner" to variable "wms_parent_menu"
+	And I assign "ABB Outbound Planner" to variable "wms_parent_menu"
 	Then I execute scenario "Web Screen Search"
 
 And I unassign variables "wms_screen_to_open,wms_parent_menu"
@@ -469,6 +469,50 @@ Given I "open the Outbound Plannner screen"
 
 And I unassign variables "wms_screen_to_open,wms_parent_menu"
     
+
+@wip @public
+Scenario: Web Assign Picks
+
+Given I "search by Wave Number"
+	And I assign "wave" to variable "component_to_search_for"
+    And I assign $schbat1 to variable "string_to_search_for"
+	When I execute scenario "Web Component Search"
+ 
+#And I "select the wave from the list"
+#	Given I assign variable "search2" by combining "text:" $schbat1
+#	When I click element $search2 in web browser within $max_response seconds 
+#	And I wait $wait_med seconds 
+
+And I "click Picks tab"
+    Then I assign variable "elt" by combining "xPath://span[text()='Picks']/ancestor::a"
+	And I click element $elt in web browser within $max_response seconds
+
+Then I "assign user from actions menu"
+	And I click element "xPath://tr[contains(@id,'rpMultiLevelGridView')]/descendant::div[contains(@class,'grid-row-checker')]" in web browser within $max_response seconds
+	And I click element "xPath://span[text()='Actions']/.." in web browser within $max_response seconds
+	And I click element "xPath://span[text()='Assign User']" in web browser within $max_response seconds
+
+And I "click element select the user"   
+	Then I assign variable "elt" by combining "xPath://td[contains(@id,'rpuxFilterComboBox')]/descendant::input[contains(@id,'rpuxFilterComboBox-')]"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser
+	And I assign variable "user_search_string" by combining "login=" $userlogin
+	And I type $user_search_string in element $elt in web browser
+	And I press keys "ENTER" in web browser
+    
+And I "select the user"
+	Then I assign variable "elt" by combining $xPath "//td[contains(@class,'headerId-gridcolumn')]/descendant::div[text()='" $username "']"
+	And I click element $elt in web browser within $max_response seconds
+    And i click element "xPath://span[text()='Select']/.." in web browser within $max_response seconds
+    Once I see element "xPath://div[contains(text(),'The selected work has been assigned')]" in web browser
+    And I click element "xPath://span[text()='OK']/.." in web browser within $max_response seconds
+
+And I "remove applied filter"
+	Then I assign variable "elt" by combining "xPath://a[@data-qtip='Delete']"
+	If I see element $elt in web browser within $screen_wait seconds
+		Then I click element $elt in web browser within $max_response seconds
+	EndIf
+
 @wip @public
 Scenario: Validate Wave Unallocated
 #############################################################

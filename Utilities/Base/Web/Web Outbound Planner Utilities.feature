@@ -135,7 +135,7 @@ And I "select/Add the Carrier"
 	And I click element "name:carrier" in web browser within $max_response seconds
 	And I type $carnam in element "name:carrier" in web browser within $max_response seconds
 	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[contains(text(),'" $carcod "')]"
+	And I assign variable "elt" by combining "xPath://li[. = '" $carnam "']"
    	And I click element $elt in web browser within $max_response seconds
 
 And I "select/Add the Transportation Mode"
@@ -688,7 +688,7 @@ Scenario: Web Navigate to Outbound Planner Outbound Screen
 
 Given I "open the Outbound Plannner screen"
 	Then I assign "Outbound" to variable "wms_screen_to_open"
-	And I assign "Outbound Planner" to variable "wms_parent_menu"
+	And I assign "ABB Outbound Planner" to variable "wms_parent_menu"
 	Then I execute scenario "Web Screen Search"
     
 @wip @public
