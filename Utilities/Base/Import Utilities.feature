@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Import Utilities.feature
 # 
 # Functional Area: Cycle Testing
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: utility
 # Blue Yonder Interfaces Interacted With: None
@@ -544,6 +544,8 @@ Then I execute scenario "Perform File Import"
 Given I assign "Web/Web Wave Utilities.feature" to variable "import_file"
 Then I execute scenario "Perform File Import"
 Given I assign "Web/Web Outbound Planner Utilities.feature" to variable "import_file"
+Then I execute scenario "Perform File Import"
+Given I assign "Web/Web Outbound Packing Utilities.feature" to variable "import_file"
 Then I execute scenario "Perform File Import"
 
 @wip @public

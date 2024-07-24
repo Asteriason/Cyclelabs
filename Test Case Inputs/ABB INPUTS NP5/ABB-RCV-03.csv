@@ -1,0 +1,2 @@
+trlr_num,inv_num,invtyp,trknum,dep_loc,supnum,putaway_method,rcvsts,rcv_prtnum,generate_screenshot,empty,prtnum,expqty,rec_loc,rcv_uom,rcv_qty,asn_flg,validate_loc,actcod,lpn,expect_discrepancies,yard_loc
+04090501001000194,04000501001451610,01,GS100001002756540,RCV004,0010002567,1,,5311,TRUE,,CI1206,100,,,5,,,,,,DK142

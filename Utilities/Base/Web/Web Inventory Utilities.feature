@@ -1,5 +1,5 @@
 ############################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Web Inventory Utilities.feature
 #
 # Functional Area: Inventory
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: utility
 # Blue Yonder Interfaces Interacted With: MOCA, WEB
@@ -220,22 +220,21 @@ And I "click on LPNs TAB"
 	And I click element $elt in web browser within $max_response seconds
 	Once I see $lodnum in web browser
 
-And I "take a web browser screen shot if requested"
-	If I verify variable "generate_screenshot" is assigned
-	And I verify text $generate_screenshot is equal to "TRUE" ignoring case
-		Then I save web browser screenshot
-	EndIf
+#And I "take a web browser screen shot if requested"
+#	If I verify variable "generate_screenshot" is assigned
+#	And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+#		Then I save web browser screenshot
+#	EndIf
 
 And I "click on the lodnum"
 	Then I assign variable "elt" by combining "xPath://span[text()='" $lodnum "']"
 	And I click element $elt in web browser within $max_response seconds
 	Once I see $lodnum in web browser
     
-And I "take a web browser screen shot if requested"
-	If I verify variable "generate_screenshot" is assigned
-	And I verify text $generate_screenshot is equal to "TRUE" ignoring case
-		Then I save web browser screenshot
-	EndIf
+#And I "take a web browser screen shot if requested"
+#	And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+#		Then I save web browser screenshot
+#	EndIf
 
 And I "click on lodnum (if the contains multiple LPNs)"
 	Then I assign variable "elt" by combining "xPath://div[contains(@class, 'rp-plus-button')]"
@@ -245,11 +244,11 @@ And I "click on lodnum (if the contains multiple LPNs)"
 		Once I see $stoloc in web browser
 	EndIf
     
-And I "take a web browser screen shot if requested"
-	If I verify variable "generate_screenshot" is assigned
-	And I verify text $generate_screenshot is equal to "TRUE" ignoring case
-		Then I save web browser screenshot
-	EndIf
+#And I "take a web browser screen shot if requested"
+#	If I verify variable "generate_screenshot" is assigned
+#	And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+#		Then I save web browser screenshot
+#	EndIf
     
 And I "move back to main Inventory screen (two clicks on left arrow)"
 	Then I assign variable "elt" by combining "xPath://div[contains(@class, 'breadcrumb-button-container')]"
@@ -306,12 +305,37 @@ Scenario: Web Open Inventory Screen
 #	None
 #############################################################
 
-Given I "Go to Search box and enter Inventory"
-	Then I assign "Inventory" to variable "wms_parent_menu"
+Given I "Go to Search box and enter ABB Inventory"
+	Then I assign "ABB Inventory" to variable "wms_parent_menu"
 	And I assign "Inventory" to variable "wms_screen_to_open"
 	When I execute scenario "Web Screen Search"
 	And I wait $wait_med seconds 
-	Once I see "To find inventory" in web browser
+	Once I see "Inventory" in web browser
+
+And I unassign variables "wms_parent_menu,wms_screen_to_open"
+
+@wip @public
+Scenario: Web Open Inventory Work Queue Screen
+#############################################################
+# Description: Traverse to top-level Search Box in Web UI
+# and search/open the main Inventory screen
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		None
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "Go to Search box and enter ABB Inventory"
+	Then I assign "ABB Inventory" to variable "wms_parent_menu"
+	And I assign "Work Queue" to variable "wms_screen_to_open"
+	When I execute scenario "Web Screen Search"
+	And I wait $wait_med seconds 
+	Once I see "Work Queue" in web browser
 
 And I unassign variables "wms_parent_menu,wms_screen_to_open"
 
@@ -364,7 +388,7 @@ Given I "Go to Search box and enter Inventory/Counts"
 	Once I see "Counts" in web browser
 
 And I unassign variables "wms_parent_menu,wms_screen_to_open"
-	
+
 @wip @public
 Scenario: Web Inventory Adjustment Check LPN Item Attributes in Location
 #############################################################
@@ -962,18 +986,26 @@ Scenario: Web Inventory Move
 #############################################################
 
 Given I "find the LPN to Move in the Inventory Screen"
-	Then I assign variable "lodnum" by combining $srclod
+	Then I assign variable "lodnum" by combining $lodnum
 	And I execute scenario "Web Inventory Navigate to Inventory LPN Display"
 
+Given I "validate screen data for shipment"
+	Once I see $lodnum in web browser
+        
+And I "click into the shipment from the shipment link"
+	Then I assign variable "lodnumw" by combining "xPath://span[@class='rpux-link-grid-column-link' and text()='" $lodnum "']"
+	And I click element $lodnumw in web browser within $max_response seconds
+
 And I "check the Checkbox for the LPN being Moved"
-	Then I assign variable "elt" by combining "xPath://tr[starts-with(@id,'rpMultiLevelGridView') and contains(@id,'" $srclod "')]//div[@class='x-grid-row-checker']"
+	Then I assign variable "elt" by combining "xPath://div[starts-with(@id,'gridcolumn-') and contains(@class,'x-column-header-inner')]"
 	And I click element $elt in web browser within $max_response seconds 
 
 And I "select the 'Actions' drop-down"
-	Then I click element "xPath://span[starts-with(@id,'wmMultiViewActionButton-') and text()='Actions']//.." in web browser within $max_response seconds 
-	And I wait $wait_med seconds 
-
+	Then I click element "xPath://a[contains(@class,'x-btn') and contains(@class, 'rp-menu-btn') and contains(@class, 'x-unselectable') and contains(@class, 'rp-btn-shadow') and contains(@class, 'x-btn-default-small') and contains(@class, 'x-noicon') and contains(@class, 'x-btn-noicon') and contains(@class, 'x-btn-default-small-noicon')]" in web browser within $max_response seconds 
+	And I wait $wait_med seconds
+     
 And I "click 'Move Inventory'"
+	#And I click element "xPath://span[starts-with(@id,'menuitem-') and contains(@class, 'x-menu-item-text')]" in web browser
 	Then I execute scenario "Web Create variable move_inventory_button on Move LPN Screen"
 	And I click element $move_inventory_button in web browser within $max_response seconds 
 	And I wait $screen_wait seconds 
@@ -1015,11 +1047,6 @@ And I "use Move immediate option"
 			Then I assign variable "elt" by combining "xPath://div[text()='LPN moved Successfully to " $dstloc "']"
 			Once I see element $elt in web browser
 			And I press keys "ENTER" in web browser
-
-		And I "clear Inventory Screen Filter and Ensure the LPN was Moved Successfully"
-			Then I assign variable "elt" by combining "xPath://a[@data-qtip='Delete']"
-			And I click element $elt in web browser within $max_response seconds 
-			When I execute scenario "Web Inventory Move Check LPN Moved to Location"
     EndIf
 
 And I "use Move through work queue option"
@@ -1036,12 +1063,33 @@ And I "use Move through work queue option"
 			Once I see element "xPath://div[@class='x-container x-container-default x-table-layout-ct'][contains(.,'Successful moves: 1 of 1Failed Moves: 0')]" in web browser
 			And I click element "xPath://span[starts-with(@id,'button-') and .= 'OK']" in web browser within $max_response seconds
         
-		And I "clear Inventory Screen Filter"
-			Then I assign variable "elt" by combining "xPath://a[@data-qtip='Delete']"
-			And I click element $elt in web browser within $max_response seconds     
-        
-		Then I assign contents of variable "srclod" to "xfer_lodnum"          
 	EndIf
+
+
+@wip @public
+Scenario: Get LPN with Item and Location
+Given I "get the orders lodnum"
+    Then I assign $rcv_prtnum to variable "prtnum"
+    Then I assign $dep_loc to variable "stoloc"
+    And I execute MOCA script "Scripts\MSQL_Files\Base\get_lodnum_by_location_prtnum.msql"
+    And I verify MOCA status is 0
+	Then I assign row 0 column "lodnum" to variable "lpn"
+
+@wip
+Scenario: Validate Move Inventory Before OSD Closure
+If I verify text $movb4osd is not equal to ""
+	Then I "login to the Mobile App"
+		When I execute scenario "Mobile Login"
+
+	Given I "get the LPN I need"
+		When I execute scenario "Get LPN with Item and Location"
+
+	Then I "open the Receipt, process workflow, receive each receipt line individually, and deposit to location"
+		Given I "Open "
+			Then I execute scenario "Mobile Navigate to Inventory Transfer Menu"
+			And I execute scenario "Mobile Full Inventory Before OSD Validation"
+	
+EndIf
 
 @wip @public
 Scenario: Web Inventory Status Change  
@@ -1132,6 +1180,27 @@ And I "validate the Inventory Status Changed"
 	And I verify MOCA status is 0
 
 And I unassign variables "string_to_search_for,component_to_search_for"
+
+@wip @public
+Scenario: Validate Over Receiving
+If I verify text $overreceiving is not equal to ""
+	When I execute scenario "Web Validate Red Bar Flow"
+EndIf
+
+@wip @public
+Scenario: Validate Unexpected Item
+If I verify text $unexpected_item is equal to "YES"
+	When I execute scenario "Web Validate Red Bar Flow"
+EndIf
+
+@wip @public
+Scenario: Web Validate Red Bar Flow
+When I execute scenario "Web Login"
+Then I execute scenario "Web Open Inbound Shipments Screen"
+And I execute scenario "Web Inbound Shipments Search for Inbound Shipment Number"
+And I execute scenario "Web Check Red Bar"
+Then I save web browser screenshot
+Then I close web browser
 
 @wip @public
 Scenario: Web Inventory Add or Release Hold
@@ -1486,8 +1555,10 @@ Scenario: Web Modify Inventory Lotnum
 #	None
 #############################################################
 
-Given I "enter Modified Inventory Lotnum" 
-	Then I assign variable "elt" by combining "xPath://input[starts-with(@id,'itemlotlookup-') and contains(@id,'-inputEl')]"
+Given I "enter Modified Inventory Lotnum"
+	And I press keys "TAB" 3 times with 1 seconds delay
+	Once I see "Unit Per Cases" in web browser
+	Then I assign variable "elt" by combining "xPath://input[starts-with(@id,'textfield-') and contains(@id,'-inputEl') and contains(@name, 'unitsPerCase')]"
 	And I clear all text in element $elt in web browser within $max_response seconds
 	And I type $new_lotnum in element $elt in web browser within $max_response seconds
 	And I press keys "ENTER" in web browser
@@ -2543,3 +2614,370 @@ Given I "validate Cycle Count"
 		Then I echo "Cycle Count was generated"
 	Else I fail step with error message "ERROR: Cycle Count was not generated"           	
 	EndIf
+
+@wip @public @ChangeFootPrint
+Scenario: Web Change FootPrint
+#############################################################
+# Description: Changes and saves the lotnum on the inventory.
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		new_lotnum - The new lotnum to enter in for the inventory.
+#		reacodfull - The reason code for the change to the inventory.
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "enter Modified Footprint"
+	And I press keys "TAB" 2 times with 1 seconds delay
+	Once I see "FootPrint" in web browser
+	Then I assign variable "elt" by combining "xPath://input[starts-with(@id,'textfield-') and contains(@id,'-inputEl') and contains(@name, 'unitsPerCase')]"
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $new_lotnum in element $elt in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+	And I wait $wait_med seconds  
+
+And I "press the Save Button"
+	Then I assign variable "elt" by combining "xPath://span[starts-with(@id,'button-') and contains(@id,'-btnInnerEl') and .= 'Save']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'bottom-tool-bar-save-button')]"
+	And I click element $elt in web browser within $max_response seconds 
+	And I wait $wait_short seconds 
+
+And I "click Into The Reason Field"
+	Then I assign variable "elt" by combining "xPath://input[starts-with(@id,'combobox-') and starts-with(@name,'reasonCode')]"
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I wait $wait_short seconds 
+	When I click element $elt in web browser within $max_response seconds 
+
+And I "enter The Reason Code Into The Field"
+	Then I wait $wait_short seconds 
+	And I type $reacodfull in element $elt in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+	And I wait $wait_short seconds 
+
+And I "press the OK Button"
+	Then I assign variable "elt" by combining "xPath://span[text()='OK']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn')]"
+	When I click element $elt in web browser within $max_response seconds
+	And I wait $wait_short seconds 
+
+And I "click the 'OK' button to finalize the lotnum change"
+	Once I see "Successfully updated inventory attributes" in web browser
+	Then I press keys "ENTER" in web browser
+
+@wip @public
+Scenario: Web Open Inventory Item Overrides Screen
+#############################################################
+# Description: Traverse to top-level Search Box in Web UI
+# and search/open the main Item Overrides Screen
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		None
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "Go to Search box and enter Item Overrides"
+	Then I assign "ABB Configuration" to variable "wms_parent_menu"
+	And I assign "Item Overrides" to variable "wms_screen_to_open"
+	When I execute scenario "Web Screen Search"
+	And I wait $wait_med seconds
+	Once I see "Item Overrides" in web browser
+
+And I unassign variables "wms_parent_menu,wms_screen_to_open"
+
+@wip @public
+Scenario: Web Item Overrides Search for Item
+#############################################################
+# Description: From Item Overrides screen, use search box to
+# find Item
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#       trlr_num - trailer number
+#	Optional:
+#		None
+# Outputs:
+# 		None
+#############################################################
+
+Given I "am on the Item Overrides Screen"
+	Once I see "Item Overrides" in web browser
+	And I "search for Item with the Item Overrides search box"
+	Then I assign "Item" to variable "component_to_search_for"
+	And I assign $item_name to variable "string_to_search_for"
+	And I execute scenario "Web Component Search"
+	And I unassign variables "component_to_search_for,string_to_search_for"
+
+@wip @public
+Scenario: Web Footprint Validate Item
+#############################################################
+# Description: Validates the item in the Web
+# MSQL Files:
+#	None
+# Inputs:
+# 	Required:
+#		yard_loc - yard location
+#		trlr_num - trailer number
+#		prtnum - part number
+#		expqty - expected quantity of prtnum
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "validate screen data for shipment"
+	Once I see $item_name in web browser
+
+	And I "click into the shipment from the shipment link"
+	Then I assign variable "elt" by combining "xPath://span[@class='wm-grid-navigate-link-column' and text()='" $item_name "']"
+	And I click element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+
+@wip @public @ChangeFootPrint
+Scenario: Web Create FootPrint
+#############################################################
+# Description: Fill all footprint information and save.
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		new_lotnum - The new lotnum to enter in for the inventory.
+#		reacodfull - The reason code for the change to the inventory.
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "Star Footprint configuration"
+	Then I assign variable "elt" by combining "xPath://span[@class='x-btn-inner x-btn-inner-left' and starts-with(@id,'rpDrilldownButton-') and contains(@id,'-btnInnerEl')]"
+	And I click element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	And I wait $wait_short seconds
+
+And I "Add Item Footprint"
+	Then I assign variable "elt" by combining "xPath://span[text()='Add']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn')]"
+	And I click element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	And I wait $wait_med seconds
+
+And I "I fill the Footprint information and Description"
+	Then I assign variable "elt" by combining "xPath://input[@name='footprintCode']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ft_name in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	Then I assign variable "elt" by combining "xPath://input[@name='longDescription']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ft_name in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+
+And I "Define the measures"
+	Then I assign variable "elt" by combining "xPath://span[@class='x-btn-inner x-btn-inner-left' and starts-with(@id,'rpDrilldownButton-') and contains(@id,'-btnInnerEl')]"
+	And I click element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+
+And I "Add unit measure"
+	Then I assign variable "elt" by combining "xPath://span[text()='Add']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn')]"
+	And I click element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+
+And I "Fill information for unit measure Each"
+	Then I assign variable "elt" by combining "xPath://input[@name='unitOfMeasure']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftunit_measureE in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='unitQuantity']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftunit_qtyE in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='length']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ft_lengthE in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='width']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ft_widthE in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='height']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ft_heightE in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='grossWeight']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftgross_weigthE in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='netWeight']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftnet_weigthE in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+And I "press the Apply Button"
+	Then I assign variable "elt" by combining "xPath://span[text()='Apply']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn-')]"
+	And I click element $elt in web browser within $max_response seconds
+	And I wait $wait_short seconds
+
+	And I "Add unit measure"
+	Then I assign variable "elt" by combining "xPath://span[text()='Add']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn')]"
+	And I click element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+
+And I "Fill information for unit measure Case"
+	Then I assign variable "elt" by combining "xPath://input[@name='unitOfMeasure']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftunit_measureC in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='unitQuantity']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftunit_qtyC in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@type='button']/following-sibling::label[contains(text(),'Case Equivalent')]"
+	Once I see element $elt in web browser
+	And I click element $elt in web browser within $max_response seconds
+	Then I press keys "ENTER"
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://label[text()='Receive']/following::div/input[@type='button']"
+	And I click element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='length']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ft_lengthC in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='width']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ft_widthC in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='height']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ft_heightC in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='grossWeight']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftgross_weigthC in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='netWeight']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftnet_weigthC in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+And I "press the Apply Button"
+	Then I assign variable "elt" by combining "xPath://span[text()='Apply']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn-')]"
+	And I click element $elt in web browser within $max_response seconds
+	And I wait $wait_short seconds
+
+And I "Add unit measure"
+	Then I assign variable "elt" by combining "xPath://span[text()='Add']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn')]"
+	And I click element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+
+And I "Fill information for unit measure Pallet"
+	Then I assign variable "elt" by combining "xPath://input[@name='unitOfMeasure']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftunit_measureP in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='unitQuantity']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftunit_qtyP in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@type='button']/following-sibling::label[contains(text(),'Pallet Equivalent')]"
+	Once I see element $elt in web browser
+	And I click element $elt in web browser within $max_response seconds
+	Then I press keys "ENTER"
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='length']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ft_lengthP in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='width']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ft_widthP in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='height']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ft_heightP in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='grossWeight']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftgross_weigthP in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	
+	Then I assign variable "elt" by combining "xPath://input[@name='netWeight']"
+	And I click element $elt in web browser within $max_response seconds
+	And I clear all text in element $elt in web browser within $max_response seconds
+	And I type $ftnet_weigthP in element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+
+And I "press the Apply Button"
+	Then I assign variable "elt" by combining "xPath://span[text()='Apply']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn-')]"
+	And I click element $elt in web browser within $max_response seconds
+	And I unassign variables "elt"
+	And I wait $wait_short seconds
+
+And I "Apply the measures to the Footprint"
+	Then I assign variable "elt" by combining "xPath://a[contains(@class, 'x-btn bottom-tool-bar-save-button ')]"
+	Once I see element $elt in web browser
+	And I click element $elt in web browser within $max_response seconds
+	And I wait $wait_short seconds
+
+And I "Save changes for Footprint"
+	Then I assign variable "elt" by combining "xPath://a[contains(@class, ' rp-important-btn ')]"
+	Once I see element $elt in web browser
+	And I click element $elt in web browser within $max_response seconds
+	And I wait $wait_short seconds
+	Then I assign variable "elt" by combining "xPath://a[@class='x-btn x-unselectable x-btn-default-small']/ancestor::div[starts-with(@id, 'container-')]"
+	Once I see element $elt in web browser
+	And I click element $elt in web browser within $max_response seconds
+	And I wait $wait_short seconds
+	Then I assign variable "elt" by combining "xPath://a[contains(@class, ' rp-important-btn ')]"
+	Once I see element $elt in web browser
+	And I click element $elt in web browser within $max_response seconds
+	And I wait $wait_med seconds

@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Mobile Replenishment Utilities.feature
 # 
 # Functional Area: Replenishment
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: Utility
 # Blue Yonder Interfaces Interacted With: Mobile, MOCA
@@ -31,6 +31,73 @@
 #
 ############################################################
 Feature: Mobile Replenishment Utilities
+
+
+@wip @public
+Scenario: Mobile Perform Pallet Replenishment
+#While I verify number "current_count" is less than "max_loop_counter"
+While I do not see "Looking for Work" in web browser within $wait_med seconds
+
+	If I see "Pickup Product At" in element "className:appbar-title" in web browser
+    	Once I see "Source Location" in web browser
+		Then I press keys "ENTER" in web browser
+    EndIf
+    
+    If I see "Replenish Pick" in element "className:appbar-title" in web browser
+    	Once I see element "name:lodnum" in web browser
+        When I copy text inside element "xPath://div[contains(@class, 'center')]//span" in web browser to variable "lodnum"
+        Then I type $lodnum in element "name:lodnum" in web browser
+        And I press keys "ENTER" in web browser
+
+		Once I see element "name:stoloc" in web browser
+    	When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+        Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+        Given I assign row 0 column "locvrc" to variable "location_verification_code"
+        Then I type $location_verification_code in element "name:stoloc" in web browser
+        And I press keys "ENTER" in web browser
+	EndIf
+
+	If I see "Order Pick *" in web browser 
+		And I "enter inventory identifier"
+			Once I see element "name:lodnum" in web browser
+			When I copy text inside element "xPath://div[contains(@class, 'center')]//span" in web browser to variable "lodnum"
+			Then I type $lodnum in element "name:lodnum" in web browser
+			And I press keys "ENTER" in web browser
+		Then I "enter location"
+			Once I see element "name:stoloc" in web browser
+			When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+			Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+			Given I assign row 0 column "locvrc" to variable "location_verification_code"
+			Then I type $location_verification_code in element "name:stoloc" in web browser
+			And I press keys "ENTER" in web browser
+		And I "enter item number"
+			Once I see element "name:prtnum" in web browser 
+			When I copy text inside element "xPath://span[contains(text(),'Item Number')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "prtnum"
+			Then I type $prtnum in element "name:prtnum" in web browser
+			And I press keys "ENTER" in web browser
+		And I "enter unit qty"
+			Once I see element "name:untqty" in web browser 
+			And I press keys "ENTER" in web browser
+		And I "enter uom"
+			Once I see element "name:uomcod" in web browser 
+			And I press keys "ENTER" in web browser
+	EndIf
+    If I see "MRG Product Deposit" in web browser
+    	If I see element "name:lodnum" in web browser within $wait_short seconds
+        	Then I press keys "ENTER" in web browser
+        EndIf
+        If I see element "xPath://span[contains(text(), '1 Equipment Full')]" in web browser within $wait_short seconds
+        	Then I click element "xPath://span[contains(text(), '1 Equipment Full')]" in web browser
+        EndIf
+        If I see element "name:dstloc" in web browser within $wait_short seconds
+			When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+			Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+			Given I assign row 0 column "locvrc" to variable "location_verification_code"
+			Then I type $location_verification_code in element "name:dstloc" in web browser
+			And I press keys "ENTER" in web browser
+        EndIf
+    EndIf
+EndWhile
 
 @wip @public
 Scenario: Mobile Replenishment

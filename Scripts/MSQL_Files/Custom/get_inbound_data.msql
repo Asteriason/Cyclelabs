@@ -1,0 +1,32 @@
+[select distinct trlr.trlr_num,
+        trlr.yard_loc,
+        rcvlin.invnum,
+        rcvlin.invlin,
+        prtmst.prtnum,
+        rcvlin.supnum,
+        rcvlin.trknum
+   from rcvtrk
+   join rcvlin
+     on rcvtrk.trknum = rcvlin.trknum
+    and rcvtrk.wh_id = rcvlin.wh_id
+   join trlr
+     on rcvtrk.trknum = trlr.trlr_num
+   join prtmst
+     on prtmst.prtnum = rcvlin.prtnum
+    and prtmst.wh_id_tmpl = rcvtrk.wh_id
+  where @+rcvtrk.trknum^inbound_shipment
+    and rcvtrk.wh_id = '25'
+    and trlr.trlr_num not in (select polval
+                                from poldat
+                               where polcod = 'CYCLELOCK'
+                                 and polvar = 'TRLR_NUM')
+    and rownum < 2] catch(-1403)
+|
+publish data
+ where trknum = @trknum
+   and trlr_num = @trlr_num
+   and yard_loc = @yard_loc
+   and invnum = @invnum
+   and invlin = @invlin
+   and prtnum = @prtnum
+   and supnum = @supnum

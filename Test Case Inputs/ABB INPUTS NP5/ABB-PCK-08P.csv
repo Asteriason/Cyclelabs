@@ -1,0 +1,2 @@
+ordnum,oprcod,mobile_start_loc,vehtyp,cancel_and_reallocate,wave_num,srcloc,generate_screenshot,source_lpn_wrong,value_source_lpn_wrong,sku_wrong,value_sku_wrong,extra_pick,value_extra_pick
+0812997786_CL,PCK,019-052-B-B-738,RT,FALSE,CL_PALLET,,TRUE,TRUE,FAKE,TRUE,FAKE,TRUE,5

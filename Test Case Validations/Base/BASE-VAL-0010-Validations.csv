@@ -1,2 +1,2 @@
-type,instruction_type,instruction,parameter_1
-PRE,MSQL,Validations/validate_location_is_empty.msql,$stoloc
+type,instruction_type,instruction,parameter_1,parameter_2,pre_validations,post_validations
+PRE,MSQL,Validations/validate_location_is_empty.msql,12345,12345,True,True

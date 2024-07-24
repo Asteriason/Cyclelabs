@@ -1,0 +1,4 @@
+[select *
+   from poldat
+  where polcod = 'CYCLELOCK'
+    and polvar = 'START'];

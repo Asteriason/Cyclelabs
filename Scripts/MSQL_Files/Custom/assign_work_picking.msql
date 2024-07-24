@@ -1,0 +1,13 @@
+publish data
+ where schbat = $schbat1
+   and wh_id = $wh_id
+   and asg_usr_id = $username
+|
+[select reqnum
+   from wrkque
+  where schbat = @schbat]
+|
+change work
+ where reqnum = @reqnum
+   and asg_usr_id = @asg_usr_id
+   and effpri = 1;

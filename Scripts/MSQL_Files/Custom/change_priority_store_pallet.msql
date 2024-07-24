@@ -1,0 +1,18 @@
+publish data
+ where srcloc = $srcloc
+   and wh_id = $wh_id
+   and usr_id = $userlogin
+   and cnt_effpri = $cnt_effpri
+|
+[select TOP 1 reqnum
+   from wrkque
+  where oprcod IN ('PALSTO', 'LNGSTO')
+    and srcloc = @srcloc
+    and effpri > @cnt_effpri
+  order by adddte desc]
+|
+change work
+ where wh_id = @wh_id
+   and reqnum = @reqnum
+   and asg_usr_id = @usr_id
+   and effpri = @cnt_effpri

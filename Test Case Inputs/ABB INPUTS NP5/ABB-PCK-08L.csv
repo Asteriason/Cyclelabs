@@ -1,0 +1,2 @@
+ordnum,oprcod,mobile_start_loc,vehtyp,cancel_and_reallocate,generate_screenshot,wrong_dest_lpn,value_wrong_dest_lpn,sku_wrong,value_sku_wrong,extra_pick,value_extra_pick
+UA7AJ,LPCK,012-054-A-A-210,CB,FALSE,TRUE,TRUE,FAKE,TRUE,FAKE,TRUE,5

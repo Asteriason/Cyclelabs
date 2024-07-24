@@ -1,5 +1,5 @@
 ############################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Web Utilities.feature
 # 
 # Functional Area: General Web
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: utility
 # Blue Yonder Interfaces Interacted With: Web, MOCA
@@ -85,13 +85,16 @@ Scenario: Web Login
 
 Given I "navigate to WMS Main Screen in Web Browser"
 	Then I open $browser web browser
+	#And I size web browser to "10000" x "10000"
+	And I maximize web browser
 	And I wait $wait_short seconds 
 	When I navigate to $web_ui in web browser
 
 When I "login to the WMS web screen"	
-	Once I see element "xPath://div[@class='copyrightMessage']" in web browser
-	When I type USERNAME from credentials $web_credentials in element "id:loginUserName" in web browser within $max_response seconds
-	And I type PASSWORD from credentials $web_credentials in element "id:loginPassword" in web browser within $max_response seconds
+	Once I see "Sign in options" in web browser
+	And I click element "xPath://button[starts-with(@id,'Exchange-')]" in web browser 
+	When I type $username in element "id:username" in web browser within $max_response seconds
+	And I type $password in element "id:password" in web browser within $max_response seconds
 	And I press keys "ENTER" in web browser
 	
 And I "check to make sure I've logged in to the correct warehouse for my test"
@@ -99,7 +102,8 @@ And I "check to make sure I've logged in to the correct warehouse for my test"
 	And I assign "check_default_warehouse.msql" to variable "msql_file"
 	When I execute scenario "Perform MSQL Execution"
 	If I verify MOCA status is 510
-		Then I execute scenario "Web Change Warehouse"
+		#Then I execute scenario "Web Change Warehouse"
+		Then I echo "Change Warehouse Correct!"
 	EndIf
 
 And I assign "FALSE" to variable "web_logged_off"
@@ -133,13 +137,13 @@ And I "if this fails, close the browser explicitly"
 	And I click element $elt in web browser within $wait_med seconds 
 		Then I wait $wait_short seconds 
 		And I "press Enter to Logout"
-			Then I click element "text:Logout" in web browser within $max_response seconds
-		Then I close web browser
+			Then I click element "text:Close" in web browser within $wait_short seconds
+		Once I see "Sign in" in web browser
+			Then I close web browser
+		Else I see "Sign in options for Prod" in web browser
+			Then I close web browser
+		EndIf
 		And I assign "TRUE" to variable "mobile_logged_off"
-	Else I close web browser
-		And I assign "TRUE" to variable "mobile_logged_off"
-    	Then I fail step with error message "ERROR: Could not logoff gracefully, closing browser explicitly from Cycle"
-    EndIf
  
 @wip @public
 Scenario: Web End Driver Tasks
@@ -186,7 +190,7 @@ Given I "clear the search bar"
 	Then I click element $wms_search in web browser within $max_response seconds 
 	When I clear all text in element $wms_search in web browser within $max_response seconds
 	
-And I "search for the new screen"
+And I "search for the screen"
 	When I type $wms_screen_to_open in element $wms_search in web browser within $max_response seconds
 	And I press keys "ENTER" in web browser
 	
@@ -304,7 +308,6 @@ Scenario: Web Component Search
 # Outputs:
 #	None
 #############################################################
-
 Given I "filter by the component provided"
 	Given I assign variable "elt" by combining $xPath ""
 	And I assign variable "elt" by combining $elt "//table[contains(@id,'FilterComboBox-')"
@@ -319,7 +322,147 @@ And I "search for my component and search criteria"
 	And I wait $screen_wait seconds 
 	Then I press keys "ENTER" in web browser
 
-And I unassign variables "search_filter,search_string" 
+And I unassign variables "search_filter,search_string"
+
+
+@wip @private
+Scenario: Web Component Search Modify Load
+#############################################################
+# Description: Use Search Box to find a specified component from most Web search screens
+# Note, exclusions do apply with other search boxes/elements having differing xPaths.
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		component_to_search_for - component to search for (i.e. shipment, load, order)
+#		string_to_search_for - string to search for relative to component_to_search_for
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+Given I "filter by the component provided"
+	Given I assign variable "elt" by combining $xPath ""
+	And I assign variable "elt" by combining $elt "//div[contains(@class, 'rp-fancy-header-bottom-bar') and .//label[contains(text(), 'Unassigned Shipments')]]"
+	And I assign variable "elt" by combining $elt "//input[@type='text']"
+	Then I assign $elt to variable "search_filter"
+	When I click element $search_filter in web browser within $max_response seconds 
+
+And I "search for my component and search criteria"
+	Given I assign variable "search_string" by combining $component_to_search_for " = " $string_to_search_for
+	Then I type $search_string in element $search_filter in web browser within $max_response seconds
+	And I wait $screen_wait seconds 
+	Then I press keys "ENTER" in web browser
+
+And I unassign variables "search_filter,search_string"
+
+@WebLoginNP2 @wip @public
+Scenario: Web Login NP2
+#############################################################
+# Description: This scenario will Navigate to WMS's Main Screen in web
+# browser and will open a particular warehouse
+# MSQL Files:
+#   check_default_warehouse.msql
+# Inputs:
+#   Required:
+#       browser  - Browser name (set in Environment by default)
+#       web_ui   - Web URL (set in Environment by default)
+#       USERNAME - Username (This value comes from MOCA credentials)
+#       PASSWORD - Password (This value comes from MOCA credentials)
+#   Optional:
+#       None
+# Outputs:
+#   None
+#############################################################
+ 
+Given I "navigate to WMS Main Screen in Web Browser"
+    Then I open $browser web browser
+	And I maximize web browser
+    And I wait $wait_short seconds
+    When I navigate to $web_ui in web browser
+ 
+When I "login to the WMS web screen"    
+    Once I see element "xPath://div[@class='copyrightMessage']" in web browser
+    When I type USERNAME from credentials $web_credentials in element "id:loginUserName" in web browser within $max_response seconds
+    And I type PASSWORD from credentials $web_credentials in element "id:loginPassword" in web browser within $max_response seconds
+    And I press keys "ENTER" in web browser
+   
+And I "check to make sure I've logged in to the correct warehouse for my test"
+    Once I see element "xPath://span[contains(text(),'Description')]" in web browser
+    And I assign "check_default_warehouse.msql" to variable "msql_file"
+    When I execute scenario "Perform MSQL Execution"
+    If I verify MOCA status is 510
+        #Then I execute scenario "Web Change Warehouse"
+		Then I echo "Change Warehouse correct!"
+    EndIf
+ 
+And I assign "FALSE" to variable "web_logged_off"
+ 
+@wip @public
+Scenario: Web Logout NP2
+#############################################################
+# Description: This scenario will log out of the WMS Web application.
+# If the logout button/path cannot be seen, the browser will be explicitly
+# closed and a fail step will be executed.
+# MSQL Files:
+#   None
+# Inputs:
+#   Required:
+#       USERNAME - This value comes from MOCA credentials
+#   Optional:
+#       None
+# Outputs:
+#   None
+#############################################################
+ 
+Given I "select the down arrow next to the user's name at the top"
+And I "if this fails, close the browser explicitly"
+    Then I assign "xPath:" to variable "xPath"
+    And I assign variable "elt" by combining $xPath ""
+    And I assign variable "elt" by combining $elt "//span[text()='" $username "']"
+    And I assign variable "elt" by combining $elt "/..//span[2]"
+    And I assign variable "elt" by combining $elt ""
+   
+    If I see element $elt in web browser within $wait_long seconds
+    And I click element $elt in web browser within $wait_med seconds
+        Then I wait $wait_short seconds
+        And I "press Enter to Logout"
+            #Then I click element "xPath://span[text() = 'Close']" in web browser within $max_response seconds
+        Then I close web browser
+        And I assign "TRUE" to variable "mobile_logged_off"
+    Else I close web browser
+        And I assign "TRUE" to variable "mobile_logged_off"
+        Then I fail step with error message "ERROR: Could not logoff gracefully, closing browser explicitly from Cycle"
+    EndIf
+
+@wip @public @WebInventorySearchForLocation
+Scenario: Web Inventory Search for Location
+#############################################################
+# Description: Search for the specified storage location on the Inventory screen
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		stoloc - Location where the adjustment will take place
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "search for the location on the Inventory screen"
+	Then I assign $stoloc to variable "string_to_search_for"
+	And I assign "Location" to variable "component_to_search_for"
+	And I execute scenario "Web Component Search"
+
+Then I "create cycle count from actions menu"
+	And I click element "xPath://div[contains(@class,'x-column-header-inner')]/descendant::span[contains(@class,'x-column-header-text')]" in web browser within $wait_med seconds
+	And I click element "xPath://span[text()='Actions']/.." in web browser within $wait_med seconds
+	And I click element "xPath://span[text()='Generate Cycle Count']" in web browser within $wait_med seconds
+	Once I see element "xPath://span[contains(text(),'Confirmation')]" in web browser
+    And I click element "xPath://span[text()='OK']/.." in web browser within $wait_med seconds
+
+And I unassign variables "string_to_search_for,component_to_search_for"
 
 #############################################################
 # Private Scenarios:

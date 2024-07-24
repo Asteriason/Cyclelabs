@@ -61,8 +61,8 @@ Given I "setup the environment"
 	Then I assign "ABB-SHP Web Assign Picks" to variable "test_case"
 	When I execute scenario "Test Data Triggers"
 
-    And I assign "USKAMAR2" to variable "userlogin"
-    Then I assign "BAT0000004" to variable "schbat1"
+    And I assign "CL_TEST3" to variable "userlogin"
+    Then I assign "2TX-DEC18" to variable "schbat1"
 
 
 After Scenario: 
@@ -82,7 +82,7 @@ Given I "execute pre-test scenario actions (including pre-validations)"
 
 Then I "log into the Web Browser, select workstation, and navigate to the Inbound Shipments Screen"
 	Then I execute scenario "Web Login"
-	And I execute scenario "Web Navigate to Outbound Planner Waves and Picks"
+	And I execute scenario "Web Navigate to Outbound Planner Work Queue Screen"
     And I execute scenario "Web Assign Picks"
 
 

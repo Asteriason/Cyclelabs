@@ -1,0 +1,6 @@
+publish data
+ where trlr_num = $trlr_num
+|
+[select trlr_id
+   from trlr
+  where trlr_num = @trlr_num]

@@ -1,0 +1,2 @@
+trlr_num,trknum,yard_loc,seal,inv_num,invtyp,dep_loc,supnum,putaway_method,rcvsts,prtnum,expqty,rec_loc,rcv_uom,rcv_qty,asn_flg,validate_loc,actcod,rcv_prtnum,lpn,expect_discrepancies,wrong_dep_loc,wrong_location,generate_screenshot,wave_num,userlogin,vehtyp,dep_loc_id,mobile_start_loc,wrong_location,overreceiving
+TRLR0400050100156154,04000501001561548,DK013,CL1236,04000501001561548,01,RCV004,0010002567,1,,,,,,1050,,,,12007AA-001,,,PACK-03-305,Yes,,,,,,,,

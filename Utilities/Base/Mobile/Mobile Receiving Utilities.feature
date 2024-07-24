@@ -1,5 +1,5 @@
 ############################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Mobile Receiving Utilities.feature
 # 
 # Functional Area: Receiving
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: utility
 # Blue Yonder Interfaces Interacted With: Mobile, MOCA
@@ -308,222 +308,228 @@ And I "enter pass error producing pallet label message"
         Then I press keys "Enter" in web browser
 	EndIf 
 
+
 @wip @public
 Scenario: Mobile Non-ASN Receiving
 #############################################################
 # Description: From an opened receipt, performs non-ASN Receiving.
-# MSQL Files: 
-# 	check_3pl.msql
-#	check_confirm_create.msql
+# MSQL Files:
+#   check_3pl.msql
+#   check_confirm_create.msql
 #   check_lodlvl.msql
 # Inputs:
-# 	Required:
-#   	rcv_qty - the number to receive 
-#		prtnum - the part to receive
-#	Optional:
-#		lpn - the load to associate the received goods with, if not populated, will be auto-generated
-#		rcv_prtnum - a prtnum to test blind receiving
-#		lotnum - a Lot Number to associate with the received prtnum if lot enabled
-#		receive_more_flag - TRUE/FALSE determine if screen press Y/N to possible "Receive More" prompts (Def:FALSE)
-#		revlvl - Revision Level
+#   Required:
+#       rcv_qty - the number to receive
+#       prtnum - the part to receive
+#   Optional:
+#       lpn - the load to associate the received goods with, if not populated, will be auto-generated
+#       rcv_prtnum - a prtnum to test blind receiving
+#       lotnum - a Lot Number to associate with the received prtnum if lot enabled
+#       receive_more_flag - TRUE/FALSE determine if screen press Y/N to possible "Receive More" prompts (Def:FALSE)
+#       revlvl - Revision Level
 # Outputs:
 #     None
 #############################################################
-
 When I "fill in the Load Number field"
-	Once I see "Receive Product" in element "className:appbar-title" in web browser
-
-	If I verify variable "lpn" is assigned
-	And I verify text $lpn is not equal to ""
-		Then I assign "Inventory Identifier" to variable "input_field_with_focus"
-		And I execute scenario "Mobile Check for Input Focus Field"
-		Then I type $lpn in element "name:invtid" in web browser within $max_response seconds
-		And I press keys "ENTER" in web browser
-	Else I "generate a new Load Number"
-		Then I press keys "F3" in web browser
-		And I wait $screen_wait seconds
-		And I press keys "ENTER" in web browser
-	EndIf
-
-And I "see if we have the same LPN already, the system will error. Check for this and error the script."
-	If I see "Load exists in" in web browser within $wait_med seconds 
-		Then I fail step with error message "ERROR: Lodnum already exists nn the system"
-	EndIf
-
-And I "fill in the Part Number field"
-	And I "may want to test blind parts so I set that in my override variables and use it here"
-		Then I assign "Item Number" to variable "input_field_with_focus"
-		And I execute scenario "Mobile Check for Input Focus Field"
-		If I verify variable "rcv_prtnum" is assigned
-		And I verify text $rcv_prtnum is not equal to ""
-			Then I type $rcv_prtnum in element "name:prtnum" in web browser within $max_response seconds
-			And I press keys "ENTER" in web browser
-		Else I type $prtnum in element "name:prtnum" in web browser within $max_response seconds
-			And I press keys "ENTER" in web browser
-		EndIf 
-
-And I "handle the Client field"
-	Given I "check if this environment is multi-client enabled"
-		Then I assign "check_3pl.msql" to variable "msql_file"
-		And I execute scenario "Perform MSQL Execution"
-		If I verify MOCA status is 0
-			Then I assign row 0 column "installed" to variable "installed"
-		Else I fail step with error message "ERROR: Could not determine if environment is multi-client enabled"
-        Endif
-
-	If I verify number $installed is equal to 1
-		Then I assign "Item Client ID" to variable "input_field_with_focus"
-		And I execute scenario "Mobile Check for Input Focus Field"
-		And I press keys "ENTER" in web browser
-	EndIf
-
-And I "check for pallet tracking/HU"
-	If I see "Handling Unit" in web browser within $screen_wait seconds 
-		Then I "confirm the HU Type is 'CHEP'"
-			And I press keys "ENTER" in web browser
-		And I "confirm the client_id is correct"
-			And I press keys "ENTER" in web browser
-	EndIf
-
-And I "process see blind not allowed"
-	If I see "Item Not On Order" in web browser within $screen_wait seconds 
-		Then I "have entered a part not on this Inbound Shipment"
-		  	And I press keys "ENTER" in web browser
-		And I fail step with error message "ERROR: Blind receiving is not allowed"
-	EndIf 
-
-And I "process blind receiving if allowed"
-	Then I assign "Item is unexpected. Do you want to receive it?" to variable "mobile_dialog_message"
-	And I execute scenario "Mobile Set Dialog xPath"
-	If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
-		Then I "have entered a part not on this Inbound Shipment"
-			And I press keys "Y" in web browser
-			And I "continue as blind receiving is allowed"
-	EndIf 
-
-And I "process lot"
-	Given I execute scenario "Mobile Receiving Process Lot"
-
-And I "process units per case"
-	Then I assign "Units Per" to variable "input_field_with_focus"
-	And I execute scenario "Mobile Check for Input Focus Field"
-	Given I execute scenario "Get Create Footprint Policy Flag"
-    If I verify text $create_footprint_flag is equal to "TRUE"
-        Then I press keys "ENTER" in web browser
+    Once I see "Receive Product" in element "className:appbar-title" in web browser
+ 
+Then I execute MOCA script "Scripts\MSQL_Files\Custom\generate_lpn.msql"
+If I verify MOCA status is 0
+    Then I assign row 0 column "lodnum" to variable "lpn"
+	And I execute groovy "lpn = lpn[1..-1].padLeft(9, '0')"
+    And I echo $lpn
+EndIf
+    If I see element "name:invtid" in web browser
+    THEN I verify variable "lpn" is assigned
+    And I verify text $lpn is not equal to ""
+        Then I assign "Inventory Identifier" to variable "input_field_with_focus"
+        And I execute scenario "Mobile Check for Input Focus Field"
+        Then I type $lpn in element "name:invtid" in web browser within $max_response seconds
+        And I press keys "ENTER" in web browser
+    Elsif I see element "name:lodnum" in web browser
+    Then I verify variable "lpn" is assigned
+    And I verify text $lpn is not equal to ""
+       
+        Then I type $lpn in element "name:lodnum" in web browser within $max_response seconds
+        And I press keys "ENTER" in web browser
     EndIf
+ 
+And I "see if we have the same LPN already, the system will error. Check for this and error the script."
+    If I see "Load exists in" in web browser within $wait_med seconds
+        Then I fail step with error message "ERROR: Lodnum already exists nn the system"
+    EndIf
+ 
+And I "fill in the Part Number field"
+    And I "may want to test blind parts so I set that in my override variables and use it here"
+        Then I assign "Item Number" to variable "input_field_with_focus"
+        And I execute scenario "Mobile Check for Input Focus Field"
+		
+        If I verify variable "rcv_prtnum" is assigned
+        And I verify text $rcv_prtnum is not equal to ""
+            Then I type $rcv_prtnum in element "name:prtnum" in web browser within $max_response seconds
+            And I press keys "ENTER" in web browser
+	    And I wait $wait_short seconds
+        Else I type $prtnum in element "name:prtnum" in web browser within $max_response seconds
+            And I press keys "ENTER" in web browser
+	    And I wait $wait_short seconds
+        EndIf
+	And I wait $wait_short seconds
+If I see "Invalid Item Number" in web browser
+If I "take a web browser screen shot if requested"
+        And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+        Then I save web browser screenshot
+Endif
+
+And I press keys "ENTER" in web browser
+Then I "execute logout due to errors"
+        And I execute scenario "Mobile Logout"
+Endif
+If I see "Item Is Not Receivable!" in web browser within $screen_wait seconds
+	If I "take a web browser screen shot if requested"
+        And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+        Then I save web browser screenshot
+    EndIf
+	And I press keys "ENTER" in web browser
+	And I execute scenario "Mobile Logout"
+	Endif
+If I see element "xPath://span[contains(text(), 'Do you want to receive it?')]" in web browser
+	Then I press keys "Y" in web browser
+EndIf	
+If I see element "name:prt_client_id" in web browser
+Then I assign "Item Client ID" to variable "input_field_with_focus"
+        And I execute scenario "Mobile Check for Input Focus Field"
+        And I press keys "ENTER" in web browser
+	And I wait $wait_short seconds
+Endif
+And I "process see blind not allowed"
+    If I see "Item Not On Order" in web browser
+        Then I "have entered a part not on this Inbound Shipment"
+            And I press keys "ENTER" in web browser
+        And I fail step with error message "ERROR: Blind receiving is not allowed"
+    EndIf
+ 
+And I "process blind receiving if allowed"
+    Then I assign "Item is unexpected. Do you want to receive it?" to variable "mobile_dialog_message"
+    And I execute scenario "Mobile Set Dialog xPath"
+    If I see element $mobile_dialog_elt in web browser within $wait_short seconds
+        Then I "have entered a part not on this Inbound Shipment"
+            And I press keys "Y" in web browser
+            And I "continue as blind receiving is allowed"
+    EndIf
+	If I see "Item Is Not Receivable!" in web browser within $wait_short seconds
+	If I "take a web browser screen shot if requested"
+        And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+        Then I save web browser screenshot
+    EndIf
+	And I press keys "ENTER" in web browser
+	And I execute scenario "Mobile Logout"
+	Endif
+Given  I "process units per case"
+If I see element "name:untcas" in web browser 
+	And I press keys "ENTER" in web browser
+endif
 
 And I "process rcv qty"
-	Then I assign "Receive Quantity" to variable "input_field_with_focus"
-	And I execute scenario "Mobile Check for Input Focus Field"
+    Then I assign "Receive Quantity" to variable "input_field_with_focus"
+    And I execute scenario "Mobile Check for Input Focus Field"
 	Then I type $rcv_qty in element "name:rcvqty" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-
-And I "process over receipt"
-	Given I execute scenario "Mobile Receiving Process Over Receipt"
+    	And I press keys "ENTER" in web browser
+	If I see element "xPath://span[contains(text(), 'Do you want to receive it?')]" in web browser within $wait_med seconds
+		Then I execute scenario "Mobile Generate Screenshot"
+		Then I press keys "Y" in web browser
+	EndIf
 
 And I "process UOM"
-	Then I assign "UOM" to variable "input_field_with_focus"
-	And I execute scenario "Mobile Check for Input Focus Field"
-
     If I verify variable "rcv_uom" is assigned
-    And I verify text $rcv_uom is not equal to ""
-    	Then I clear all text in element "name:rcvuom" in web browser within $max_response seconds
-    	And I type $rcv_qty in element "name:rcvuom" in web browser within $max_response seconds
+	And I verify text $rcv_uom is not equal to ""
+		Then I assign "UOM" to variable "input_field_with_focus"
+    	And I execute scenario "Mobile Check for Input Focus Field"
+		And I wait $wait_short seconds
+		If I verify text $wrong_uom is not equal to ""
+			Then I execute scenario "Mobile Product Deposit Wrong UOM"
+		EndIf
+		Then I type $rcv_uom in element "name:rcvuom" in web browser within $max_response seconds
 		And I press keys "ENTER" in web browser
     Else I press keys "ENTER" in web browser
-	EndIf
-
+    EndIf
+ 
 And I "check if part has an aging profile"
-	Given I execute scenario "Mobile Receiving Process Aging Profile"
-
+    #Given I execute scenario "Mobile Receiving Process Aging Profile"
+ 
 And I "process status"
-	Then I assign "Inventory Status" to variable "input_field_with_focus"
-	And I execute scenario "Mobile Check for Input Focus Field"
-
-	If I verify variable "qa_sts" is assigned
-	And I verify text $qa_sts is not equal to ""
-		Then I clear all text in element "name:invsts" in web browser within $max_response seconds
-		And I type $qa_sts in element "name:invsts" in web browser within $max_response seconds
-	ElsIf I verify variable "age_profile" is assigned
-	And I verify text $age_profile is equal to "x"
-		Then I type $ap_sts in element "name:invsts" in web browser within $max_response seconds
-		If I see "aging" in web browser within $wait_med seconds
-			Then I assign "Continue" to variable "mobile_dialog_message"
-			And I execute scenario "Mobile Set Dialog xPath"
-			If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
-				Then I press keys "C" in web browser
-			EndIf
-		EndIf 
-	Else I type $rcvsts in element "name:invsts" in web browser within $max_response seconds
-	EndIf
-	And I press keys "ENTER" in web browser
-
-And I "process manufacturing date"	
-	Then I execute scenario "Mobile Receiving Process Manufacturing Date"
-
-And I "process subload and detail level receiving"
-    And I assign "check_lodlvl.msql" to variable "msql_file"
-    When I execute scenario "Perform MSQL Execution"
-    If I verify MOCA status is 0
-        Then I assign row 0 column "lodlvl" to variable "load_level"
-    Else I fail step with error message "ERROR: failed check of load level"
-    EndIf
-
-    If I verify text $load_level is not equal to "L"
-        If I see "Identify Sub-LPN" in web browser within $screen_wait seconds
-            Then I execute scenario "Mobile Process Subload Receiving"
+    Then I assign "Inventory Status" to variable "input_field_with_focus"
+    And I execute scenario "Mobile Check for Input Focus Field"
+ 
+    If I verify variable "qa_sts" is assigned
+    And I verify text $qa_sts is not equal to ""
+        And I type $qa_sts in element "name:invsts" in web browser within $max_response seconds
+    ElsIf I verify variable "age_profile" is assigned
+    And I verify text $age_profile is equal to "x"
+        Then I type $ap_sts in element "name:invsts" in web browser within $max_response seconds
+        If I see "aging" in web browser within $wait_med seconds
+            Then I assign "Continue" to variable "mobile_dialog_message"
+            And I execute scenario "Mobile Set Dialog xPath"
+            If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
+                Then I press keys "C" in web browser
+            EndIf
         EndIf
+    Else I type $rcvsts in element "name:invsts" in web browser within $max_response seconds
     EndIf
+    And I press keys "ENTER" in web browser
+	Then I save web browser screenshot
 
-And I "process revision level"
-	If I verify variable "revlvl" is assigned
-	And I verify text $revlvl is not equal to ""
-    	Then I assign "Revision Level" to variable "input_field_with_focus"
-		And I execute scenario "Mobile Check for Input Focus Field"
-		Then I type $revlvl in element "name:revlvl" in web browser within $max_response seconds
-        And I press keys "ENTER" in web browser
-	EndIf
+If I see element "xPath://span[contains(text(), 'Do you want to continue?')]" in web browser within $wait_med seconds
+	Then I press keys "Y" in web browser
+EndIf
 
 And I "process create inventory"
-	Given I assign "check_confirm_create.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	If I verify MOCA status is 0
-		Then I assign "OK To Create Inventory?" to variable "mobile_dialog_message"
-		And I execute scenario "Mobile Set Dialog xPath"
-		If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
-			And I press keys "Y" in web browser
-		EndIf
-	Endif
-    
-And I "wait for inventory creation processing" which can take between $wait_med seconds and $wait_long seconds 
-    
+    Given I assign "check_confirm_create.msql" to variable "msql_file"
+	    When I execute scenario "Perform MSQL Execution"
+    If I verify MOCA status is 0
+        Then I assign "OK To Create Inventory?" to variable "mobile_dialog_message"
+        And I execute scenario "Mobile Set Dialog xPath"
+        If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
+            And I press keys "Y" in web browser
+            Then I press keys "ENTER" in web browser
+        EndIf
+    Endif
+   
+And I "wait for inventory creation processing" which can take between $wait_med seconds and $wait_long seconds
+   
+ 
+While i see "Confirm Workflow Instruction" in element "className:appbar-title" in web browser
+And I wait $wait_short seconds
+    Then I press keys "Y" in web browser
+	And I wait $wait_short seconds
+ Endwhile
+ 
 And I "process serialization if required/configured"
-	If I see "Serial Number Capture" in element "className:appbar-title" in web browser within $screen_wait seconds
-		Then I execute scenario "Get Item Serialization Type"
-		If I verify text $serialization_type is equal to "CRDL_TO_GRAVE"
-			Then I execute scenario "Mobile Scan Serial Number Cradle to Grave Receiving"
-		ElsIf I verify text $serialization_type is equal to "OUTCAP_ONLY"
+    If I see "Serial Number Capture" in element "className:appbar-title" in web browser within $screen_wait seconds
+        Then I execute scenario "Get Item Serialization Type"
+        If I verify text $serialization_type is equal to "CRDL_TO_GRAVE"
+            Then I execute scenario "Mobile Scan Serial Number Cradle to Grave Receiving"
+        ElsIf I verify text $serialization_type is equal to "OUTCAP_ONLY"
         Else I fail step with error message "ERROR: Serial Number Screen seen, but serialization type cannot be determined"
         EndIf
     EndIf
-
+ 
 And I "answer the any more to receive question"
-	Then I assign "Any More To Receive" to variable "mobile_dialog_message"
-	And I execute scenario "Mobile Set Dialog xPath"
-	If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
-		If I verify text $receive_more_flag is equal to "TRUE"
-			Then I press keys "Y" in web browser
-		Else I press keys "N" in web browser
-		EndIf
-	EndIf
-
+    Then I assign "Any More To Receive" to variable "mobile_dialog_message"
+    And I execute scenario "Mobile Set Dialog xPath"
+    If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
+        If I verify text $receive_more_flag is equal to "TRUE"
+            Then I press keys "Y" in web browser
+        Else I press keys "N" in web browser
+        EndIf
+    EndIf
+ 
 And I "enter pass error producing pallet label message"
-	Then I assign "Error Producing" to variable "mobile_dialog_message"
-	And I execute scenario "Mobile Set Dialog xPath"
-	If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
-		Then I press keys "Enter" in web browser
-	EndIf
-
+    Then I assign "Error Producing" to variable "mobile_dialog_message"
+    And I execute scenario "Mobile Set Dialog xPath"
+    If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
+        Then I press keys "Enter" in web browser
+    EndIf
+ 
 Once I see "Receive Product" in element "className:appbar-title" in web browser
 
 @wip @public
@@ -619,6 +625,7 @@ And I "process status"
 		And I verify variable "rcv_chg_sts" is assigned
 		And I verify text $rcv_chg_sts is not equal to ""
 			Then I type $rcv_chg_sts in element "name:invsts" in web browser within $max_response seconds
+			And I save web browser screenshot
 		ElsIf I verify variable "age_profile" is assigned
 		And I verify text $age_profile is equal to "x"
 			Then I type $ap_sts in element "name:invsts" in web browser within $max_response seconds
@@ -777,10 +784,23 @@ Scenario: Mobile Trigger Product Putaway
 #############################################################
     
 Given I "initiate a Product Putaway"
+
+	#When I assign 0 to variable "dep_counter"
+	#And I assign 10 to variable "max_dep_counter"
+
+	#While I verify number $dep_counter is less than or equal to $max_dep_counter
+	#If I do not see "Product Putaway" in web browser
+	#	And I press keys "F6" in web browser
+	#	Then I wait $wait_med seconds
+	#	And I increase variable "dep_counter" by 1
+	#Elsif I assign 11 to variable "dep_counter"
+	#EndIf
+	#EndWhile
 	If I see "Product Putaway" in web browser within $screen_wait seconds 
 		Then I "have reached my vehicle load limit and will not need an F6"
 	Else I "will need to trigger a deposit"
 		Once I see "Receive Product" in element "className:appbar-title" in web browser
+		Then I wait $wait_med seconds
 		Then I press keys "F6" in web browser
 		And I execute scenario "Mobile Wait for Processing"
 	EndIf
@@ -947,6 +967,7 @@ And I "address allocation failure, if necessary"
 	EndIf
 
 And I "wait for screen to transition out of Putaway"
+	And I wait $wait_med seconds
 	Once I do not see "Product Putaway" in element "className:appbar-title" in web browser
 
 #############################################################
@@ -1010,7 +1031,7 @@ Given I "check if this part is lot enabled"
         Endif
     
 @wip @private
-Scenario: Mobile Receiving Process Over Receipt
+Scenario: 
 #############################################################
 # Description: Process Mobile over-receipt error message
 # MSQL Files:
@@ -1024,7 +1045,7 @@ Scenario: Mobile Receiving Process Over Receipt
 #     None
 #############################################################
 
-	And I assign "Over-receipt is not allowed" to variable "mobile_dialog_message"
+	And I assign "Over-receipt is " to variable "mobile_dialog_message"
 	Then I execute scenario "Mobile Set Dialog xPath"
 	If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
 		Then I "have entered too much quantity"
@@ -1114,7 +1135,9 @@ Given I "capture all the subload LPNs"
     
 Then I "perform cleanup"
 	Given I unassign variable "subload_lpn"  
-    
+
+
+
 @wip @private    
 Scenario: Mobile Process Detail Receiving
 #############################################################
@@ -1181,3 +1204,194 @@ Scenario: Generate Detail LPN for Receiving
 #############################################################
 
 Given I assign next value from sequence "dtlnum" to "detail_lpn"
+
+@wip @private
+Scenario: Mobile Receiving
+#############################################################
+# Description: Generate a subload LPN for receiving functions
+# MSQL Files:
+#   None
+# Inputs:
+#   Required:
+#       trknum- the inbound shipment number
+#        wh_id - warehouse id
+#   Optional:
+#       None
+# Outputs:
+#     detail_lpn - detail lpn for receiving
+#############################################################
+ 
+When I "Process order receiving, line by line"
+Given I execute moca script "Scripts\MSQL_Files\Custom\count_inb_lines.msql"
+When I verify MOCA status is 0
+And I assign row 0 column "total_count" to variable "max_count"
+And I assign 0 to variable "counter"
+While I verify number $counter is less than $max_count
+    Given I execute moca script "Scripts\MSQL_Files\Custom\get_line_fields.msql"
+	Then I assign row $counter column "prtnum" to variable "prtnum"
+    And I assign row $counter column "expqty" to variable "expqty"
+    And I assign row $counter column "rcvsts" to variable "rcvsts"
+	If I verify text $overreceiving is equal to ""
+    	Then I assign row $counter column "expqty" to variable "rcv_qty"
+		Once I verify text $rcv_qty is not equal to ""
+	EndIf
+	If I verify variable "unexpected_item" is equal to ""
+    	And I assign row $counter column "prtnum" to variable "rcv_prtnum"
+	EndIf
+ 
+    If I verify variable "prtnum" is assigned
+    	Then I execute moca script "Scripts\MSQL_Files\Custom\get_min_uom.msql"
+    	And I verify MOCA status is 0
+    	And I assign row 0 column "uomcod" to variable "rcv_uom"
+		#If I verify variable "ftpcod" is equal to ""
+		#	Then I echo "FTPCOD is not populated"
+		#	And I execute scenario "Mobile Logout"
+		#Else I verify variable "ftpcod" is equal to "BOGUS"
+		#	Then I echo "FTPCOD is equal to BOGUS"
+		#	And I execute scenario "Mobile Logout"
+		#endif
+    Endif
+ 
+    When I "perform Receiving (non-ASN)"
+        Then I execute scenario "Mobile Non-ASN Receiving"
+        And I "move to Product Putaway screen and process the Putaway"
+        	Then I execute scenario "Mobile Trigger Product Putaway"
+        	And I execute scenario "Mobile Process Product Putaway"
+		And I "deposit the load"
+			If I verify text $rcvtyp is equal to "XDOCK"
+				Then I execute scenario "Mobile Fast MRG Product Deposit"
+			Else I execute scenario "Mobile Deposit"
+			EndIf
+ 
+    Once I see "Receive Product" in web browser
+    	Then I increase variable "counter" by 1
+   
+EndWhile
+ 
+If I verify variable "counter" is equal to variable "max_counter"
+    When I "perform Receiving (non-ASN)"
+        Then I execute scenario "Mobile Non-ASN Receiving"
+        And  I "move to Product Putaway screen and process the Putaway"
+        Then I execute scenario "Mobile Trigger Product Putaway"
+        And I execute scenario "Mobile Process Product Putaway"
+	And I "deposit the load"
+        Then I execute scenario "Mobile Deposit"
+    	And I execute scenario "Mobile Complete Receiving"
+    And I "verify LPN is deposited properly (non-sorted putaways)"
+    If I verify text $putaway_method is not equal to "2"
+        Then I assign $lpn to variable "lodnum"
+        And I execute scenario "Validate Putaway Was Successful"
+    EndIf
+Endif
+
+ ###################################################################
+@wip @private
+Scenario: Process Store-Pallet
+#############################################################
+# Description: Generate a subload LPN for receiving functions
+# MSQL Files:
+#   None
+# Inputs:
+#   Required:
+#       trknum- the inbound shipment number
+#        wh_id - warehouse id
+#   Optional:
+#       None
+# Outputs:
+#     detail_lpn - detail lpn for receiving
+#############################################################
+
+If I do not see element "xPath://span[text()='Looking for Work, Please Wait...']" in web browser within $wait_long seconds
+#If I see element $dep_loc_id in web browser
+    Given I execute moca script "Scripts\MSQL_Files\Custom\get_lpn_count.msql"
+   	When I verify MOCA status is 0
+	And I assign row 0 column "total_count" to variable "max_count"
+	And I assign 0 to variable "lod_counter"
+	While I verify number $lod_counter is less than $max_count
+    	If I see "Pickup Product At" in element "className:appbar-title" in web browser
+    		Then I press keys "ENTER" in web browser
+    	Endif
+               
+    	If I see element "name:lodnum" in web browser within $max_response seconds
+			#Then I execute MOCA script "Scripts\MSQL_Files\Custom\get_lpn_store_pallet_work.msql"
+			# If I verify MOCA status is 0
+			# 	Then I assign row $lod_counter column "lodnum" to variable "lpn"
+			# 	And I echo $lpn
+			# 	And I verify text $lpn is not equal to ""
+			# 	Then I assign "Inventory Identifier" to variable "input_field_with_focus"
+			# 	And I execute scenario "Mobile Check for Input Focus Field"
+			# 	Then I type $lpn in element "name:lodnum" in web browser within $max_response seconds
+			# 	And I press keys "ENTER" in web browser
+			# Else I assign "Inventory Identifier" to variable "input_field_with_focus"
+				And I assign "Inventory Identifier" to variable "input_field_with_focus"
+				Then I execute scenario "Mobile Check for Input Focus Field"
+				And I copy text inside element "xPath://span[contains(text(),'Inventory Identifier')]/ancestor::aq-displayfield[contains(@id,'dsplod')]/descendant::span[contains(@class,'data')]" in web browser to variable "lpn" within $max_response seconds
+				Then I type $lpn in element "name:lodnum" in web browser within $max_response seconds
+				And I press keys "ENTER" in web browser
+			# Endif
+		EndIf
+ 
+		And I "check for an invalid Device State"
+	    If I see "Invalid " in web browser within $wait_short seconds 
+			Then I press keys "ENTER" in web browser
+			And I echo $lpn
+			And I echo "Invalid Lodnum"
+			And I increase variable "counter" by 1
+			If I verify variable "dep_loc" is assigned
+			And I unassign variable "dep_loc"
+			EndIf
+		ElsIf I "deposit location"
+			When I assign 0 to variable "dep_counter"
+			And I assign 10 to variable "max_dep_counter"
+			While I verify number $dep_counter is less than or equal to $max_dep_counter
+			If I do not see "Deposit" in web browser
+				And I press keys "F6" in web browser
+				Then I wait $wait_med seconds
+				And I increase variable "dep_counter" by 1
+			Elsif I assign 11 to variable "dep_counter"
+			EndIf
+			EndWhile
+			And I execute scenario "Mobile Deposit"
+			And I increase variable "lod_counter" by 1
+			And I unassign variable "dep_loc"
+		EndIf
+    Endwhile
+	#If I verify number $counter is equal to $max_count
+		#Then I press keys "F1" in web browser
+
+	#EndIf
+	#Elsif I press keys "F1" in web browser
+	#EndIf
+EndIf
+
+@wip @private
+Scenario: Mobile Product Deposit Wrong UOM
+When I "enter wrong location"
+    Then I type $wrong_uom in element "name:rcvuom" in web browser within $max_response seconds
+    And I press keys "ENTER" in web browser
+    Once I see "Invalid UOM" in web browser
+    Given I execute scenario "Mobile Generate Screenshot"
+    Then I press keys "ENTER" in web browser
+    And I wait $wait_med seconds
+    Once I see element "name:rcvuom" in web browser
+
+@wip
+Scenario: Mobile Receive Inbound Shipment
+Then I "login to the Mobile App"
+    When I execute scenario "Mobile Login"
+When I "open the Receipt, process workflow, receive each receipt line individually, and deposit to location"
+    Given I "open the Receipt"
+        Then I execute scenario "Mobile LPN Receiving Menu"
+
+        And I execute scenario "Mobile Enter Receive ID"
+       
+        Then I execute scenario "Mobile Process Workflow"
+    Then I execute scenario "Mobile Receiving"
+
+@wip
+Scenario: Mobile Store Pallet Directed
+Then I "login to the Mobile App"
+	Given I execute scenario "Assign User, Change Priority and get Vehicle Type"
+    When I execute scenario "Mobile Login"
+    And I execute scenario "Mobile Navigate to Directed Work Menu"
+    Then I execute scenario "Process Store-Pallet"

@@ -1,0 +1,2 @@
+trlr_num,inv_num,invtyp,trknum,dep_loc,supnum,putaway_method,rcv_prtnum,generate_screenshot,empty,prtnum,rcvsts,expqty,rec_loc,rcv_uom,rcv_qty,asn_flg,validate_loc,actcod,lpn,expect_discrepancies,yard_loc
+TRLR04000501001,04000501001451610,01,04000501001451610,RCV004,0010002567,1,10H-FAKE,TRUE,,,,2000,,,,,,,,,

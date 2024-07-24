@@ -62,7 +62,7 @@ Given I "execute pre-test scenario actions (including pre-validations)"
 When I execute scenario "Web Login"
 Then I execute scenario "Web Open Inbound Shipments Screen"
 And I execute scenario "Web Inbound Shipments Search for Inbound Shipment Number"
-And I execute scenario "Web Check Over Receipt Inbound Shipment"
+And I execute scenario "Web Check Red Bar"
 
 Then I "execute post-test scenario actions (including post-validations)"
 	And I execute scenario "End Post-Test Activities"

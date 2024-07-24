@@ -61,8 +61,8 @@ Given I "setup the environment"
 	Then I assign "BASE-SHP-1100" to variable "test_case"
 	When I execute scenario "Test Data Triggers"
 
-And I "load the dataset"	
-	Then I assign "Web_Outbound_Shipment" to variable "dataset_directory"
+#And I "load the dataset"	
+	#Then I assign "Web_Outbound_Shipment" to variable "dataset_directory"
 	#And I execute scenario "Perform MOCA Dataset"
 
 After Scenario: 
@@ -73,9 +73,9 @@ After Scenario:
 Given I "perform test completion activities including logging out of the interfaces"
 	Then I execute scenario "Test Completion"
 
-And I "cleanup the dataset"
+#And I "cleanup the dataset"
 	Then I assign $ui_move_id to variable "move_id"
-	And I assign "Web_Outbound_Shipment" to variable "cleanup_directory"
+	#And I assign "Web_Outbound_Shipment" to variable "cleanup_directory"
 	#And I execute scenario "Perform MOCA Cleanup Script"
  
 @BASE-SHP-1100
@@ -86,7 +86,7 @@ Given I "execute pre-test scenario actions (including pre-validations)"
 	And I execute scenario "Begin Pre-Test Activities"
 
 Then I "log into the Web and navigate to Outbound Screen"
-	And I execute scenario "Web Login"
+	And I execute scenario "Web Login NP2"
 	And I execute scenario "Web Navigate to Outbound Planner Outbound Screen"
 
 When I "create the load"

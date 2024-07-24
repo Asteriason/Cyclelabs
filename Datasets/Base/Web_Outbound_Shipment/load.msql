@@ -70,7 +70,7 @@ publish data
        and adr_client_id = @client_id
        and host_ext_id = @ordnum
        and rt_host_adr_id = @st_adr_id
-       and carcod = nvl(@carcod, 'CYCCAR1')
+       and carcod = nvl(@carcod, 'FEDEX')
        and srvlvl = nvl(@srvlvl, 'TL')
        and sddflg = '0'
        and early_shpdte = '20161222163434'

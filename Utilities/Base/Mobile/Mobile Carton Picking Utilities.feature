@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Mobile Carton Picking Utilities.feature
 # 
 # Functional Area: Picking
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: Utility
 # Blue Yonder Interfaces Interacted With: Mobile, MOCA
@@ -169,6 +169,17 @@ When I "perform every Carton Pick in the batch"
 
                 And I "read the Part number that needs to be picked"
 					Then I copy text inside element "xPath://span[contains(text(),'Item Number')]/ancestor::aq-displayfield[contains(@id,'dspprt')]/descendant::span[contains(@class,'data')]" in web browser to variable "prtnum" within $max_response seconds
+					If I verify text $sku_wrong is equal to "TRUE" ignoring case
+		Then I type $value_sku_wrong in element "name:prtnum" in web browser 
+		Then I press keys "ENTER" in web browser
+		If I "take a web browser screen shot if requested"
+        And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+		Once I see "Invalid Item Number" in web browser
+        Then I save web browser screenshot
+    EndIf
+	Then I press keys "ENTER" in web browser
+	Then I execute scenario  "Test Completion" 
+	Endif
 
                 And I "read the Item Client that needs to be picked"
 					Then I copy text inside element "xPath://span[contains(text(),'Item Client ID')]/ancestor::aq-displayfield[contains(@id,'dspprtcli-')]/descendant::span[contains(@class,'data')]" in web browser to variable "client" within $max_response seconds

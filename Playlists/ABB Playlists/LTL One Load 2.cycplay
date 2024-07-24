@@ -1,0 +1,15 @@
+Playlist: 
+
+Resources: ..\..
+
+Working Directory: 
+
+Namespaces: 
+
+FailFast: NONE
+
+Items:
+Feature: ..\..\Test Cases\ABB Test Cases\Outbound\ABB-WAV-05 Check For Shorts And Replenishments.feature
+Feature: ..\..\Test Cases\ABB Test Cases\Outbound\ABB-SHP-07 Outbound Assign Picks.feature
+Feature: ..\..\Test Cases\ABB Test Cases\Outbound\ABB-PCK-08 Outbound List Pick Directed.feature
+Feature: ..\..\Test Cases\ABB Test Cases\Outbound\ABB-PCK-08 Outbound Pallet Pick Directed.feature

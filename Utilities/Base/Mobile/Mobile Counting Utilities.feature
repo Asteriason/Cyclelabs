@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Mobile Counting Utilities.feature
 # 
 # Functional Area: Inventory
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: Utility
 # Blue Yonder Interfaces Interacted With: Mobile, MOCA
@@ -280,7 +280,7 @@ And I "count the item assigned by the prtnum variable otherwise loop through and
 	EndIf
 
 @wip @public
-Scenario: Mobile Inventory Perform Detail Count 
+Scenario: Mobile Inventory Perform Detail Count ABC
 #############################################################
 # Description: Logic to process a Detail Count from the Detail
 # Cycle Count Screen. Can handle case where a singular and specified lodnum, prtnum and 
@@ -309,12 +309,21 @@ Scenario: Mobile Inventory Perform Detail Count
 #############################################################
 
 Given I "am on the Detail Cyle Count Screen"
-	Once I see "Detail Cycle Count" in element "className:appbar-title" in web browser
+	Once I see "Cycle Count" in element "className:appbar-title" in web browser
 
 And I "enter the location to count"
 	Then I assign "Location" to variable "input_field_with_focus"
 	And I execute scenario "Mobile Check for Input Focus Field"
-	Then I type $stoloc in element "name:stoloc" in web browser within $max_response seconds
+	Then I execute MOCA script "Scripts/MSQL_Files/Custom/get_location_vercod.msql"
+	And I assign row 0 column "locvrc" to variable "locvrc"
+	Then I type $locvrc in element "name:vfyloc" in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+Then I "enter the prtnum"
+	Once I see element "name:prtnum" in web browser
+	Then I type $prtnum in element "name:prtnum" in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+Then I "enter the client ID"
+	Once I see element "name:prt_client_id" in web browser
 	And I press keys "ENTER" in web browser
 
 Given I "process a single lodnum/prtnum or process all lodnum/prtnums at a stoloc"
@@ -326,10 +335,10 @@ Given I "process a single lodnum/prtnum or process all lodnum/prtnums at a stolo
 	If I verify variable "lodnum" is assigned
 	And I verify variable "prtnum" is assigned
 	And I verify variable "prt_client_id" is assigned
-    And I verify text $lodnum is not equal to ""
+    #And I verify text $lodnum is not equal to ""
     And I verify text $prtnum is not equal to ""     
     And I verify text $prt_client_id is not equal to ""
-		Then I execute scenario "Mobile Inventory Detail Count Enter Blind or Part Info"
+		#Then I execute scenario "Mobile Inventory Detail Count Enter Blind or Part Info"
         And I execute scenario "Mobile Inventory Count Process Quantity Capture"
 		# if quantity is entered and there is no descrepancy, screen goes back 
 		# to the screen where we enter the LPN and the cursor lands on ....
@@ -337,16 +346,9 @@ Given I "process a single lodnum/prtnum or process all lodnum/prtnums at a stolo
 
 		Then I assign "Unexpected Entry - Please Re-Enter" to variable "mobile_dialog_message"
 		And I execute scenario "Mobile Set Dialog xPath"
-		If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
+		If I see element $mobile_dialog_elt in web browser within $wait_long seconds
 			Then I press keys "ENTER" in web browser
 			Then I "know there is a mismatch in what I counted"                
-				If I verify text $client_id is not equal to "----"
-    				And I assign "Item Client ID" to variable "input_field_with_focus"
-					Then I execute scenario "Mobile Check for Input Focus Field"
-					Once I see element "name:prt_client_id" in web browser
-					Then I press keys "ENTER" in web browser
-				EndIf
-                
                 And I "need to enter the quantiy again for the same prtnum and quantity"
 					Then I execute scenario "Mobile Inventory Count Process Quantity Capture"
 		EndIf
@@ -360,21 +362,17 @@ Given I "process a single lodnum/prtnum or process all lodnum/prtnums at a stolo
 	 	# to the screen where we enter an item number for the same location
 	 	# if there is more inventory in the location we would enter it now
 	 	# check if there are more items to count in this location
-		Once I see "Count Adjustment" in element "className:appbar-title" in web browser
+		Once I see "Cycle Count" in element "className:appbar-title" in web browser
 
 		And I "press F6 and complete count"
 			Then I press keys "F6" in web browser
 			And I execute scenario "Mobile Wait for Processing" 
-
-			Then I assign "OK To complete this" to variable "mobile_dialog_message"
-			And I execute scenario "Mobile Set Dialog xPath"
-			Once I see element $mobile_dialog_elt in web browser
-			Then I press keys "Y" in web browser
 			And I wait $wait_med seconds
 
 		And I "validate that an audit count was generated if test generated a mismatch"
 			If I verify text $create_mismatch is equal to "TRUE" ignoring case
-				Then I execute scenario "Validate Count Audit Generated"
+			And I verify text $cnttyp is equal to "R" ignoring case
+				#Then I execute scenario "Validate Count Audit Generated"
 			EndIf
 
 	# the Mobile screen keeps the counted LPNs, prtnums and quantities 'in memory' and doesn't
@@ -458,6 +456,300 @@ Given I "process a single lodnum/prtnum or process all lodnum/prtnums at a stolo
 		Else I fail step with error message "ERROR: Something went wrong during detail count"
 		EndIf
 	EndIf
+
+
+
+@wip @public
+Scenario: Mobile Inventory Perform Detail Count
+#############################################################
+# Description: Logic to process a Detail Count from the Detail
+# Cycle Count Screen. Can handle case where a singular and specified lodnum, prtnum and 
+# prt_client_id are specified and also case where just the stoloc is 
+# specified and all items in the location are counted.
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		stoloc - Location where the count will take place and 
+#                if this is the only input, will count all items
+#                in the location.
+#		cntbat - Count Batch we are working on
+#	Optional:
+#		lodnum - load number
+#		create_mismatch - (TRUE|FALSE) specifies if the quantity should be incremented
+#				 to generate a mismatch.
+#		blind_counting - (TRUE|FALSE) specifies if the prtnum and prt_client_id
+#			     should be entered or just ENTER responses.
+#		prtnum - part, if specified along with prt_client_id will
+#                count just this prtnum in this stoloc.
+#		prt_client_id - client ID. if specified along with prtnum will
+#                count just this prtnum in this stoloc.
+# Outputs:
+# 		None
+#############################################################
+
+Given I "am on the Detail Cyle Count Screen"
+	Once I see "Cycle Count" in element "className:appbar-title" in web browser
+
+And I "enter the location to count"
+	Then I assign "Location" to variable "input_field_with_focus"
+	And I execute scenario "Mobile Check for Input Focus Field"
+	Once I see element "xPath:(//div[@class='data-area']//span[@class='data ng-star-inserted'])[1]" in web browser
+	And I copy text inside element "xPath:(//div[@class='data-area']//span[@class='data ng-star-inserted'])[1]" in web browser to variable "stoloc"
+	And I echo $stoloc
+	And I assign "85" to variable "wh_id"
+	Then I execute MOCA script "Scripts/MSQL_Files/Custom/get_location_vercod.msql"
+	And I assign row 0 column "locvrc" to variable "locvrc"
+	Then I type $locvrc in element "name:vfyloc" in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+	If I see "Committed inventory exists" in web browser within $wait_med seconds 
+	Then I press keys "N" in web browser
+	And I wait $wait_med seconds 
+	Endif
+	
+Then I "enter the prtnum"
+Then I "will validate their prtnum"
+
+	If I do not see element "name:prtnum" in web browser within 2 seconds
+	Once I see "Enter" in web browser 
+	And I press keys "Enter" in web browser
+	If I see element "name:vfyloc" in web browser
+	And I copy text inside element "xPath:(//div[@class='data-area']//span[@class='data ng-star-inserted'])[1]" in web browser to variable "stoloc"
+	Then I execute MOCA script "Scripts/MSQL_Files/Custom/get_location_vercod.msql"
+	And I assign row 0 column "locvrc" to variable "locvrc"
+	Then I type $locvrc in element "name:vfyloc" in web browser within $max_response seconds
+	And I press keys "Enter" in web browser
+	Endif
+	Endif
+ 
+			Once I see element "name:prtnum" in web browser
+			And I echo $stoloc
+			And I assign "85" to variable "wh_id"
+			######
+			Then I "look for other items in same location"
+			Then I execute MOCA script "Scripts/MSQL_Files/Base/get_prtnum_counts.msql"
+
+And I assign row 0 column "publish_data" to variable "number_prtnums_different"
+And I convert string variable "number_prtnums_different" to integer variable "number_prtnums_num"
+
+If I verify number $number_prtnums_num is equal to 1
+	And I assign 0 to variable "row0"
+And I assign row $row0 column "prtnum" to variable "prtnum0"
+	And I echo $prtnum0
+	Once I see element "name:prtnum" in web browser within $max_response seconds
+	Then I type $prtnum0 in element "name:prtnum" in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+Then I "enter the client ID"
+	Once I see element "name:prt_client_id" in web browser within $wait_med seconds
+	And I press keys "ENTER" in web browser
+
+	#And I wait $wait_med seconds
+	#Then I press keys "ENTER" in web browser
+	And I execute scenario "Mobile Inventory Count Process Quantity Capture"
+	Then I assign "Unexpected Entry - Please Re-Enter" to variable "mobile_dialog_message"
+		And I execute scenario "Mobile Set Dialog xPath"
+		If I see element $mobile_dialog_elt in web browser within $wait_med seconds
+			Then I press keys "ENTER" in web browser
+			Then I "know there is a mismatch in what I counted"                
+                And I "need to enter the quantiy again for the same prtnum and quantity"
+					Then I execute scenario "Mobile Inventory Count Process Quantity Capture"
+					Then I "look to see if we have an triggered an inventory adjustment with serialization and handle it"
+			If I see "Adjustment References" in element "className:appbar-title" in web browser within $screen_wait seconds
+				Then I execute scenario "Mobile Count Process Adjustment"
+			EndIf
+		Endif
+Endif
+
+If I verify number $number_prtnums_num is greater than 1
+And I assign 1 to variable "row"
+And I assign 1 to variable "row1"
+And I assign row $row1 column "prtnum" to variable "prtnum1"
+And I assign 0 to variable "row0"
+And I assign row $row0 column "prtnum" to variable "prtnum0"
+
+And I assign 1 to variable "count_diff_elements_found"
+
+And I echo $prtnum0
+	Once I see element "name:prtnum" in web browser within $wait_med seconds
+	Then I type $prtnum0 in element "name:prtnum" in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+Then I "enter the client ID"
+	Once I see element "name:prt_client_id" in web browser
+	And I press keys "ENTER" in web browser
+
+	#And I wait $wait_med seconds
+	#Then I press keys "ENTER" in web browser
+	And I execute scenario "Mobile Inventory Count Process Quantity Capture"
+	Then I assign "Unexpected Entry - Please Re-Enter" to variable "mobile_dialog_message"
+		And I execute scenario "Mobile Set Dialog xPath"
+		If I see element $mobile_dialog_elt in web browser within $wait_med seconds
+		Then I execute scenario "Falla"
+			Then I press keys "ENTER" in web browser
+			Then I "know there is a mismatch in what I counted"                
+                And I "need to enter the quantiy again for the same prtnum and quantity"
+					Then I execute scenario "Mobile Inventory Count Process Quantity Capture"
+					Then I "look to see if we have an triggered an inventory adjustment with serialization and handle it"
+			If I see "Adjustment References" in element "className:appbar-title" in web browser within $screen_wait seconds
+				Then I execute scenario "Mobile Count Process Adjustment"
+			EndIf
+		Endif
+
+While I verify number $count_diff_elements_found is not equal to $number_prtnums_num
+
+If I verify text $prtnum0 is not equal to $prtnum1
+And I increase variable "count_diff_elements_found" by 1
+#Content to replicate for others prtnum's
+And I type $prtnum1 in element "name:prtnum" in web browser within $max_response seconds 
+#And I wait $wait_med seconds
+	Then I press keys "ENTER" in web browser
+	And I wait $wait_med seconds
+	Then I press keys "ENTER" in web browser
+	And I execute scenario "Mobile Inventory Count Process Quantity Capture row1"
+	Then I assign "Unexpected Entry - Please Re-Enter" to variable "mobile_dialog_message"
+		And I execute scenario "Mobile Set Dialog xPath"
+		If I see element $mobile_dialog_elt in web browser within $wait_long seconds
+			Then I press keys "ENTER" in web browser
+			Then I "know there is a mismatch in what I counted"                
+                And I "need to enter the quantiy again for the same prtnum and quantity"
+					Then I execute scenario "Mobile Inventory Count Process Quantity Capture row1"
+					Then I "look to see if we have an triggered an inventory adjustment with serialization and handle it"
+			If I see "Adjustment References" in element "className:appbar-title" in web browser within $screen_wait seconds
+				Then I execute scenario "Mobile Count Process Adjustment"
+			EndIf
+		EndIf
+
+
+		Then I "look to see if we have an triggered an inventory adjustment with serialization and handle it"
+			If I see "Adjustment References" in element "className:appbar-title" in web browser within $screen_wait seconds
+				Then I execute scenario "Mobile Count Process Adjustment"
+				Endif
+			If I verify number $count_diff_elements_found is not equal to $number_prtnums_num
+And I increase variable "row" by 1
+ And I increase variable "row0" by 1
+ And I assign row $row0 column "prtnum" to variable "prtnum0"
+ And I increase variable "row1" by 1
+ And I assign row $row1 column "prtnum" to variable "prtnum1"
+		
+			EndIf	
+	
+Endif
+While I verify text $prtnum0 is equal to $prtnum1
+ And I increase variable "row" by 1
+ And I increase variable "row0" by 1
+ And I assign row $row0 column "prtnum" to variable "prtnum0"
+ If I verify number $count_diff_elements_found is not equal to $number_prtnums_num
+  And I increase variable "row1" by 1
+ And I assign row $row1 column "prtnum" to variable "prtnum1"
+ Endif 
+Endwhile
+
+Endwhile
+Endif
+
+
+
+#And I wait 10 seconds
+
+	 	# if quantity is entered (or re-entered), screen goes back 
+	 	# to the screen where we enter an item number for the same location
+	 	# if there is more inventory in the location we would enter it now
+	 	# check if there are more items to count in this location
+		Once I see "Cycle Count" in element "className:appbar-title" in web browser
+
+		And I "press F6 and complete count"
+			Then I press keys "F6" in web browser
+			And I execute scenario "Mobile Wait for Processing" 
+			And I wait 2 seconds
+
+		And I "validate that an audit count was generated if test generated a mismatch"
+			If I verify text $create_mismatch is equal to "TRUE" ignoring case
+			And I verify text $cnttyp is equal to "R" ignoring case
+				#Then I execute scenario "Validate Count Audit Generated"
+			EndIf
+
+	# the Mobile screen keeps the counted LPNs, prtnums and quantities 'in memory' and doesn't
+	# write each count to the database, so we can't retrieve the 'next' LPN/prtnum combo after each count
+	# in this script. So we are going to loop through the moca result set instead. 
+	# Else I "am going to loop through all LPNs in the location, and through all items on each LPN"
+	# 	Then I execute scenario "Inventory Detail Count Get LPNs to Count"
+	# 	And I assign 0 to variable "row"
+	# 	While I verify number $row is less than $num_rows
+	# 		Then I assign row $row column "lodnum" to variable "lodnum"
+	# 		And I assign row $row column "prtnum" to variable "prtnum"
+	# 		And I assign row $row column "prt_client_id" to variable "prt_client_id" 
+	# 		And I assign row $row column "untqty" to variable "untqty"
+	# 		And I assign row $row column "numUOMs" to variable "numUOMs" 
+	# 		And I increase variable "row"
+            
+	# 		And I "check if mismatch was requested and calculate the quantity to use"
+    #         	Then I execute scenario "Calculate Quantity Mismatch Information"
+
+	# 		Then I execute scenario "Mobile Inventory Detail Count Enter Blind or Part Info"
+    #         And I execute scenario "Mobile Inventory Count Process Quantity Capture"
+
+	# 		# if quantity is entered and there is no descrepancy, screen goes back 
+	# 		# to the screen where we enter the LPN and the cursor lands on ....
+	# 		# the client id field. with one more entry we end up back in the quantities field
+	# 		Then I assign "Unexpected Entry - Please Re-Enter" to variable "mobile_dialog_message"
+	# 		And I execute scenario "Mobile Set Dialog xPath"
+	# 		If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
+	# 			Then I "know there is a mismatch in what I counted"
+	# 				Then I press keys "ENTER" in web browser
+					
+	# 				If I verify text $client_id is not equal to "----"
+    # 					And I assign "Item Client ID" to variable "input_field_with_focus"
+	# 					Then I execute scenario "Mobile Check for Input Focus Field"
+	# 					And I press keys "ENTER" in web browser
+	# 				EndIf
+                
+    #             	And I "need to enter the quantiy again for the same prtnum and quantity"
+	# 					Then I execute scenario "Mobile Inventory Count Process Quantity Capture"
+	# 		EndIf
+			
+	# 		# sometimes a message shows 'Please complete this inventory first - Press Enter'
+	# 		# re-enter the quantity, just like we do with an unexpected quantity
+	# 		Then I assign "Please complete this" to variable "mobile_dialog_message"
+	# 		And I execute scenario "Mobile Set Dialog xPath"
+	# 		If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
+	# 			Then I "know I have to re-enter what I counted"
+	# 				And I press keys "ENTER" in web browser
+	# 			And I "need to enter the quantity again for the same prtnum and quantity"
+	# 				Then I execute scenario "Mobile Inventory Count Process Quantity Capture"
+	# 		EndIf
+	# 	EndWhile
+
+	# 	And I "know there are no more LPNs to count in the location according to what's in the system - press F6"
+	# 		Then I "look to see if we have an triggered an inventory adjustment with serialization and handle it"
+				#If I see "Adjustment References" in element "className:appbar-title" in web browser within $screen_wait seconds
+					#Then I execute scenario "Mobile Count Process Adjustment"
+				#EndIf
+
+			#Once I see "Count Adjustment" in element "className:appbar-title" in web browser
+			And I wait 5 seconds
+			# And I "press F6 and complete count"
+			# 	Then I press keys "F6" in web browser
+				#And I execute scenario "Mobile Wait for Processing" 
+
+				Then I assign "OK To complete this" to variable "mobile_dialog_message"
+				And I execute scenario "Mobile Set Dialog xPath"
+			# 	Once I see element $mobile_dialog_elt in web browser
+			# 	Then I press keys "Y" in web browser
+			# 	And I wait $wait_med seconds
+            
+            # And I "validate that an audit count was generated if test generated a mismatch"
+			# If I verify text $create_mismatch is equal to "TRUE" ignoring case
+			# 	Then I execute scenario "Validate Count Audit Generated"
+			# EndIf
+
+		If I see "Cycle Count" in element "className:appbar-title" in web browser within $max_response seconds
+			Then I "know we completed this location count because the next count is showing up"
+		ElsIf I see "Looking" in web browser within $screen_wait seconds 
+			Then I "know we completed this location count"
+		Else I fail step with error message "ERROR: Something went wrong during detail count"
+		EndIf
+	
+
+
 
 @wip @public
 Scenario: Mobile Inventory Audit Count Enter Location Directed Work
@@ -628,10 +920,10 @@ Given I "verify we are on Count Adjustment Screen and enter lodum"
 	Then I execute scenario "Mobile Check for Input Focus Field"
 	And I type $lodnum in element "name:invtid" in web browser within $max_response seconds
 	And I press keys "ENTER" in web browser
+#comment last 4 lines if it's ABC count
 
 And I "enter prtnum"
-	And I assign "Item Number" to variable "input_field_with_focus"
-	Then I execute scenario "Mobile Check for Input Focus Field"
+	Once I see element "name:prtnum" in web browser
 	And I type $prtnum in element "name:prtnum" in web browser within $max_response seconds
 	And I press keys "ENTER" in web browser
 
@@ -1066,19 +1358,78 @@ Scenario: Mobile Enter Count Quantity
 #############################################################
 
 Given I "enter the quantity (for each UOM) and post it to the screen"
-	Then I assign 1 to variable "rownum"
-	And I convert string variable "numUOMs" to integer variable "numUOMs_num"
-	While I verify number $numUOMs_num is greater than or equal to $rownum
-		Then I assign variable "elt" by combining "name:" "uomqty" $rownum
-		And I see element $elt in web browser within $screen_wait seconds
-		If I verify number $numUOMs_num is equal to $rownum
-			And I type $untqty in element $elt in web browser within $max_response seconds
+	
+	# And I wait 1.5 seconds
+	# And I "add untqty if there is more than one prtnum in location"
+	# And I copy text inside element "xPath:(//span[@class='data ng-star-inserted'])[1]" in web browser to variable "prtnump" 
+	# And I assign row 0 column "prtnum" to variable "prtnumq"
+	# If I verify text $prtnumq is not equal to $prtnump
+	# And I assign row 1 column "total_untqty_per_prtnum" to variable "untqty"
+	# And I convert string variable "untqty" to integer variable "untqty_num"
+	# If I verify text $untqty_mismatch_increment is not equal to ""
+	# Then  I increase variable "untqty_num" by $untqty_mismatch_increment
+	# Endif
+	# Endif
+	Then I assign 1 to variable "numUOM_line"
+	And I convert string variable "numUOM_line" to integer variable "numUOMs_line_num"
+	If I see element "xPath://span[@class='label ng-star-inserted' and text()='FT']" in web browser
+	While I do not see element "xPath://div[@class='aq-container-segment-wrapper' and .//span[text()='FT']]//div[contains(@class, 'highlighted')]" in web browser
+	And I press keys "Enter" in web browser 
+	And I increase variable "numUOMs_line_num" by 1
+	And I echo $numUOMs_line_num
+	And I wait 2 seconds
+	Endwhile
+	Then I assign variable "elt2" by combining "name:" "uomqty" $numUOMs_line_num
+			And I type $untqty_num in element $elt2 in web browser within $max_response seconds
 		Endif
-		And I press keys "ENTER" in web browser
-		
-		And I wait $wait_short seconds 
-		Then I increase variable "rownum"
-	EndWhile
+		If I see element "xPath://span[@class='label ng-star-inserted' and text()='EA']" in web browser
+	While I do not see element "xPath://div[@class='aq-container-segment-wrapper' and .//span[text()='EA']]//div[contains(@class, 'highlighted')]" in web browser
+	And I press keys "Enter" in web browser 
+	And I increase variable "numUOMs_line_num" by 1
+	And I echo $numUOMs_line_num
+	And I wait 4 seconds
+	Endwhile
+	Then I assign variable "elt2" by combining "name:" "uomqty" $numUOMs_line_num
+	#And I wait 3 seconds
+			And I type $untqty_num in element $elt2 in web browser within $max_response seconds
+	Endif
+			And I press keys "ENTER" in web browser
+		And I wait $wait_short seconds
+
+ @wip @private
+Scenario: Mobile Inventory Count Process Quantity Capture row1
+#############################################################
+# Description: While on the Quantity Capture screen, call scenario
+# to get untqty and numUOMs relative to the stoloc/prtnum. Use this data to 
+# enter for each UOM the current quantity. If the script is asked to 
+# generate mismatch on quantity (create_mismatch) increment the quantity 
+# by untqty_mismatch_increment setting.
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		None
+#	Optional:
+#		create_mismatch - (TRUE|FALSE) specifies if the quantity should be incremented
+#                         to generate a mismatch.
+#		numUOMs - number of unit of measures for this prtnum
+#		untqty - the quantity of inventory relative to the prtnum
+#		untqty_mismatch_increment - amount to increase quantity to create a mismatch
+# Outputs:
+# 	None
+#############################################################
+
+Given I "calculate and enter quantity information"
+	Once I see "Quantity Capture" in element "className:appbar-title" in web browser within $max_response seconds	
+	 And I echo $row
+	And I assign row $row column "total_untqty_per_prtnum" to variable "untqty"
+	And I convert string variable "untqty" to integer variable "untqty_num"
+		Then I echo "  quantity: " $untqty_num
+
+		Then I execute scenario "Calculate Quantity Mismatch Information"
+
+
+	Then I execute scenario "Mobile Enter Count Quantity"
 
 @wip @private
 Scenario: Mobile Inventory Count Process Quantity Capture
@@ -1104,21 +1455,14 @@ Scenario: Mobile Inventory Count Process Quantity Capture
 #############################################################
 
 Given I "calculate and enter quantity information"
-	Once I see "Quantity Capture" in element "className:appbar-title" in web browser
+	Once I see "Quantity Capture" in element "className:appbar-title" in web browser within $max_response seconds	
+	 And I echo $row0
+	And I assign row $row0 column "total_untqty_per_prtnum" to variable "untqty"
+	And I convert string variable "untqty" to integer variable "untqty_num"
+		Then I echo "  quantity: " $untqty_num
 
-	# now we need to loop through these fields. The number of fields depends on 
-	# footprint detail levels. Which quantity (or multiple quantities) we fill in is 
-	# arbitrary and depends on user decision / business process. 
-	# We will assume we fill in one of the quantites and we get the number of fields
-	# and the lowest level quantity passed in as a variable
-	If I verify variable "numUOMs" is assigned
-	And I verify variable "untqty" is assigned
-    And I verify text $numUOMs is not equal to ""
-    And I verify text $untqty is not equal to ""
-		Then I echo "number of UOMs: " $numUOMs "  quantity: " $untqty 
-	Else I execute scenario "Inventory Count Get untqty and numUOMs"
 		Then I execute scenario "Calculate Quantity Mismatch Information"
-	EndIf 
+
 
 	Then I execute scenario "Mobile Enter Count Quantity"
 

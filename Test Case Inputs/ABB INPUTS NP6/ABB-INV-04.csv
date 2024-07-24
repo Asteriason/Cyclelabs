@@ -1,0 +1,2 @@
+stoloc,lodnum,prtnum,ftpcod,untqty,adjref1,adjref2,reacod,invsts,inventory_move_mode,dstloc,actcod,dstlod,move_qty,web_credentials,username,adjust_approval_reason,approval_needed
+001-013-A-A,900119028,15008-500,1FTX500RLX2PA,1000,001-013-A-A,15008-500,RE-Receiving Error,AP,IMMEDIATE,063-002-A-A,,110351851,100,CYCLELABS,CYCLELABS,RE-Receiving Error,TRUE

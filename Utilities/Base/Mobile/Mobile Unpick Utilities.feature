@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Mobile Unpick Utilities.feature
 # 
 # Functional Area: Picking
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: Utility
 # Blue Yonder Interfaces Interacted With: Mobile
@@ -183,3 +183,71 @@ And I "enter the destination load for the unpicked item if one is defined and th
 		And I wait $wait_short seconds 
 	EndIf
 	And I press keys "ENTER" in web browser
+
+@wip @private
+Scenario: Mobile Full Unpick
+#############################################################
+# Description: Performs a partial Mobile App Unpick.
+# MSQL Files:
+#	None
+# Inputs:
+# 	Required:
+#		client_id - Client
+#		prtnum - Part Number
+#		unpick_qty - Partial qty to unpick
+#		unpick_to_lodnum - LPN to put partial unpicked inventory
+# 	Optional:
+#       None
+# Outputs:
+#	None
+#############################################################
+
+Given I "verify I am on the unpick (partial) screen"
+	Once I see "Unpick" in element "className:appbar-title" in web browser
+
+Given I "enter the destination load"
+	When I execute MOCA script "Datasets\Custom\unpick_data.msql"
+	Once I verify MOCA status is 0
+	Then I assign row 0 column "lodnum" to variable "lodnum"
+	And I type $lodnum in element "name:invtid" in web browser within $max_response seconds
+	Then I press keys "ENTER" in web browser 
+
+Then I "don't want to unpick partial inventory"
+	Once I see "Do you want to unpick partial inventory?" in web browser 
+	Then I press keys "N" in web browser
+
+Then I "type the cancel code"
+	Once I see element "name:codval" in web browser 
+	And I type $cancelcod in element "name:codval" in web browser within $max_response seconds
+	Then I press keys "ENTER" in web browser 
+
+Then I "confirm unpick"
+	Once I see "Identifier Has Been Unpicked" in web browser 
+	Then I press keys "ENTER" in web browser
+	And I wait $wait_med seconds 
+	Then I press keys "F6" in web browser
+
+Then I "execute directed deposit"
+	If I see "Product Putaway" in web browser within $wait_long seconds
+	Then I press keys "1" in web browser 
+	And I wait $wait_med seconds 
+    EndIf
+
+Then I "perform product deposit"
+	If I see "OK" in web browser 
+		Then I press keys "ENTER" in web browser 
+		And I wait $wait_med seconds 
+	EndIf 
+    If I see "MRG Product Deposit" in element "className:appbar-title" in web browser
+      Once I see element "name:lodnum" in web browser 
+      Then I press keys "ENTER" in web browser 
+      Once I see element "name:dstloc" in web browser 
+	  And I copy text inside element "xPath://span[contains(text(),'Location')]/ancestor::aq-displayfield[contains(@id,'dsploc')]/descendant::span[contains(@class,'data')]" in web browser to variable "dep_loc" within $max_response seconds
+      And I type $dep_loc in element "name:dstloc" in web browser within $max_response seconds
+      Then I press keys "ENTER" in web browser 
+      And I wait $wait_med seconds 
+    EndIf
+
+And I "check if I went back to Unpick menu"
+	Once I see "Unpick" in element "className:appbar-title" in web browser
+	Then I echo "Unpick Successful"

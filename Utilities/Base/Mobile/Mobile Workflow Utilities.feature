@@ -1,5 +1,5 @@
 ############################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Mobile Workflow Utilities.feature
 # 
 # Functional Area: Workflows
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: Utility
 # Blue Yonder Interfaces Interacted With: Mobile
@@ -52,7 +52,7 @@ Scenario: Mobile Process Workflow
 Given I "check if a workflow is being prompted"
 	If I see "Confirm Workflow" in element "className:appbar-title" in web browser within $wait_med seconds 
 		Then I "have a pending workflow to process"
-			If I see "Perform Trailer Safety Check" in web browser within $wait_med seconds
+			If I see "Confirm Workflow Instruction" in web browser within $wait_med seconds
 				Then I execute scenario "Mobile Perform Trailer Safety Check Pass"
 			Else I fail step with error message "ERROR: Expected to perform safety checks, but did not see approrpiate screen prompts"
 			EndIf
@@ -81,7 +81,6 @@ Scenario: Mobile Perform Trailer Safety Check Pass
 
 Given I "only perform the workflow if prompted"
 	If I see "Confirm Workflow" in element "className:appbar-title" in web browser within $wait_short seconds
-	And I see "Perform Trailer Safety Check" in web browser within $wait_short seconds
 		Given I "press ENTER if needed"
 			If I see element "xPath://span[contains(text(),'OK [Enter]')]" in web browser within $screen_wait seconds
 				Then I press keys "ENTER" in web browser

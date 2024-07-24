@@ -6,7 +6,7 @@ Test Case File: BASE-API-8010 API Alternate Item Lookups.feature
 Test Case Description:
     This Test Case validates alternate item types of a given part
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Pre-Validation
 Functional Area: Inventory
 
@@ -62,7 +62,7 @@ Test Case File: BASE-RCV-0010 Terminal Inbound Receiving.feature
 Test Case Description:
     This Test Case generates a receipt via MSQL and receives it.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -129,7 +129,7 @@ Test Case File: BASE-RCV-0020 Terminal Inbound Putaway.feature
 Test Case Description:
     This Test Case generates an LPN to perform an Undirected Putaway
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -188,7 +188,7 @@ Test Case File: BASE-RCV-0030 Terminal Inbound Reverse Receiving.feature
 Test Case Description:
     Performs Terminal Reverse Receiving
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -238,7 +238,7 @@ Test Case File: BASE-RCV-0040 Terminal Inbound ASN Receiving.feature
 Test Case Description:
     This Test Case generates an ASN receipt via MSQL and receives it.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -302,7 +302,7 @@ Test Case File: BASE-RCV-0050 Terminal Inbound Receiving Without Order.feature
 Test Case Description:
     Performs Terminal Receiving WithOut Order
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -344,7 +344,7 @@ Test Case File: BASE-RCV-0060 Terminal Inbound ASN Receiving Non Trusted Supplie
 Test Case Description:
     This Test Case generates an ASN receipt from a non-trusted supplier via MSQL and receives it.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -415,7 +415,7 @@ Test Case File: BASE-RCV-0070 Terminal Inbound Unload All.feature
 Test Case Description:
     This Test Case will exercise Receiving Unload Shipment functionality in the Terminal
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -459,7 +459,7 @@ Test Case File: BASE-RCV-0080 Terminal Inbound Directed Putaway from Receiving O
 Test Case Description:
     This Test Case receives a non-ASN receipt and performs a putaway operation overriding the putaway location and selecting an override code
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -521,7 +521,7 @@ Test Case Description:
     This Test Case generates a receipt via MSQL and receives it. It will over receive based on expqty and rec_qty inputs and user will have permissions/role
     to do the over receive.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -580,7 +580,7 @@ Test Case Description:
     This Test Case generates a receipt via MSQL, receives it, and then performs directed putaway and deposits to a staging area. 
     From that action directed work is generated to move inventory to a system generated final location.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -639,7 +639,7 @@ Test Case File: BASE-RCV-0110 Terminal Inbound Blind Receiving.feature
 Test Case Description:
     This Test Case generates a receipt via MSQL and receives it. It specifies a part not on the receipt and receives that blind.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -696,7 +696,7 @@ Test Case File: BASE-RCV-1010 Web Inbound Close Receipt.feature
 Test Case Description:
     Receive an invoice without discrepancies and with over/under discrepancies in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -748,7 +748,7 @@ Test Case File: BASE-RCV-1020 Web Inbound Reverse Receiving.feature
 Test Case Description:
     This test case performs a Reverse Receipt in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -799,7 +799,7 @@ Test Case File: BASE-RCV-1030 Web Inbound Create Order.feature
 Test Case Description:
     This test case creates an Inbound Order from the Web.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -840,7 +840,7 @@ Test Case File: BASE-RCV-1040 Web Inbound Create Quality Issue.feature
 Test Case Description:
     This test case creates an Inbound Quality Issue.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -881,7 +881,7 @@ Test Case File: BASE-RCV-1050 Web Inbound Complete OSD Receipt.feature
 Test Case Description:
     This test case will receive/putaway in short, over, and damaged product states
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -927,7 +927,7 @@ Test Case File: BASE-RCV-1060 Web Inbound Validate Inbound Shipments.feature
 Test Case Description:
     This test case will validate an inbound shipment in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -969,7 +969,7 @@ Test Case File: BASE-RCV-1070 Web Inbound Create Inbound Shipment.feature
 Test Case Description:
     This test case creates an Inbound Shipment from the Web.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1007,7 +1007,7 @@ Test Case File: BASE-RCV-1080 Web Inbound Copy Inbound Order to Inbound Shipment
 Test Case Description:
     This test case copies an Inbound Order to an Inbound Shipment from the Web.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1050,7 +1050,7 @@ Test Case File: BASE-RCV-1090 Web Inbound Unload All Without Receiving.feature
 Test Case Description:
     This test case will perform an Unload All operation from the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1097,7 +1097,7 @@ Test Case File: BASE-RCV-1100 Web Inbound Putaway.feature
 Test Case Description:
     This test case will perform Putaway in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1142,7 +1142,7 @@ Test Case File: BASE-RCV-1110 Web Inbound Non ASN Receiving.feature
 Test Case Description:
     This Test Case generates an Non-ASN receipt via MSQL and receives it in Web. Capabilitites include serialization.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1196,7 +1196,7 @@ Test Case File: BASE-RCV-1111 Web Inbound ASN Receiving.feature
 Test Case Description:
     This Test Case generates an ASN receipt via MSQL and receives it in Web. Capabilitites include serialization
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1249,7 +1249,7 @@ Test Case File: BASE-RCV-1120 Web Inbound Receiving Without Trailer.feature
 Test Case Description:
     This Test Case receives without a trailer in the Web
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1297,7 +1297,7 @@ Test Case File: BASE-RCV-1130 Web Inbound Assign Shipment.feature
 Test Case Description:
     This test case will Assign transport Equipment to Shipment
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1337,7 +1337,7 @@ Test Case File: BASE-RCV-1140 Web Inbound Complete Shipment.feature
 Test Case Description:
     This test case will complete an Inbound Shipment in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1396,7 +1396,7 @@ Test Case File: BASE-RCV-1150 Web Inbound Capture Quality Incident.feature
 Test Case Description:
     This test case captures a inbound quality incident for shipment from the Web.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1446,7 +1446,7 @@ Test Case File: BASE-RCV-4010 Mobile Inbound Receiving.feature
 Test Case Description:
     This Test Case generates a receipt via MSQL and receives it in the Mobile App.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1513,7 +1513,7 @@ Test Case File: BASE-RCV-4020 Mobile Inbound Putaway.feature
 Test Case Description:
     This Test Case generates an LPN to perform an Undirected Putaway in Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1572,7 +1572,7 @@ Test Case File: BASE-RCV-4030 Mobile Inbound Reverse Receiving.feature
 Test Case Description:
     Performs Mobile Reverse Receiving
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1622,7 +1622,7 @@ Test Case File: BASE-RCV-4040 Mobile Inbound ASN Receiving.feature
 Test Case Description:
     This Test Case generates an ASN receipt via MSQL and receives it in the Mobile App.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1686,7 +1686,7 @@ Test Case File: BASE-RCV-4050 Mobile Inbound Receiving Without Order.feature
 Test Case Description:
     Performs Mobile App Receiving without an order in the Mobile App.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1728,7 +1728,7 @@ Test Case File: BASE-RCV-4060 Mobile Inbound ASN Receiving Non Trusted Supplier.
 Test Case Description:
     This Test Case generates an ASN receipt from a non-trusted supplier via MSQL and receives it in the the Mobile App.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1799,7 +1799,7 @@ Test Case File: BASE-RCV-4070 Mobile Inbound Unload All.feature
 Test Case Description:
     This Test Case will exercise Receiving Unload Shipment functionality in the Mobile App.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1843,7 +1843,7 @@ Test Case File: BASE-RCV-4080 Mobile Inbound Directed Putaway from Receiving Ove
 Test Case Description:
     This Test Case receives a non-ASN receipt and performs a putaway operation overriding the putaway location and selecting an override code in the Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1905,7 +1905,7 @@ Test Case Description:
     This Test Case generates a receipt via MSQL and receives it in the Mobile App. It will over receive based on expqty and rec_qty inputs
     and user will have permissions/role to do the over receive.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -1964,7 +1964,7 @@ Test Case Description:
     This Test Case generates a receipt via MSQL, receives it, and then performs directed putaway and deposits to a staging area in the Mobile App. 
     From that action directed work is generated to move inventory to a system generated final location.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -2023,7 +2023,7 @@ Test Case File: BASE-RCV-4110 Mobile Inbound Blind Receiving.feature
 Test Case Description:
     This Test Case generates a receipt via MSQL and receives it in Mobile App. It specifies a part not on the receipt and receives that blind.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -2080,7 +2080,7 @@ Test Case File: BASE-RCV-5010 Flow Reverse Receive LPN.feature
 Test Case Description:
     Performs Terminal Reverse Receiving, verifying the inbound shipment details in Web and then receives back the reversed LPN
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -2138,7 +2138,7 @@ Test Case File: BASE-RCV-8010 API Create Inbound Shipment.feature
 Test Case Description:
     This test case creates an Inbound Shipment using the API
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Receiving
 
@@ -2176,7 +2176,7 @@ Test Case File: BASE-INT-2010 Integrator Download ASN Inbound.feature
 Test Case Description:
     This test case runs the ASN download transaction for Add, Change, and Delete
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Integration
 
@@ -2232,7 +2232,7 @@ Test Case File: BASE-INT-2020 Integrator Download Customer Inbound.feature
 Test Case Description:
     This test case runs the Download Customer Inbound transaction for Add, Change, and Delete
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Integration
 
@@ -2288,7 +2288,7 @@ Test Case File: BASE-INT-2030 Integrator Download Supplier Inbound.feature
 Test Case Description:
     This test case runs the Supplier Inbound Transaction for Add, Change, and Delete
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Integration
 
@@ -2344,7 +2344,7 @@ Test Case File: BASE-INT-2040 Integrator Download Order Inbound.feature
 Test Case Description:
     This test case runs the order download transaction for Add, Change, and Delete
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Integration
 
@@ -2401,7 +2401,7 @@ Test Case File: BASE-INT-2050 Integrator Download PartFootprint Inbound.feature
 Test Case Description:
     This test case runs the Download PartFootprint Inbound transaction for Add, Change, and Delete
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Integration
 
@@ -2461,7 +2461,7 @@ Test Case File: BASE-INT-2060 Integrator Download BOM Inbound.feature
 Test Case Description:
     This test case runs the BOM Inbound Transaction for Add, Change, and Delete
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Integration
 
@@ -2517,7 +2517,7 @@ Test Case File: BASE-INT-2070 Integrator Download Work Order Inbound.feature
 Test Case Description:
     This test case runs the Work Order download transaction for Add, Change, and Delete
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Integration
 
@@ -2575,7 +2575,7 @@ Test Case File: BASE-INT-2080 Integrator Download Part Inbound.feature
 Test Case Description:
     This test case runs the Download Part Inbound transaction for Add, Change, and Delete
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Integration
 
@@ -2630,7 +2630,7 @@ Test Case File: BASE-INT-2090 Integrator Download PO Inbound.feature
 Test Case Description:
     This test case runs the PO Inbound Transaction for Add, Change, and Delete
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Integration
 
@@ -2686,7 +2686,7 @@ Test Case File: BASE-INT-2100 Integrator Download Shipment Order Inbound.feature
 Test Case Description:
     This test case runs the Download Shipment Order Inbound transaction for Add, Change, and Delete
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Integration
 
@@ -2740,7 +2740,7 @@ Test Case File: BASE-CNT-0010 Terminal Inventory Count LPN Undirected.feature
 Test Case Description:
     This test case performs an LPN count on Terminal for undirected work.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -2787,7 +2787,7 @@ Test Case File: BASE-CNT-0011 Terminal Inventory Count LPN Directed.feature
 Test Case Description:
     This test case performs an LPN count on Terminal for Directed work.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -2836,7 +2836,7 @@ Test Case File: BASE-CNT-0021 Terminal Inventory Count Summary Directed.feature
 Test Case Description:
     This test case performs a cycle summary count on the terminal in Directed work mode.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -2891,7 +2891,7 @@ Test Case File: BASE-CNT-0030 Terminal Inventory Count Detail Undirected.feature
 Test Case Description:
     This test case performs a Undirected detail count in the terminal. The screen flow is almost identical to an Audit Count, but the detail count does not adjust inventory
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -2950,7 +2950,7 @@ Test Case File: BASE-CNT-0031 Terminal Inventory Count Detail Directed.feature
 Test Case Description:
     This test case performs a Directed detail count in the terminal. The screen flow is almost identical to an Audit Count, but the detail count does not adjust inventory
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3011,7 +3011,7 @@ Test Case File: BASE-CNT-0040 Terminal Inventory Audit Count Undirected.feature
 Test Case Description:
     This test case performs a audit count in the terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3067,7 +3067,7 @@ Test Case File: BASE-CNT-0041 Terminal Inventory Audit Count Directed.feature
 Test Case Description:
     This test case performs a audit count in the terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3123,7 +3123,7 @@ Test Case File: BASE-CNT-0042 Terminal Inventory Audit Count Add LPN Directed.fe
 Test Case Description:
     This test case performs a audit count adding a new LPN not originally in the location in the Terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3171,7 +3171,7 @@ Test Case File: BASE-CNT-0050 Terminal Inventory Count Manual Undirected.feature
 Test Case Description:
     This test case performs a manual count in the Terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3219,7 +3219,7 @@ Test Case File: BASE-CNT-1010 Web Inventory Count Create Batch.feature
 Test Case Description:
     Create a Count Batch using the Web using ad-hoc selection parameters like location range, client_id etc.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3264,7 +3264,7 @@ Test Case File: BASE-CNT-4010 Mobile Inventory Count LPN Undirected.feature
 Test Case Description:
     This test case performs an LPN count on Mobile for undirected work.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3311,7 +3311,7 @@ Test Case File: BASE-CNT-4011 Mobile Inventory Count LPN Directed.feature
 Test Case Description:
     This test case performs an LPN count on Mobile App using Directed work.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3360,7 +3360,7 @@ Test Case File: BASE-CNT-4021 Mobile Inventory Count Summary Directed.feature
 Test Case Description:
     This test case performs a cycle summary count on the Mobile App using Directed work mode.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3416,7 +3416,7 @@ Test Case File: BASE-CNT-4030 Mobile Inventory Count Detail Undirected.feature
 Test Case Description:
     This test case performs a Undirected detail count in the Mobile App. The screen flow is almost identical to an Audit Count, but the detail count does not adjust inventory
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3475,7 +3475,7 @@ Test Case File: BASE-CNT-4031 Mobile Inventory Count Detail Directed.feature
 Test Case Description:
     This test case performs a Directed detail count in the Mobile App. The screen flow is almost identical to an Audit Count, but the detail count does not adjust inventory
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3536,7 +3536,7 @@ Test Case File: BASE-CNT-4040 Mobile Inventory Audit Count Undirected.feature
 Test Case Description:
     This test case performs a audit count in the Mobile App
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3592,7 +3592,7 @@ Test Case File: BASE-CNT-4041 Mobile Inventory Audit Count Directed.feature
 Test Case Description:
     This test case performs a audit count in the Mobile App
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3648,7 +3648,7 @@ Test Case File: BASE-CNT-4042 Mobile Inventory Audit Count Add LPN Directed.feat
 Test Case Description:
     This test case performs a audit count adding a new LPN not originally in the location in the Mobile App
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3696,7 +3696,7 @@ Test Case File: BASE-CNT-4050 Mobile Inventory Count Manual Undirected.feature
 Test Case Description:
     This test case performs a manual count in the Mobile App.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3744,7 +3744,7 @@ Test Case File: BASE-INV-0010 Terminal Inventory Adjustment Add.feature
 Test Case Description:
     This test case adds inventory to an empty location or a location that holds more than one pallet via terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3792,7 +3792,7 @@ Test Case File: BASE-INV-0020 Terminal Inventory Adjustment Delete.feature
 Test Case Description:
     This test case deletes a single load of inventory on the terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3840,7 +3840,7 @@ Test Case File: BASE-INV-0030 Terminal Inventory Adjustment Increase.feature
 Test Case Description:
     This test case adds additional quantity to an existing load in a location on the terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3888,7 +3888,7 @@ Test Case File: BASE-INV-0040 Terminal Inventory Adjustment Decrease.feature
 Test Case Description:
     This test case decrements inventory on an existing load in a location on the terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3936,7 +3936,7 @@ Test Case File: BASE-INV-0050 Terminal Inventory Transfer Directed.feature
 Test Case Description:
     This test case performs a full inventory move as Directed work in the terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -3975,9 +3975,9 @@ Test Case File: BASE-INV-0060 Terminal Inventory Transfer Undirected.feature
 ###############################################################
 
 Test Case Description:
-    This test case performs a full inventory move as Undirected work.
+    This test case performs a  as Undirected work.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4020,7 +4020,7 @@ Test Case File: BASE-INV-0070 Terminal Inventory Status Change.feature
 Test Case Description:
     This test case changes the status of an inventory identifier in the terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4067,7 +4067,7 @@ Test Case File: BASE-INV-0080 Terminal Inbound Directed Putaway from Inventory O
 Test Case Description:
     This Test Case generates an LPN to perform a putaway and during operation overrides the putaway location.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4127,7 +4127,7 @@ Test Case File: BASE-INV-0090 Terminal Inventory Location Display.feature
 Test Case Description:
     This Test Case will perform an inventory location display given a stoloc in the terminal
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4164,7 +4164,7 @@ Test Case File: BASE-INV-0100 Terminal Inventory Display.feature
 Test Case Description:
     This Test Case will perform an inventory display given a lodnum and prtnum in the terminal
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4203,7 +4203,7 @@ Test Case File: BASE-INV-0120 Terminal Partial Inventory Move.feature
 Test Case Description:
     This test case will perform a terminal inventory move of a partial quantity in a load and verify that the move was successful.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4251,7 +4251,7 @@ Test Case File: BASE-INV-0130 Terminal Inventory Transfer Invalid.feature
 Test Case Description:
     This test case will attempt to move inventory to an invalid location in the Terminal.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4299,7 +4299,7 @@ Test Case File: BASE-INV-0140 Terminal Inventory Transfer Multiple LPNs Undirect
 Test Case Description:
     This test case performs a full inventory move of multiple LPNs as Undirected work in the Terminal
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4342,7 +4342,7 @@ Test Case File: BASE-INV-0150 Terminal Inventory Partial Move Multiple LPNs.feat
 Test Case Description:
     This test case will perform a Terminal inventory move of a partial quantity in a load for multiple LPNs and verify that the moves were successful.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4389,7 +4389,7 @@ Test Case Description:
     adjusted into the system. If adjustment approvals are enabled and the adjustment exceeds the threshold, this test case will acknowledge
     approval if required and confirm the inventory adjustment is pending approval.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4442,7 +4442,7 @@ Test Case Description:
     been deleted from the system. If adjustment approvals are enabled and the adjustment exceeds the threshold, this feature will acknowledge 
     approval if required and confirm the inventory adjustment is pending approval.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4496,7 +4496,7 @@ Test Case Description:
     has been adjusted into the system. If adjustment approvals are enabled and the adjustment exceeds the threshold, this test case will 
     acknowledge approval if required and confirm the inventory adjustment is pending approval.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4550,7 +4550,7 @@ Test Case Description:
     has been adjusted into the system. If adjustment approvals are enabled and the adjustment exceeds the threshold, this test case will
     acknowledge approval if required and confirm the inventory adjustment is pending approval
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4603,7 +4603,7 @@ Test Case Description:
     This test case will utilize the Web to complete an inventory movement from a source location to a destination location and confirm the 
     inventory has been moved to the destination location.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4654,7 +4654,7 @@ Test Case File: BASE-INV-1060 Web Inventory Status Change
 Test Case Description:
     This test case will change the Inventory Status from the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4701,7 +4701,7 @@ Test Case File: BASE-INV-1070 Web Inventory Display.feature
 Test Case Description:
     This test case will perform an inventory display in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4740,7 +4740,7 @@ Test Case File: BASE-INV-1080 Web Inventory Add Hold.feature
 Test Case Description:
     This test case will add a hold to inventory from the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4788,7 +4788,7 @@ Test Case File: BASE-INV-1090 Web Inventory Release Hold.feature
 Test Case Description:
     This test case will release hold of Inventory from the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4836,7 +4836,7 @@ Test Case File: BASE-INV-1100 Web Inventory Adjust With Approval Limits.feature
 Test Case Description:
     This test case will Adjust Inventory with Approval Limits
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4891,7 +4891,7 @@ Test Case File: BASE-INV-1110 Web Inventory Location Display.feature
 Test Case Description:
     This test case will examine a storage location for Configuration/Storage Locations area in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4928,7 +4928,7 @@ Test Case File: BASE-INV-1120 Web Inventory Error Location.feature
 Test Case Description:
     This Test Case sets a location status to error and resets it to the original status.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -4964,7 +4964,7 @@ Test Case File: BASE-INV-1130 Web Inventory Change Lot.feature
 Test Case Description:
     This test case will change the lot number for an Inventory from the Web.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5011,7 +5011,7 @@ Test Case File: BASE-INV-1140 Web Inventory Relabel LPN.feature
 Test Case Description:
     This test case will relabel an LPN for an Inventory from the Web.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5057,7 +5057,7 @@ Test Case File: BASE-INV-1150 Web Inventory Adjustment Reject Approval.feature
 Test Case Description:
     This test case will reject a Inventory Adjustment approval in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5111,7 +5111,7 @@ Test Case File: BASE-INV-1160 Web Inventory Add Hold Multiple LPNs.feature
 Test Case Description:
     This test case will add a hold to multiple pieces of inventory from the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5164,7 +5164,7 @@ Test Case File: BASE-INV-1170 Web Inventory Remove Hold Multiple LPNs.feature
 Test Case Description:
     This test case will release holds on multiple pieces of multiple inventory from the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5218,7 +5218,7 @@ Test Case Description:
     This test case will generate a Inventory Adjustment based on cost. It will choose adjustment quantities at an allowable amount, 
     below that allowable amount, and above the allowable amount.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5274,7 +5274,7 @@ Test Case File: BASE-INV-1190 Web Inventory Adjust Case Level UOM.feature
 Test Case Description:
     This test case will Adjust inventory Case quantity below threshold level in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5329,7 +5329,7 @@ Test Case File: BASE-INV-4010 Mobile Inventory Adjustment Add.feature
 Test Case Description:
     This test case adds inventory to an empty location or a location that holds more than one pallet via Mobile
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5378,7 +5378,7 @@ Test Case File: BASE-INV-4020 Mobile Inventory Adjustment Delete.feature
 Test Case Description:
     This test case deletes a single load of inventory on the Mobile App
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5427,7 +5427,7 @@ Test Case File: BASE-INV-4030 Mobile Inventory Adjustment Increase.feature
 Test Case Description:
     This test case adds additional quantity to an existing load in a location on the Mobile App
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5476,7 +5476,7 @@ Test Case File: BASE-INV-4040 Mobile Inventory Adjustment Decrease.feature
 Test Case Description:
     This test case decrements inventory on an existing load in a location on the Mobile App
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5525,7 +5525,7 @@ Test Case File: BASE-INV-4050 Mobile Inventory Transfer Directed.feature
 Test Case Description:
     This test case performs a full inventory move as Directed work in Mobile
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5567,7 +5567,7 @@ Test Case File: BASE-INV-4060 Mobile Inventory Transfer Undirected.feature
 Test Case Description:
     This test case performs a full inventory move as Undirected work in the Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5609,7 +5609,7 @@ Test Case File: BASE-INV-4070 Mobile Inventory Status Change.feature
 Test Case Description:
     This test case changes the status of an inventory identifier in the Mobile App
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5660,7 +5660,7 @@ Test Case File: BASE-INV-4080 Mobile Inbound Directed Putaway from Inventory Ove
 Test Case Description:
     This Test Case generates an LPN to perform a putaway and during operation overrides the putaway location.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5720,7 +5720,7 @@ Test Case File: BASE-INV-4090 Mobile Inventory Location Display.feature
 Test Case Description:
     This Test Case will perform an inventory location display given a stoloc in the Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5757,7 +5757,7 @@ Test Case File: BASE-INV-4100 Mobile Inventory Display.feature
 Test Case Description:
     This Test Case will perform an inventory display given a lodnum and prtnum in the Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5796,7 +5796,7 @@ Test Case File: BASE-INV-4120 Mobile Inventory Partial Move.feature
 Test Case Description:
     This test case will perform a Mobile inventory move of a partial quantity in a load, verify that the move was successful.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5844,7 +5844,7 @@ Test Case File: BASE-INV-4130 Mobile Inventory Transfer Invalid.feature
 Test Case Description:
     This test case will attempt to move inventory to an invalid location in the Mobile App.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5890,7 +5890,7 @@ Test Case File: BASE-INV-4140 Mobile Inventory Transfer Multiple LPNs Undirected
 Test Case Description:
     This test case performs a full inventory move of multiple LPNs as Undirected work in the Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5933,7 +5933,7 @@ Test Case File: BASE-INV-4150 Mobile Inventory Partial Move Multiple LPNs.featur
 Test Case Description:
     This test case will perform a Mobile inventory move of a partial quantity in a load for multiple LPNs, and verify that the moves were successful.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -5979,7 +5979,7 @@ Test Case Description:
     This test case will utilize the Web to request an inventory movement from a source location to a destination location as directed work, 
     perform the inventory movement on the terminal, and confirm the inventory has been moved to the destination location.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -6029,7 +6029,7 @@ Test Case File: BASE-INV-5010 Flow Inventory Adjust With Approval Limits.feature
 Test Case Description:
     This test case will Adjust Inventory with Approval Limits via terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -6084,7 +6084,7 @@ Test Case Description:
     This test case will utilize the Web to request an inventory movement from a source location to a destination location as directed work, 
     perform the inventory movement in the Mobile App, and confirm the inventory has been moved to the destination location.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -6134,7 +6134,7 @@ Test Case File: BASE-INV-6010 Flow Mobile Inventory Adjust With Approval Limits.
 Test Case Description:
     This test case will Adjust Inventory in Mobile App and Approve in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -6188,7 +6188,7 @@ Test Case File: BASE-INV-8020 API Remove Inventory.feature
 Test Case Description:
     This test case deletes a single load of inventory using the API
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Inventory
 
@@ -6236,7 +6236,7 @@ Test Case File: BASE-RPL-1010 Web Inventory Generate Triggered Replenishment.fea
 Test Case Description:
     This test case will generate a triggered replenishment for a location in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Replenishment
 
@@ -6284,7 +6284,7 @@ Test Case File: BASE-RPL-1030 Web Inventory Generate Top-Off Replenishment.featu
 Test Case Description:
     This test case will generate a top-off replenishment for a location in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Replenishment
 
@@ -6330,7 +6330,7 @@ Test Case File: BASE-BLD-0010 Terminal Outbound Pallet Building Undirected.featu
 Test Case Description:
     This Test Case performs terminal undirected pallet building in the Terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Pallet Building
 
@@ -6392,7 +6392,7 @@ Test Case File: BASE-BLD-4010 Mobile Outbound Pallet Building Undirected.feature
 Test Case Description:
     This Test Case performs Mobile App undirected pallet building
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Pallet Building
 
@@ -6452,7 +6452,7 @@ Test Case File: BASE-LDG-0010 Terminal Outbound Loading LTL Directed.feature
 Test Case Description:
     This test case is Standard Directed LTL Loading using the terminal
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -6504,7 +6504,7 @@ Test Case File: BASE-LDG-0020 Terminal Outbound Loading LTL Undirected.feature
 Test Case Description:
     This test case is Standard LTL Loading - Undirected using the terminal
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -6556,7 +6556,7 @@ Test Case File: BASE-LDG-0030 Terminal Outbound Loading TL Directed.feature
 Test Case Description:
     This test case is Standard Directed TL Loading using the Terminal
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -6610,7 +6610,7 @@ Test Case File: BASE-LDG-0040 Terminal Outbound Loading TL Undirected.feature
 Test Case Description:
     This test case is Standard Undirected TL Loading using the terminal
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -6664,7 +6664,7 @@ Test Case File: BASE-LDG-4010 Mobile Outbound Loading LTL Directed.feature
 Test Case Description:
     This test case is Standard Directed LTL Loading using the Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -6715,7 +6715,7 @@ Test Case File: BASE-LDG-4020 Mobile Outbound Loading LTL Undirected.feature
 Test Case Description:
     This test case is Standard LTL Loading - Undirected using the Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -6767,7 +6767,7 @@ Test Case File: BASE-LDG-4030 Mobile Outbound Loading TL Directed.feature
 Test Case Description:
     This test case is Standard Directed TL Loading using the Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -6821,7 +6821,7 @@ Test Case File: BASE-LDG-4040 Mobile Outbound Loading TL Undirected.feature
 Test Case Description:
     This test case is Standard Undirected TL Loading using the Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -6875,7 +6875,7 @@ Test Case Description:
     This test case performs an outbound inventory audit in the terminal. If a discrepancy is found, a re-count will occur, followed by a release of hold completed in the Web. 
     It will also check the RF Outbound audit history and load, close, dispatch the trailer.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -6930,7 +6930,7 @@ Test Case Description:
     This test case performs an outbound inventory audit in the Mobile App. If a discrepancy is found, a re-count will occur, followed by a release of hold completed in the Web. 
     It will also check the RF Outbound audit history and loads, closes, and dispatches the trailer.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -6985,7 +6985,7 @@ Test Case File: BASE-PCK-0010 Terminal Outbound Carton Picking Undirected.featur
 Test Case Description:
     This Test Case performs Terminal Undirected Carton Picking
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7040,7 +7040,7 @@ Test Case File: BASE-PCK-0020 Terminal Outbound Carton Picking Undirected Cancel
 Test Case Description:
     This test case performs Terminal Undirected Carton Picking and a Cancel Pick
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7095,7 +7095,7 @@ Test Case File: BASE-PCK-0030 Terminal Outbound Pallet Picking Directed.feature
 Test Case Description:
     This Test Case performs Terminal Directed Pallet Picking
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7146,7 +7146,7 @@ Test Case File: BASE-PCK-0040 Terminal Outbound Pallet Picking Cancel Directed.f
 Test Case Description:
     This test case performs Terminal Outbound Pallet Picking Cancel Directed
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7197,7 +7197,7 @@ Test Case File: BASE-PCK-0050 Terminal Outbound List Pick Case To Pallet Directe
 Test Case Description:
     This Test Case performs Terminal Outbound List Pick Case To Pallet Directed Cancel and Reallocate
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7249,7 +7249,7 @@ Test Case File: BASE-PCK-0060 Terminal Outbound List Pick Case To Pallet Directe
 Test Case Description:
     This Test Case performs Terminal Directed List Pick Case To Pallet
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7303,7 +7303,7 @@ Test Case File: BASE-PCK-0070 Terminal Outbound Pallet Picking Undirected.featur
 Test Case Description:
     This Test Case performs Terminal Outbound Pallet Picking Undirected
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7354,7 +7354,7 @@ Test Case File: BASE-PCK-0080 Terminal Outbound Unpicking.feature
 Test Case Description:
     This test case performs terminal Unpicking functions
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7415,7 +7415,7 @@ Test Case File: BASE-PCK-0090 Terminal Outbound List Pick Case To Pallet Undirec
 Test Case Description:
     This Test Case performs Terminal Directed List Pick Case To Pallet
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7469,7 +7469,7 @@ Test Case File: BASE-PCK-0100 Terminal Outbound List Pick Short Ship With Reship
 Test Case Description:
     This Test Case performs Terminal Outbound List Pick Short Ship With Reship Directed
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7536,7 +7536,7 @@ Test Case Description:
     (ii) Pick and count near zero - mismatch and match 
     (iii) Pick and count near zero - mismatch and mismatch - generate audit
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7591,7 +7591,7 @@ Test Case File: BASE-PCK-0120 Terminal List Pick Equipment Full Set Down Resume.
 Test Case Description:
     This Test Case performs Terminal List Pick with Equipment Full and Set Down Resume options
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7649,7 +7649,7 @@ Test Case File: BASE-PCK-4010 Mobile Outbound Carton Picking Undirected.feature
 Test Case Description:
     This Test Case performs Mobile App Undirected Carton Picking
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7703,7 +7703,7 @@ Test Case File: BASE-PCK-4020 Mobile Outbound Carton Picking Undirected and Real
 Test Case Description:
     This test case performs Mobile App Undirected Carton Picking and a Cancel Pick
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7757,7 +7757,7 @@ Test Case File: BASE-PCK-4030 Mobile Outbound Pallet Picking Directed.feature
 Test Case Description:
     This Test Case performs Mobile App Directed Pallet Picking
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7807,7 +7807,7 @@ Test Case File: BASE-PCK-4040 Mobile Outbound Pallet Picking Cancel and Realloca
 Test Case Description:
     This test case performs Mobile App Outbound Pallet Picking Cancel and Reallocate Directed work
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7857,7 +7857,7 @@ Test Case File: BASE-PCK-4050 Mobile Outbound List Pick Case To Pallet Directed 
 Test Case Description:
     This Test Case performs Mobile App Outbound List Pick Case To Pallet Directed Cancel and Reallocate
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7908,7 +7908,7 @@ Test Case File: BASE-PCK-4060 Mobile Outbound List Pick Case To Pallet Directed.
 Test Case Description:
     This Test Case performs Mobile App Directed List Pick Case To Pallet
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -7961,7 +7961,7 @@ Test Case File: BASE-PCK-4070 Mobile Outbound Pallet Picking Undirected.feature
 Test Case Description:
     This Test Case performs Mobile App Outbound Pallet Picking Undirected
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -8011,7 +8011,7 @@ Test Case File: BASE-PCK-4080 Mobile Outbound Unpicking.feature
 Test Case Description:
     This test case performs Mobile App Unpicking functions
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -8071,7 +8071,7 @@ Test Case File: BASE-PCK-4090 Mobile Outbound List Pick Case To Pallet Undirecte
 Test Case Description:
     This Test Case performs Mobile App Directed List Pick Case To Pallet
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -8125,7 +8125,7 @@ Test Case File: BASE-PCK-4100 Mobile Outbound List Pick Short Ship With Reship D
 Test Case Description:
     This Test Case performs Mobile App Outbound List Pick Short Ship With Reship Directed
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -8191,7 +8191,7 @@ Test Case Description:
     (ii) Pick and count near zero - mismatch and match 
     (iii) Pick and count near zero - mismatch and mismatch - generate audit
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -8246,7 +8246,7 @@ Test Case File: BASE-PCK-4120 Mobile Outbound List Pick Equipment Full Set Down 
 Test Case Description:
     This Test Case performs Mobile App List Pick with Equipment Full and Set Down Resume options
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Picking
 
@@ -8304,7 +8304,7 @@ Test Case File: BASE-RPL-0010 Terminal Outbound Pallet Replenishment.feature
 Test Case Description:
     This test case performs a pallet replenishment in the terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Replenishment
 
@@ -8362,7 +8362,7 @@ Test Case File: BASE-RPL-0020 Terminal Outbound Case Replenishment.feature
 Test Case Description:
     This test case performs a case replenishment in the terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Replenishment
 
@@ -8421,7 +8421,7 @@ Test Case File: BASE-RPL-1020 Web Outbound Cancel Replenishment Task.feature
 Test Case Description:
     This Test Case cancels a replenishment task generated by the system due to other circumstances in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Replenishment
 
@@ -8478,7 +8478,7 @@ Test Case File: BASE-RPL-4010 Mobile Outbound Pallet Replenishment.feature
 Test Case Description:
     This test case performs a pallet replenishment in the Mobile App
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Replenishment
 
@@ -8536,7 +8536,7 @@ Test Case File: BASE-RPL-4020 Mobile Outbound Case Replenishment.feature
 Test Case Description:
     This test case performs a case replenishment in the Mobile App
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: Regression
 Functional Area: Replenishment
 
@@ -8595,7 +8595,7 @@ Test Case File: BASE-SHP-0010 Terminal Outbound Trailer Close.feature
 Test Case Description:
     This test case performs Standard Terminal Trailer closing in the terminal
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -8650,7 +8650,7 @@ Test Case File: BASE-SHP-0020 Terminal Outbound Reopen Closed Transport Equipmen
 Test Case Description:
     This test case will reopen closed transport equipment in the terminal
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -8701,7 +8701,7 @@ Test Case File: BASE-SHP-0030 Terminal Unload and Unpick Shipment.feature
 Test Case Description:
     This test case will unload a shipping trailer, and unpick the inventory that was picked for the shipment.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -8758,7 +8758,7 @@ Test Case File: BASE-SHP-1010 Web Outbound Trailer Close.feature
 Test Case Description:
     This test case will handle closing and dispatching a trailer in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Yard
 
@@ -8810,7 +8810,7 @@ Test Case File: BASE-SHP-1030 Web Outbound Validate Order.feature
 Test Case Description:
     This test case will load an incoming order via MSQL and validate it from the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -8862,7 +8862,7 @@ Test Case File: BASE-SHP-1040 Web Outbound Validate Shipment.feature
 Test Case Description:
     This test case will load an incoming order and shipment via MSQL and validate shipment from the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -8907,7 +8907,7 @@ Test Case File: BASE-SHP-1050 Web Outbound Validate Load.feature
 Test Case Description:
     This test case will create a order, shipment, and load and will validate that load in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -8955,7 +8955,7 @@ Test Case File: BASE-SHP-1060 Web Outbound Create Order.feature
 Test Case Description:
     This test case will create a order and single order line in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -9007,7 +9007,7 @@ Test Case File: BASE-SHP-1070 Web Outbound Assign Transport Equipment to Load.fe
 Test Case Description:
     This test case will Assign Transport Equipment to Load
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -9056,7 +9056,7 @@ Test Case File: BASE-SHP-1080 Web Outbound Remove Load from Trailer.feature
 Test Case Description:
     This test case will Remove Load from Trailer in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -9105,7 +9105,7 @@ Test Case File: BASE-SHP-1090 Web Outbound Create Shipment.feature
 Test Case Description:
     This test case will create a shipment in the Web and associate with order
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -9156,7 +9156,7 @@ Test Case File: BASE-SHP-1100 Web Outbound Create Load.feature
 Test Case Description:
     This test case will create a new load in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -9202,7 +9202,7 @@ Test Case File: BASE-SHP-1110 Web Outbound Deassign LPN from Load.feature
 Test Case Description:
     This test case will deassign a LPN from a load in the Web
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Shipping
 
@@ -9251,7 +9251,7 @@ Test Case File: BASE-SHP-1120 Web Outbound Close Load with Safety Questions.feat
 Test Case Description:
     This test case will handle closing a trailer with safety check workflow in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Loading
 
@@ -9304,7 +9304,7 @@ Test Case File: BASE-SHP-1130 Web Outbound Trailer Reopen.feature
 Test Case Description:
     This test case will handle closing and then re-opening a trailer in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Loading
 
@@ -9357,7 +9357,7 @@ Test Case File: BASE-SHP-1140 Web Outbound Close and Dispatch Trailer.feature
 Test Case Description:
     This test case will handle closing and dispatching a trailer in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Loading
 
@@ -9409,7 +9409,7 @@ Test Case File: BASE-SHP-4010 Mobile Outbound Trailer Close.feature
 Test Case Description:
     This test case performs Standard Mobile App Trailer Closing
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -9464,7 +9464,7 @@ Test Case File: BASE-SHP-4020 Mobile Outbound Reopen Closed Transport Equipment.
 Test Case Description:
     This test case will reopen closed transport equipment in the Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -9515,7 +9515,7 @@ Test Case File: BASE-SHP-4030 Mobile Unload and Unpick Shipment.feature
 Test Case Description:
     This test case will unload a shipping trailer, and unpick the inventory that was picked for the shipment in the Mobile App
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Loading
 
@@ -9572,7 +9572,7 @@ Test Case File: BASE-WAV-1010 Web Outbound Allocate Wave.feature
 Test Case Description:
     This Test Case loads an order and inventory then plans and allocates a wave in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Allocation
 
@@ -9633,7 +9633,7 @@ Test Case File: BASE-WAV-1020 Web Outbound Shipment Planning.feature
 Test Case Description:
     This test case plans and validates an order in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Planning
 
@@ -9687,7 +9687,7 @@ Test Case File: BASE-WAV-1030 Web Outbound Unallocate Wave.feature
 Test Case Description:
     This Test Case loads an order, inventory and allocates a wave via MSQL. It then unallocates the wave in the Web.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Allocation
 
@@ -9735,7 +9735,7 @@ Test Case File: BASE-WAV-1040 Web Outbound Plan Wave Remove Stop.feature
 Test Case Description:
     This Test Case loads an order, plans a wave, creates a load and assigns a stop to it via MSQL. It then removes stop from the load in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -9783,7 +9783,7 @@ Test Case File: BASE-WAV-1050 Web Outbound Plan Wave Delete Load.feature
 Test Case Description:
     This Test Case loads a carrier move id (load) via MSQL and then removes the load in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -9820,7 +9820,7 @@ Test Case File: BASE-WAV-1070 Web Outbound Unplan Wave.feature
 Test Case Description:
     This test case will unplan a wave that was previously planned prior to allocating the wave in the Web.
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Planning
 
@@ -9872,7 +9872,7 @@ Test Case File: BASE-WAV-1090 Web Outbound Cancel Orders from Load.feature
 Test Case Description:
     This test case will create a order and single order line in the Web. It will then cancel the order or order line based on test input
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -9926,7 +9926,7 @@ Test Case Description:
     This test case goes through the whole work order processing cycle for one work order. It starts with creating the work order and ends with closing the work order
     and removing all the work order related data in the end, including the finished goods.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Production
 
@@ -9982,7 +9982,7 @@ Test Case Description:
     This test case goes through the whole work order processing cycle for one work order. It starts with creating the work order and ends with closing the work order
     and removing all the work order related data in the end, including the finished goods.
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Production
 
@@ -10037,7 +10037,7 @@ Test Case File: Dynamic Data Test
 Test Case Description:
     This Test Case tests the Dynamic Data Functionality
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Testing
 
@@ -10073,7 +10073,7 @@ Test Case File: BASE-VAL-0010 Pre Validation Test
 Test Case Description:
     This Test Case tests the Validation Functionality
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Testing
 
@@ -10109,7 +10109,7 @@ Test Case File: BASE-VAL-0020 Post Validation Test.feature
 Test Case Description:
     This Test Case tests the Validation Functionality
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Testing
 
@@ -10145,7 +10145,7 @@ Test Case File: BASE-VAL-0030 Post Validation Test
 Test Case Description:
     This Test Case tests a post validation on an integrator event
 
-Test Case Author: Tryon Solutions 
+Test Case Author: Netlogistik 
 Test Case Type: Regression
 Functional Area: Testing
 
@@ -10181,7 +10181,7 @@ Test Case File: BASE-LDG-1010 Web Outbound Trailer Load.feature
 Test Case Description:
     This test case will handle loading a trailer in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Yard
 
@@ -10235,7 +10235,7 @@ Test Case File: BASE-SHP-1020 Web Outbound Trailer Dispatch
 Test Case Description:
     This test case will handle dispatching a trailer in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Yard
 
@@ -10290,7 +10290,7 @@ Test Case File: BASE-YRD-0010 Terminal Trailer Move.feature
 Test Case Description:
     This Test Case assigns a trailer, checks it in, then moves the trailer using the Terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Yard
 
@@ -10332,7 +10332,7 @@ Test Case File: BASE-YRD-0010 Trailer Moving.feature
 Test Case Description:
     This Test Case assigns a trailer, checks it in, then moves the trailer using the WEB
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Yard
 
@@ -10375,7 +10375,7 @@ Test Case File: BASE-YRD-1020 Web Inbound Trailer Check In.feature
 Test Case Description:
     This Test Case checks in an Inbound trailer in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Inbound
 
@@ -10419,7 +10419,7 @@ Test Case File: BASE-YRD-1030 Web Inbound Trailer Check In with Safety Check.fea
 Test Case Description:
     This Test Case checks in an Inbound trailer and processes enabled Safety Checks in he Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Inbound
 
@@ -10463,7 +10463,7 @@ Test Case File: BASE-YRD-1040 Web Outbound Trailer Check In.feature
 Test Case Description:
     This test case creates an outbound trailer in the Web Transport Equipment screen then uses the Web Check In screen to check the outbound trailer into an available dock door
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -10503,7 +10503,7 @@ Test Case File: BASE-YRD-1050 Web Outbound Trailer Check In with Safety Check.fe
 Test Case Description:
     This test case creates an outbound trailer in the Web Transport Equipment screen then uses the Web Check In screen to check the outbound trailer into an available dock door then processes the safety checks
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Outbound
 
@@ -10544,7 +10544,7 @@ Test Case File: BASE-YRD-1060 Web Storage Trailer Check In.feature
 Test Case Description:
     This Test Case checks in a Storage trailer in the Web
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Inbound
 
@@ -10589,7 +10589,7 @@ Test Case File: BASE-YRD-4010 Mobile Trailer Move.feature
 Test Case Description:
     This Test Case assigns a trailer, checks it in, then moves the trailer using the Mobile App
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Yard
 
@@ -10631,7 +10631,7 @@ Test Case File: BASE-YRD-5000 Flow Yard Audit.feature
 Test Case Description:
     Test case for Yard Audit scenarios starting in the Web and completing in the terminal
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Yard
 
@@ -10675,7 +10675,7 @@ Test Case File: BASE-YRD-6000 Flow Mobile Yard Audit.feature
 Test Case Description:
     Test case for Yard Audit scenarios starting in the Web and completing in the Mobile App
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Yard
 
@@ -10719,7 +10719,7 @@ Test Case File: BASE-YRD-8010 API List Transport Equipment.feature
 Test Case Description:
     This Test Case creates an Inbound transport equipment using MOCA, then verifies it can see it using the API
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Yard
 
@@ -10763,7 +10763,7 @@ Test Case File: BASE-YRD-8020 API Close Transport Equipment.feature
 Test Case Description:
     This Test Case creates an Inbound transport equipment using MOCA, then checks it in and closes it via the API
 
-Test Case Author: Tryon Solutions
+Test Case Author: Netlogistik
 Test Case Type: regression
 Functional Area: Yard
 

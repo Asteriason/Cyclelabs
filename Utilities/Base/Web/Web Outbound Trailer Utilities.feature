@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Web Outbound Trailer Utilities.feature
 # 
 # Functional Area: Outbound
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: utility
 # Blue Yonder Interfaces Interacted With: WEB, MOCA
@@ -63,7 +63,7 @@
 ############################################################
 Feature: Web Outbound Trailer Utilities
 
-wip @public
+@wip @public
 Scenario: Web Dispatch Transport Equipment from Door Activity
 #############################################################
 # Description: This scenario dispatches transport equipment from
@@ -78,10 +78,17 @@ Scenario: Web Dispatch Transport Equipment from Door Activity
 # Outputs:
 #   None                     
 #############################################################
-
-Given I "click on Trailer to Dispatch"
-	Then I assign variable "elt" by combining "xPath://div[starts-with(text(), '" $trlr_id " | " "')]"
+And I "enter the Door Location"
+	Then I assign variable "elt" by combining "xPath://input[starts-with(@id, 'rpuxFilterComboBox-') and contains(@class, 'x-form-field')]"
 	And I click element $elt in web browser within $max_response seconds
+	And I assign variable "location" by combining "Loc=" $yard_loc
+	And I type $location in element $elt in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+	
+Given I "click on Trailer to Dispatch"
+	Then I assign variable "elt" by combining "xPath://div[contains(text(), '" $trlr_num "')]"
+	And I click element $elt in web browser within $max_response seconds
+#//div[contains(text(), '" $trlr_id " | " "')]
 
 When I "select Dispatch Equipment Menu Item from Actions Drop Down"
 	Then I assign variable "elt" by combining "xPath://span[starts-with(@id,'button-') and text()='Actions']/.."
@@ -91,11 +98,23 @@ When I "select Dispatch Equipment Menu Item from Actions Drop Down"
 	And I click element $elt in web browser within $max_response seconds
 
 And I "click Save Button on Dispatch Equipment Screen"
-	Then I click element "xPath://a[contains(@class,'x-btn w')]/descendant::span[text()='Save']/.." in web browser within $max_response seconds
+	Then I click element "xPath://a[contains(@class, 'x-btn') and contains(., 'Save')]" in web browser within $max_response seconds
 	And I wait $wait_med seconds
     
 And I "verify actions is completed"
-	Then I execute scenario "Web Verify Confirmation"
+	Then I execute scenario "Web Verify Confirmation Dispatch"
+
+@wip @private 
+Scenario: Validate Outbound Close Equipment 
+If I verify text $process_type is equal to "more"
+	Then I execute scenario "Web Close Transport Equipment from Door Activity"
+EndIf
+
+@wip @public
+Scenario: Get Trailer ID
+Given I execute MOCA script "Scripts\MSQL_Files\Custom\get_trlr_id.msql"
+And I verify MOCA status is 0 
+Then I assign row 0 column "trlr_id" to variable "trlr_id"
 
 @wip @public
 Scenario: Web Close Transport Equipment from Door Activity
@@ -114,7 +133,7 @@ Scenario: Web Close Transport Equipment from Door Activity
 #############################################################
 
 Given I "click on Trailer to Close"
-	Then I assign variable "elt" by combining "xPath://div[starts-with(text(), '" $trlr_id " | " "')]"
+	Then I assign variable "elt" by combining "xPath://div[contains(text(), '" $trlr_id "')]"
 	And I click element $elt in web browser within $max_response seconds
 
 When I "select Close Equipment Menu Item from Actions Drop Down"
@@ -123,16 +142,25 @@ When I "select Close Equipment Menu Item from Actions Drop Down"
 
 	Then I assign variable "elt" by combining "xPath://span[starts-with(@id,'menuitem-') and text()='Close Equipment']"
 	And I click element $elt in web browser within $max_response seconds
-    
-Then I "enter Transport Equipment Seal 1 on Close Equipment Screen"    
-	And I type $seal in element "xPath://input[@name='equipmentSealField1']" in web browser within $max_response seconds
-     
+
 And I "click Save Button on Close Equipment Screen"
-	Then I click element "xPath://a[contains(@class,'x-btn w')]/descendant::span[text()='Save']/.." in web browser within $max_response seconds
+	When I assign variable "elt" by combining $xPath "//a[contains(@class, 'x-btn') and contains(., 'Save')]"
+	If I see element $elt in web browser within $wait_med seconds
+	Then I click element "xPath://a[contains(@class, 'x-btn') and contains(., 'Save')]" in web browser within $max_response seconds
 	And I wait $wait_med seconds
+	EndIf
+
+And I "create the xPath to the Dock Door Leave at Door choice"
+	Then I assign variable "elt" by combining $xPath ""
+	And I assign variable "elt" by combining $elt "//span[text()='Leave at Door'"
+	And I assign variable "elt" by combining $elt " and @class='x-menu-item-text'"
+	And I assign variable "elt" by combining $elt "]"
+	When I assign $elt to variable "leave_at_door_choice"
+		And I click element $leave_at_door_choice in web browser within $wait_long seconds 
+        Then I click element "xPath://span[text()='Yes']/.." in web browser within $wait_med seconds
+        Once I see element "xPath://span[text()='OK']/.." in web browser
+        Then I click element "xPath://span[text()='OK']/.." in web browser within $wait_med seconds
     
-And I "perform workflow and click OK to dismiss screen"
-	Then I execute scenario "Web Verify Confirmation"
 
 @wip @public
 Scenario: Web Reopen Transport Equipment
@@ -326,11 +354,11 @@ Scenario: Web Open Door Activity Screen
 #############################################################
 
 Given I "go to the Search box and enter Door Activity"
-	When I assign "Shipping" to variable "wms_parent_menu"
-	And I assign "Door Activity" to variable "wms_screen_to_open"
-	Then I execute scenario "Web Screen Search"
-	Once I see "Door Activity" in web browser
-
+    When I assign "ABB Shipping" to variable "wms_parent_menu"
+    And I assign "Door Activity" to variable "wms_screen_to_open"
+    Then I execute scenario "Web Screen Search"
+    Once I see "Door Activity" in web browser
+ 
 And I unassign variables "wms_parent_menu,wms_screen_to_open"
  
 @wip @public
@@ -349,7 +377,7 @@ Scenario: Web Open Transport Equipment Screen
 #############################################################
 
 Given I "go to the Search box and enter Transport Equipment"
-	When I assign "Shipping" to variable "wms_parent_menu"
+	When I assign "ABB Shipping" to variable "wms_parent_menu"
 	And I assign "Transport Equipment" to variable "wms_screen_to_open"
 	Then I execute scenario "Web Screen Search"
 	Once I see "Equipment Status" in web browser
@@ -372,11 +400,16 @@ Scenario: Web Open Check In Screen
 #############################################################
 
 Given I "go to the Search box and enter Check In"
-	When I assign "Shipping" to variable "wms_parent_menu"
+	When I assign "ABB Shipping" to variable "wms_parent_menu"
 	And I assign "Check In" to variable "wms_screen_to_open"
 	Then I execute scenario "Web Screen Search"
 	Once I see "Appointments" in web browser
 
+    When I assign "ABB Shipping" to variable "wms_parent_menu"
+    And I assign "Check In" to variable "wms_screen_to_open"
+    Then I execute scenario "Web Screen Search"
+    Once I see "Appointments" in web browser
+ 
 And I unassign variables "wms_parent_menu,wms_screen_to_open"
 
 @wip @public
@@ -437,7 +470,7 @@ Scenario: Web Search for Outbound Trailer
 # Inputs:
 #	Required:
 #		trlr_num - Trailer Number
-#		carcod - Carrier Code
+#		carcode - Carrier Code
 #	Optional:
 #		None
 # Outputs:
@@ -448,7 +481,10 @@ Given I "search for the trailer to check in"
 	When I assign variable "elt" by combining "xPath://input[starts-with(@id,'trailerlookup-') and contains(@id,'-inputEl')]"
 	Then I click element $elt in web browser within $max_response seconds 
 	And I type $trlr_num in element $elt in web browser within $max_response seconds
-	And I assign variable "elt" by combining "xPath://div[starts-with(@class,'x-boundlist-item') and text()='" $trlr_num "|" $carcod "']"
+Given I "get the carnam"
+	When I execute MOCA script "Scripts\MSQL_Files\Base\get_carrier_name.msql"
+	Then I assign row 0 column "carnam" to variable "carnam"
+	And I assign variable "elt" by combining "xPath://div[starts-with(@class,'x-boundlist-item') and contains(text(),'" + $trlr_num + "')]"
 	Once I see element $elt in web browser
 	Then I click element $elt in web browser within $max_response seconds
 	
@@ -490,6 +526,30 @@ Scenario: Web Check In Outbound Trailer
 Given I "click the Check In button"
 	When I assign variable "elt" by combining "xPath://span[starts-with(@id,'button-') and text()='Check In']/.."
 	Then I click element $elt in web browser within $max_response seconds
+	And I wait $screen_wait seconds
+
+If I see "Transport Equipment Workflow" in web browser within $wait_long seconds
+	Given I "create the xPath to click to run through the Safety Check"
+		Then I assign variable "elt" by combining "xPath://a[not(contains(@class,'x-pressed'))]"
+		And I assign variable "elt" by combining $elt "//span[text()='Yes']/.."
+		And I assign variable "yes_not_pressed" by combining $elt
+				
+		When I "click Yes to all the safety check questions"
+			While I see element $yes_not_pressed in web browser within $wait_med seconds 
+				Then I click element $yes_not_pressed in web browser within $max_response seconds
+			EndWhile
+				
+		Then I "click Complete Button"
+			And I click element "xPath://span[text()='Complete']/ancestor::span[@class='x-btn-button']/span[2]" in web browser within $max_response seconds
+EndIf
+
+Given I "see the Check In Successful screen"
+	And I wait $screen_wait seconds
+	When I assign variable "elt" by combining "xPath://span[text()='OK']/.."
+	If I see element $elt in web browser 
+		Then I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+	EndIf
 	
 @wip @public
 Scenario: Web Verify Outbound Trailer Check In
@@ -677,8 +737,7 @@ Given I "handle safety check workflow on close if seen"
 	EndIf 
 
 Then I "wait for the confirmation and click the 'OK' button by pressing Enter"
-	Once I see "Confirmation" in web browser
-	And I see "successfully" in web browser
+	Once I see "Complete" in web browser
 	Then I press keys "ENTER" in web browser
 	
 @wip @public
@@ -848,8 +907,8 @@ And I "enter the trailer number"
 And I "select the carrier"
 	When I assign variable "elt" by combining "xPath://input[@name='carrier']"
 	Then I click element $elt in web browser within $max_response seconds 
-	And I type $carcod in element $elt in web browser within $max_response seconds
-	And I assign variable "elt" by combining "xPath://li[@role='option' and text()='" $carcod "']"
+	And I type $carcod_2 in element $elt in web browser within $max_response seconds
+	And I assign variable "elt" by combining "xPath://li[@role='option' and text()='" $carcod_2 "']"
 	And I click element $elt in web browser within $max_response seconds 
 
 And I "ensure I am creating a Shipping trailer"
@@ -862,8 +921,8 @@ And I "ensure I am creating a Shipping trailer"
 And I "select the type of equipment"
 	When I assign variable "elt" by combining "xPath://input[@name='trailerType']"
 	Then I click element $elt in web browser within $max_response seconds 
-	And I type "Truck" in element $elt in web browser within $max_response seconds
-	And I assign variable "elt" by combining "xPath://li[@role='option' and text()='Truck/Transport Equipment']"
+	And I type $eqtype in element $elt in web browser within $max_response seconds
+	And I assign variable "elt" by combining "xPath://li[@role='option' and starts-with(text(), '" $eqtype "')]"
 	And I click element $elt in web browser within $max_response seconds 
 
 And I "click Save to create the trailer"
@@ -983,3 +1042,42 @@ Given I "call MSQL to get trailer ID from trailer number"
 	When I execute scenario "Perform MSQL Execution"
 	Then I verify MOCA status is 0
 	And I assign row 0 column "trlr_id" to variable "trlr_id"
+
+@wip @public
+Scenario: Web Quick Filter Dispatch
+#############################################################
+# Description: Use Quick Filter to apply a specified filter
+# MSQL Files:
+#	None
+# Inputs:
+# 	Required:
+#		qf_filter_item - menu item filter to select
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+@wip @public
+Scenario: Web Verify Confirmation Dispatch
+#############################################################
+# Description: This scenario waits for the successful confirmation
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		None
+#	Optional:
+#		None
+# Outputs:
+#   None
+#############################################################
+
+Given I "handle safety check workflow on close if seen"
+	If I see "Safety Check" in web browser within $wait_long seconds
+		Then I execute scenario "Web Complete Trailer Safety Check"
+	EndIf 
+
+Then I "wait for the confirmation and click the 'OK' button by pressing Enter"
+	Once I see "Confirmation" in web browser
+	Then I press keys "ENTER" in web browser

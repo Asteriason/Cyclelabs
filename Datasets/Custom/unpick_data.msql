@@ -1,0 +1,17 @@
+publish data
+ where ordnum = $ordnum
+   and wh_id = $wh_id
+|
+[select distinct inventory_pckwrk_view.lodnum,
+        inventory_pckwrk_view.ordnum,
+        pckmov.stoloc,
+        pckmov.seqnum,
+        inventory_pckwrk_view.prtnum,
+        inventory_pckwrk_view.subucc
+   from inventory_pckwrk_view
+   join pckmov
+     on inventory_pckwrk_view.cmbcod = pckmov.cmbcod
+  where inventory_pckwrk_view.wh_id = @wh_id
+    and inventory_pckwrk_view.ordnum = @ordnum
+    and pckmov.seqnum > 0
+  order by pckmov.seqnum asc];

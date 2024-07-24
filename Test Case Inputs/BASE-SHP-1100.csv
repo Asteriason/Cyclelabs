@@ -1,2 +1,2 @@
-ordnum,ship_id,adr_id,ui_move_id,cstnum,carcod,srvlvl,ordtyp,prtnum,untqty,invsts_prg
-NLJUL1923-002,NLJUL1923-002,A000039771,TSTORD003,00000290,FEDEX,TL,C,E942N,1,AP
+ordnum,ui_move_id,carcod,wave_num
+0812997287,JAWH-JAN31,JAWH,JAWH-JAN31

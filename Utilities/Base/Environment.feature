@@ -1,5 +1,5 @@
 ############################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Environment.feature
 #
 # Functional Area: Environment Setup
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: Utility
 # Blue Yonder Interfaces Interacted With: MOCA, Integrator
@@ -206,10 +206,8 @@ And I "setup the directory_load_path and import the Import Utilities feature"
 	When I execute scenario "Perform File Import"
 
 Given I "establish the MOCA connection here before any queries or MOCA steps start"
-	If I verify variable "moca_server_connection" is assigned
-	And I verify text $moca_server_connection is not equal to ""
-		Then I connect to MOCA $moca_server_connection logged in as $moca_credentials
-	EndIf
+	Then I connect to MOCA at $moca_address logged in as $username with password $password
+
     
 Given I "establish the database connection here before any queries or SQL steps start"
 	If I verify variable "db_server_connection" is assigned
@@ -255,7 +253,7 @@ And I "initialize the API framework"
 	Then I execute scenario "Perform Load of API Field Mappings"
 
 And I "gather the WMS version and record in logs"
-	Then I execute scenario "Get WMS Version"
+	#Then I execute scenario "Get WMS Version"
 
 @wip @public
 Scenario: Perform File Import
@@ -707,7 +705,55 @@ Then I "perform a WEB logout and termination of WEB driver tasks (unless asked n
 
 And I "perform custom test triggers"
 	Then I execute scenario "Test Completion Triggers"
+
+@wip @public
+Scenario: Test Completion NP2
+###################################################################
+# Description:  Execute a common utility that will be called by
+# every test case and handle terminal, Mobile, and WEB logout and in the
+# future other activities we want to perform.
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		None
+#	Optional:
+#		None
+# Outputs:
+#	None
+###################################################################
+
+Given I "perform a Terminal logout"
+	If I verify terminal is OPENED
+    	Then  I "navigate to undirected menu to end test"
+			And I execute scenario "Terminal Navigate Quickly to Undirected Menu"
+            
+        And I "logout of the terminal"
+			Then I execute scenario "Terminal Logout"
+	EndIf
+
+And I "perform a Mobile App Logout"
+	If I verify variable "mobile_logged_off" is assigned
+	And I verify text $mobile_logged_off is equal to "FALSE"
+		If I execute scenario "Mobile Logout NP2"
+		Endif
+	EndIf
 	
+Then I "perform a WEB logout and termination of WEB driver tasks (unless asked not to)"
+	If I verify variable "web_logged_off" is assigned
+	And I verify text $web_logged_off is equal to "FALSE"
+		If I execute scenario "Web Logout NP2"
+			If I verify variable "parallel_testing" is assigned
+			And I verify text $parallel_testing is equal to "FALSE" ignoring case
+				If I execute scenario "Web End Driver Tasks"
+				EndIf
+			EndIf 
+		Endif
+	EndIf
+
+And I "perform custom test triggers"
+	Then I execute scenario "Test Completion Triggers"
+
 @wip @public
 Scenario: Test Completion Triggers
 ###################################################################

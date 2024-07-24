@@ -1,0 +1,16 @@
+Playlist: 
+
+Resources: ..\..
+
+Working Directory: 
+
+Namespaces: 
+
+FailFast: ALL_TESTS
+
+Items:
+Feature: ..\..\Test Cases\ABB Test Cases NP6\Outbound\ABB-SHP-01 Outbound Validate Order NP6.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP6\Outbound\ABB-WAV-02 Outbound Plan Wave NP6.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP6\Outbound\ABB-WAV-04 Outbound Allocate Wave NP6.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP6\Outbound\ABB-WAV-05 Check For Shorts And Replenishments NP6.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP6\Outbound\ABB-SHP-07 Outbound Assign Picks NP6.feature

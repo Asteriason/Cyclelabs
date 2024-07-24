@@ -1,0 +1,2 @@
+ordnum,oprcod,mobile_start_loc,vehtyp,cancel_and_reallocate,srcloc,generate_screenshot,sku_wrong,value_sku_wrong,wrong_dest_lpn,value_wrong_dest_lpn,extra_pick,value_extra_pick
+0812997785_CL,LPCK,013-005-A-A-654,CART,FALSE,,TRUE,TRUE,FAKE,FALSE,FAKE,TRUE,5

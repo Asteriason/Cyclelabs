@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Mobile List Picking Utilities.feature
 # 
 # Functional Area: Picking
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: Utility
 # Blue Yonder Interfaces Interacted With: Mobile, MOCA
@@ -35,6 +35,503 @@
 #
 ############################################################
 Feature: Mobile List Picking Utilities
+
+@wip @public
+Scenario: Mobile Perform Directed Carton Pick 
+Given I assign 20 to variable "max_loop_counter"
+And I assign 0 to variable "current_count"
+#While I verify number "current_count" is less than "max_loop_counter"
+While I do not see element "xPath://span[text()='Looking for Work, Please Wait...']" in web browser within $max_response seconds
+
+	If I see "Pick List At" in element "className:appbar-title" in web browser
+    	If I see "List ID" in web browser
+        When I copy text inside element "xPath://span[contains(text(),'List ID')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "list_id"
+        Then I press keys "ENTER" in web browser
+        EndIf
+		Given I execute scenario "Get Load Id for Work Assignment"
+            Then I assign "To ID" to variable "input_field_with_focus"
+			And I execute scenario "Mobile Check for Input Focus Field"
+            
+            Then I execute groovy "to_id = to_id[1..-1].padLeft(9, '0')"
+			If I verify text $wrong_dest_lpn is equal to "TRUE" ignoring case
+		Then I type $value_wrong_dest_lpn in element "name:to_id" in web browser 
+		Then I press keys "ENTER" in web browser
+		If I "take a web browser screen shot if requested"
+        And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+		Once I see "Provided LPN is not valid" in web browser
+        Then I save web browser screenshot
+    EndIf
+	Then I press keys "ENTER" in web browser
+	Then I execute scenario  "Test Completion" 
+	Endif
+            Then I type $to_id in element "name:to_id" in web browser within $max_response seconds
+			And I press keys "ENTER" in web browser
+		If I see element "name:pos_id" in web browser within $wait_med seconds
+			Then I assign "Pos ID" to variable "input_field_with_focus"
+			And I execute scenario "Mobile Check for Input Focus Field"	
+			Then I press keys "ENTER" in web browser
+			And I wait $wait_long seconds
+		EndIf 
+    EndIf
+    
+    If I see "Build Batch" in element "className:appbar-title" in web browser  
+        And I press keys "ENTER" in web browser 2 times with $wait_short seconds delay
+	EndIf
+    
+	If I see "Order Pick L" in web browser
+        When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+        Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+        Given I assign row 0 column "locvrc" to variable "location_verification_code"
+        Once I see element "name:stoloc" in web browser
+        Then I type $location_verification_code in element "name:stoloc" in web browser within $wait_med seconds
+        And I press keys "ENTER" in web browser
+
+    And I "copy item number to input"
+        Once I see element "name:prtnum" in web browser
+        If I verify text $sku_wrong is equal to "TRUE" ignoring case
+		Then I type $value_sku_wrong in element "name:prtnum" in web browser 
+		Then I press keys "ENTER" in web browser
+		If I "take a web browser screen shot if requested"
+        And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+		Once I see "Invalid Item Number" in web browser
+        Then I save web browser screenshot
+    EndIf
+	Then I press keys "ENTER" in web browser
+	Then I execute scenario  "Test Completion" 
+	Endif
+		When I copy text inside element "xPath://span[contains(text(),'Item Number')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "prtnum" within $short_sec_wait seconds
+        Then I type $prtnum in element "name:prtnum" in web browser
+        And I press keys "ENTER" in web browser
+
+	And I "see element dspprtcli"
+        If I see element "name:dspprtcli" in web browser within $wait_short seconds
+        	And I press keys "ENTER" in web browser
+		EndIf
+
+    Then I "press enter for Unit Quantity and UOM fields"
+        Once I see element "name:untqty" in web browser
+        If I verify text $extra_pick is equal to "TRUE" ignoring case
+        Then I copy text inside element "name:untqty" in web browser to variable "pick_qty"
+        And I convert string variable "pick_qty" to integer variable "pick_qty2"
+        And I increase variable "pick_qty2" by $extra_pick_qty
+        Then I type $pick_qty2 in element "name:untqty" in web browser within $wait_med seconds
+        And I press keys "ENTER" in web browser
+        Once I see element "name:uomcod" in web browser
+        Then I press keys "ENTER" in web browser
+        If I "take a web browser screen shot if requested"
+        And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+        Once I see "Invalid Quantity" in web browser
+        Then I save web browser screenshot
+        Endif
+        And I press keys "ENTER" in web browser
+        Then I execute scenario  "Test Completion"
+        Endif
+		Then I press keys "ENTER" in web browser
+
+        Once I see element "name:uomcod" in web browser
+        Then I press keys "ENTER" in web browser
+        
+        And I "enter to id"
+        Once I see element "name:to_id" in web browser
+        If I see element "xPath://span[contains(text(),'To ID')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser within $wait_short seconds
+          		  Then I copy text inside element "xPath://span[contains(text(),'To ID')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "to_id" within $wait_short seconds
+          Then I type $to_id in element "name:to_id" in web browser
+          And I press keys "ENTER" in web browser
+          And I wait $wait_med seconds
+        EndIf
+        If I see element "name:to_id" in web browser within $wait_short seconds
+          And I see element "xPath://span[contains(text(),'Inventory Identifier')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser
+		  Then I copy text inside element "xPath://span[contains(text(),'Inventory Identifier')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "to_id" within $short_sec_wait seconds
+          Then I type $to_id in element "name:to_id" in web browser
+          And I press keys "ENTER" in web browser
+          And I wait $wait_short seconds
+        EndIf
+    EndIf
+    
+    If I see "Carton Is Complete" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+    
+    If I see "Batch is Complete" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+    
+    If I see "No Picks Remaining in Batch" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+    
+    If I see "MRG Product Deposit" in web browser
+    	If I see element "name:subnum" in web browser within $wait_short seconds
+        	Then I press keys "ENTER" in web browser
+        Elsif I see element "name:lodnum" in web browser 
+        	Then I press keys "ENTER" in web browser
+        EndIf
+        If I see element "xPath://span[contains(text(), '1 Equipment Full')]" in web browser within $wait_short seconds
+        	Then I click element "xPath://span[contains(text(), '1 Equipment Full')]" in web browser
+        EndIf
+        If I see element "name:dstloc" in web browser within $wait_short seconds
+        	When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+        	Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+       		Given I assign row 0 column "locvrc" to variable "location_verification_code"
+        	Then I type $location_verification_code in element "name:dstloc" in web browser
+        	And I press keys "ENTER" in web browser
+        EndIf
+    EndIf
+    
+    If I see "List Pick Completed" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_med seconds
+    EndIf
+    
+    If I see "Work Assignment" in web browser
+      If I see "List Pick Completed" in web browser
+          Then I press keys "ENTER" in web browser
+          And I press keys "F1" in web browser 2 times with $wait_short seconds delay
+      EndIf
+    EndIf
+    
+	And I wait $wait_med seconds
+EndWhile
+
+@wip @private
+Scenario: Check for Product Put Screen
+Given I "check for Product Put screen"
+	If I see element "name:to_id" in web browser within $wait_short seconds
+	And I verify element "name:to_id" is clickable in web browser
+		And I see element "xPath://span[contains(text(),'To ID')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser
+		Then I copy text inside element "xPath://span[contains(text(),'To ID')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "to_id" within $short_sec_wait seconds
+		Then I type $to_id in element "name:to_id" in web browser
+		And I press keys "ENTER" in web browser
+		And I wait $wait_med seconds
+	EndIf
+
+@wip @public
+Scenario: Mobile Perform Directed List Pick 
+Given I assign 20 to variable "max_loop_counter"
+And I assign 0 to variable "current_count"
+#While I verify number "current_count" is less than "max_loop_counter"
+While I do not see "Looking for Work" in web browser within $wait_long seconds
+
+	If I see "Pick List At" in element "className:appbar-title" in web browser
+    	If I see "List ID" in web browser
+        When I copy text inside element "xPath://span[contains(text(),'List ID')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "list_id"
+        Then I press keys "ENTER" in web browser
+        EndIf
+		Given I execute scenario "Get Load Id for Work Assignment"
+            Then I assign "To ID" to variable "input_field_with_focus"
+			And I execute scenario "Mobile Check for Input Focus Field"
+            
+            Then I execute groovy "to_id = to_id[1..-1].padLeft(9, '0')"
+            If I verify text $wrong_dest_lpn is equal to "TRUE" ignoring case
+		Then I type $value_wrong_dest_lpn in element "name:to_id" in web browser 
+		Then I press keys "ENTER" in web browser
+		If I "take a web browser screen shot if requested"
+        And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+		Once I see "Provided LPN is not valid" in web browser
+        Then I save web browser screenshot
+    EndIf
+	Then I press keys "ENTER" in web browser
+	Then I execute scenario  "Test Completion" 
+	Endif
+			Then I type $to_id in element "name:to_id" in web browser within $max_response seconds
+			And I press keys "ENTER" in web browser
+			
+		If I see element "name:pos_id" in web browser within $wait_med seconds
+			Then I assign "Pos ID" to variable "input_field_with_focus"
+			And I execute scenario "Mobile Check for Input Focus Field"	
+			Then I press keys "ENTER" in web browser
+			And I wait $wait_med seconds
+		EndIf 
+    EndIf
+    
+    If I see "Build Batch" in element "className:appbar-title" in web browser  
+        And I press keys "ENTER" in web browser 2 times with $wait_short seconds delay
+	EndIf
+    
+	If I see "Order Pick L" in web browser
+		While I see "Order Pick L" in web browser within $wait_med seconds
+			If I verify variable "cancel_pick" is assigned
+			And I verify text $cancel_pick is equal to "YES" ignoring case
+				And I execute scenario "Mobile Cancel Pick from Tools Menu"
+				And I execute scenario "Mobile Logout"
+			EndIf
+				When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+				Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+				Given I assign row 0 column "locvrc" to variable "location_verification_code"
+				Once I see element "name:stoloc" in web browser
+				Then I type $location_verification_code in element "name:stoloc" in web browser within $wait_med seconds
+				And I press keys "ENTER" in web browser
+
+				And I "copy item number to input"
+					Once I see element "name:prtnum" in web browser
+					When I copy text inside element "xPath://span[contains(text(),'Item Number')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "prtnum" within $short_sec_wait seconds
+					If I verify text $sku_wrong is equal to "TRUE" ignoring case
+						Then I type $value_sku_wrong in element "name:prtnum" in web browser 
+						Then I press keys "ENTER" in web browser
+						If I "take a web browser screen shot if requested"
+							And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+							Once I see "Invalid Item Number" in web browser
+							Then I save web browser screenshot
+						EndIf
+						Then I press keys "ENTER" in web browser
+						Then I execute scenario  "Test Completion" 
+					Endif
+
+					Then I type $prtnum in element "name:prtnum" in web browser
+					And I press keys "ENTER" in web browser
+
+					And I "see element dspprtcli"
+						If I see element "name:dspprtcli" in web browser within $wait_short seconds
+							And I press keys "ENTER" in web browser
+						EndIf
+
+				Then I "press enter for Unit Quantity and UOM fields"
+					Once I see element "name:untqty" in web browser
+					If I verify text $extra_pick is equal to "TRUE" ignoring case
+						Then I copy text inside element "name:untqty" in web browser to variable "pick_qty"
+						And I convert string variable "pick_qty" to integer variable "pick_qty2"
+						And I increase variable "pick_qty2" by $extra_pick_qty
+						Then I type $pick_qty2 in element "name:untqty" in web browser within $wait_med seconds
+						And I press keys "ENTER" in web browser
+						Once I see element "name:uomcod" in web browser
+						Then I press keys "ENTER" in web browser
+						If I "take a web browser screen shot if requested"
+							And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+							Once I see "Invalid Quantity" in web browser
+							Then I save web browser screenshot
+						Endif
+						And I press keys "ENTER" in web browser
+						Then I execute scenario  "Test Completion"
+					Endif
+					Then I press keys "ENTER" in web browser
+
+					Once I see element "name:uomcod" in web browser
+					Then I press keys "ENTER" in web browser
+					
+					And I "process Product Put screen by entering To ID"
+					Once I see element "name:to_id" in web browser
+					While I see element "name:to_id" in web browser within $wait_short seconds
+					And I see "Product Put" in web browser
+						Then I execute scenario "Check for Product Put Screen"
+					EndWhile
+		EndWhile
+    EndIf
+
+    If I see "Carton Is Complete" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+
+    If I see "Batch is Complete" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+    
+    If I see "No Picks Remaining in Batch" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+    
+    If I see "List Pick Completed" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_med seconds
+    EndIf
+    
+    If I see "Work Assignment" in web browser
+      If I see "List Pick Completed" in web browser
+          Then I press keys "ENTER" in web browser
+          And I press keys "F1" in web browser 2 times with $wait_short seconds delay
+      EndIf
+    EndIf
+
+    If I see "MRG Product Deposit" in web browser
+    	If I see element "name:lodnum" in web browser within $wait_short seconds
+        	Then I press keys "ENTER" in web browser
+        EndIf
+        If I see element "xPath://span[contains(text(), '1 Equipment Full')]" in web browser within $wait_short seconds
+        	Then I click element "xPath://span[contains(text(), '1 Equipment Full')]" in web browser
+        EndIf
+        If I see element "name:dstloc" in web browser within $wait_med seconds
+        When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+        Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+        Given I assign row 0 column "locvrc" to variable "location_verification_code"
+        Then I type $location_verification_code in element "name:dstloc" in web browser
+        And I press keys "ENTER" in web browser
+        EndIf
+    EndIf
+    
+	And I wait $wait_med seconds
+EndWhile
+
+
+
+
+@wip @public
+Scenario: Mobile Perform Directed List Pick V1
+Given I assign 20 to variable "max_loop_counter"
+And I assign 0 to variable "current_count"
+#While I verify number "current_count" is less than "max_loop_counter"
+While I do not see "Looking for Work" in web browser within $wait_long seconds
+
+	If I see "Pick List At" in element "className:appbar-title" in web browser
+    	If I see "List ID" in web browser
+        When I copy text inside element "xPath://span[contains(text(),'List ID')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "list_id"
+        Then I press keys "ENTER" in web browser
+        EndIf
+		Given I execute scenario "Get Load Id for Work Assignment"
+            Then I assign "To ID" to variable "input_field_with_focus"
+			And I execute scenario "Mobile Check for Input Focus Field"
+            
+            Then I execute groovy "to_id = to_id[1..-1].padLeft(9, '0')"
+            If I verify text $wrong_dest_lpn is equal to "TRUE" ignoring case
+		Then I type $value_wrong_dest_lpn in element "name:to_id" in web browser 
+		Then I press keys "ENTER" in web browser
+		If I "take a web browser screen shot if requested"
+        And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+		Once I see "Provided LPN is not valid" in web browser
+        Then I save web browser screenshot
+    EndIf
+	Then I press keys "ENTER" in web browser
+	Then I execute scenario  "Test Completion" 
+	Endif
+			Then I type $to_id in element "name:to_id" in web browser within $max_response seconds
+			And I press keys "ENTER" in web browser
+			
+		If I see element "name:pos_id" in web browser within $wait_med seconds
+			Then I assign "Pos ID" to variable "input_field_with_focus"
+			And I execute scenario "Mobile Check for Input Focus Field"	
+			Then I press keys "ENTER" in web browser
+			And I wait $wait_med seconds
+		EndIf 
+    EndIf
+    
+    If I see "Build Batch" in element "className:appbar-title" in web browser  
+        And I press keys "ENTER" in web browser 2 times with $wait_short seconds delay
+	EndIf
+    
+	If I see "Order Pick L" in web browser
+	If I verify variable "cancel_pick" is assigned
+	And I verify text $cancel_pick is equal to "YES" ignoring case
+		And I execute scenario "Mobile Cancel Pick from Tools Menu"
+		And I execute scenario "Mobile Logout"
+	EndIf
+        When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+        Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+        Given I assign row 0 column "locvrc" to variable "location_verification_code"
+        Once I see element "name:stoloc" in web browser
+        Then I type $location_verification_code in element "name:stoloc" in web browser within $wait_med seconds
+        And I press keys "ENTER" in web browser
+
+		And I "copy item number to input"
+			Once I see element "name:prtnum" in web browser
+			When I copy text inside element "xPath://span[contains(text(),'Item Number')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "prtnum" within $short_sec_wait seconds
+			If I verify text $sku_wrong is equal to "TRUE" ignoring case
+				Then I type $value_sku_wrong in element "name:prtnum" in web browser 
+				Then I press keys "ENTER" in web browser
+				If I "take a web browser screen shot if requested"
+					And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+					Once I see "Invalid Item Number" in web browser
+					Then I save web browser screenshot
+    			EndIf
+				Then I press keys "ENTER" in web browser
+				Then I execute scenario  "Test Completion" 
+			Endif
+			Then I type $prtnum in element "name:prtnum" in web browser
+			And I press keys "ENTER" in web browser
+
+			And I "see element dspprtcli"
+				If I see element "name:dspprtcli" in web browser within $wait_short seconds
+					And I press keys "ENTER" in web browser
+				EndIf
+
+		Then I "press enter for Unit Quantity and UOM fields"
+			Once I see element "name:untqty" in web browser
+			If I verify text $extra_pick is equal to "TRUE" ignoring case
+				Then I copy text inside element "name:untqty" in web browser to variable "pick_qty"
+				And I convert string variable "pick_qty" to integer variable "pick_qty2"
+				And I increase variable "pick_qty2" by $extra_pick_qty
+				Then I type $pick_qty2 in element "name:untqty" in web browser within $wait_med seconds
+				And I press keys "ENTER" in web browser
+				Once I see element "name:uomcod" in web browser
+				Then I press keys "ENTER" in web browser
+				If I "take a web browser screen shot if requested"
+					And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+					Once I see "Invalid Quantity" in web browser
+					Then I save web browser screenshot
+				Endif
+				And I press keys "ENTER" in web browser
+				Then I execute scenario  "Test Completion"
+			Endif
+			Then I press keys "ENTER" in web browser
+
+			Once I see element "name:uomcod" in web browser
+			Then I press keys "ENTER" in web browser
+			
+			And I "enter to id"
+			Once I see element "name:to_id" in web browser
+			If I see element "xPath://span[contains(text(),'To ID')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser within $wait_short seconds
+				Then I copy text inside element "xPath://span[contains(text(),'To ID')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "to_id" within $wait_short seconds
+				Then I type $to_id in element "name:to_id" in web browser
+				And I press keys "ENTER" in web browser
+				And I wait $wait_med seconds
+			EndIf
+			If I see element "name:to_id" in web browser within $wait_short seconds
+				And I see element "xPath://span[contains(text(),'Inventory Identifier')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser
+				Then I copy text inside element "xPath://span[contains(text(),'Inventory Identifier')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "to_id" within $short_sec_wait seconds
+				Then I type $to_id in element "name:to_id" in web browser
+				And I press keys "ENTER" in web browser
+				And I wait $wait_short seconds
+			EndIf
+    EndIf
+
+    If I see "Carton Is Complete" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+
+    If I see "Batch is Complete" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+    
+    If I see "No Picks Remaining in Batch" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+    
+    If I see "List Pick Completed" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_med seconds
+    EndIf
+    
+    If I see "Work Assignment" in web browser
+      If I see "List Pick Completed" in web browser
+          Then I press keys "ENTER" in web browser
+          And I press keys "F1" in web browser 2 times with $wait_short seconds delay
+      EndIf
+    EndIf
+
+    If I see "MRG Product Deposit" in web browser
+    	If I see element "name:lodnum" in web browser within $wait_short seconds
+        	Then I press keys "ENTER" in web browser
+        EndIf
+        If I see element "xPath://span[contains(text(), '1 Equipment Full')]" in web browser within $wait_short seconds
+        	Then I click element "xPath://span[contains(text(), '1 Equipment Full')]" in web browser
+        EndIf
+        If I see element "name:dstloc" in web browser within $wait_med seconds
+        When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+        Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+        Given I assign row 0 column "locvrc" to variable "location_verification_code"
+        Then I type $location_verification_code in element "name:dstloc" in web browser
+        And I press keys "ENTER" in web browser
+        EndIf
+    EndIf
+    
+	And I wait $wait_med seconds
+EndWhile
 
 @wip @public
 Scenario: Mobile Perform Directed List Pick for Order
@@ -69,29 +566,17 @@ When I "perform all associated list Picking"
 
 	Then I "copy the list ID from the Mobile App screen"
 		And I copy text inside element "xPath://span[contains(text(),'List ID')]/ancestor::aq-displayfield[contains(@id,'list_id')]/descendant::span[contains(@class,'data')]" in web browser to variable "list_id" within $max_response seconds
-			
 	When I "perform the List Pick, if applicable"
+    	Then I echo $oprcod
+        Then I echo $devcod
+        And I echo $username
+        And I echo $list_id
 		And I execute scenario "Check List Pick Directed Work Assignment"
 		If I verify MOCA status is 0
 			Then I echo "The Current Work is a List Pick. Proceeding...."
            	And I execute scenario "Mobile Acknowledge Work Assignment"
-            When I execute scenario "Mobile Perform Picks for Work Assignment"
-			If I verify number $picks_confirmed is greater than 0
-				   Then I execute scenario "Mobile Deposit"
-   			Else I "handle situation in which the first and only pick got canceled"
-				If I execute scenario "Assign Work to User by Order and Operation"
-				EndIf
-
-                Then I assign "Completed" to variable "mobile_dialog_message"
-				And I execute scenario "Mobile Set Dialog xPath"
-				If I see element $mobile_dialog_elt in web browser within $screen_wait seconds
-               		Then I press keys "ENTER" in web browser 
-               	EndIf
-			EndIf
-		Else I echo "The Current Work is not a List Pick or the Work is not assigned to the Current User. Exiting..."
-			Then I assign "TRUE" to variable "lists_done"
-		EndIf 
-	EndWhile
+        EndIf
+        EndWhile
 	
 @wip @public
 Scenario: Mobile Perform Undirected List Pick for Order
@@ -165,6 +650,8 @@ Scenario: Mobile Perform Picks for Work Assignment
 Given I assign "FALSE" to variable "work_assignment_loop_done"
 And I assign 0 to variable "picks_confirmed"
 And I assign "NO" to variable "lpck_action_performed"
+
+
 When I "perform work assignment picks"
 	While I verify text $work_assignment_loop_done is equal to "FALSE"
 	And I see "Order Pick" in element "className:appbar-title" in web browser within $wait_med seconds
@@ -191,6 +678,15 @@ When I "perform work assignment picks"
 						And I assign "TRUE" to variable "lpck_action_performed"
 					EndIf
 				EndIf
+                
+                
+                When I "check if carton pick is required"
+                If I see "Build Batch" in element "className:appbar-title" in web browser within $wait_med seconds
+                    Once I see element "name:subnum" in web browser 
+                    Then I press keys "ENTER" in web browser
+                    Once I see element "name:pos_id" in web browser
+                    Then I press keys "ENTER" in web browser
+                EndIf
             
 			Then I "read the source location to pick from"
 				And I copy text inside element "xPath://span[contains(text(),'Location')]/ancestor::aq-displayfield[contains(@id,'dsploc')]/descendant::span[contains(@class,'data')]" in web browser to variable "srcloc" within $max_response seconds
@@ -359,7 +855,9 @@ Given I "check to see if I am resuming a list"
 
             Then I assign "To ID" to variable "input_field_with_focus"
 			And I execute scenario "Mobile Check for Input Focus Field"
-			Then I type $to_id in element "name:to_id" in web browser within $max_response seconds
+
+            Then I execute groovy "to_id = to_id[1..-1].padLeft(9, '0')"
+            Then I type $to_id in element "name:to_id" in web browser within $max_response seconds
 			And I press keys "ENTER" in web browser
     EndIf
 
@@ -506,3 +1004,210 @@ Then I "note, the Current Work is a List Pick. Proceeding...."
 	Then I execute scenario "Mobile Acknowledge Work Assignment"
 
 Once I see "Order Pick" in element "className:appbar-title" in web browser
+
+@wip @public @Threshold-Picking
+Scenario: Mobile Perform Threshold Picking
+Given I assign 20 to variable "max_loop_counter"
+And I assign 0 to variable "current_count"
+
+When I "confirm Directed Work exists"
+	If I see "Pickup Product At" in element "className:appbar-title" in web browser within $screen_wait seconds
+		Then I echo "I'm good to proceed as there are directed works"
+	Else I assign variable "error_message" by combining "ERROR: No Directed Picks found. Exiting..."
+		Then I fail step with error message $error_message
+	EndIf
+ 
+And I "perform all associated Threshold Picking"
+	Then I assign "FALSE" to variable "DONE" 
+	While I do not see element "xPath://span[text()='Looking for Work, Please Wait...']" in web browser within $max_response seconds
+		If I see "Pickup Product At" in web browser 
+			Then I press keys "ENTER" in web browser
+		EndIf
+		If I verify text $DONE is equal to "FALSE"
+			Then I copy text inside element "xPath://span[contains(text(),'Location')]/ancestor::aq-displayfield[contains(@id,'dsploc')]/descendant::span[contains(@class,'data')]" in web browser to variable "srcloc" within $max_response seconds
+		EndIf
+ 
+		#And I execute scenario "Check Pick Directed Work Assignment by Operation and Location"
+		#If I verify MOCA status is 0
+		#	Then I assign row 0 column "reqnum" to variable "reqnum"
+		#	And I assign row 0 column "wh_id" to variable "wh_id"
+		#	Then I echo "The Current Work (reqnum = " $reqnum ") is a Threshold Pick. Proceeding...."
+ 
+		#	If I verify text $cancel_and_reallocate is equal to "TRUE" ignoring case
+		#		Once I see element "xPath://span[contains(text(),'Next [Enter]')]" in web browser
+		#		Then I press keys "ENTER" in web browser
+		#	If I see "Threshold Pick" in element "className:appbar-title" in web browser within $wait_med seconds
+		#		Then I assign "C-RA" to variable "cancel_code"
+		#		And I assign "TRUE" to variable "error_location_flag"
+		#		Then I execute scenario "Mobile Cancel Pick from Tools Menu"
+		#	Else I verify text $cancel_and_reallocate is not equal to "TRUE" ignoring case
+		#		Then I execute scenario "Mobile Pallet Picking Process Detail"
+		#		And I execute scenario "Get Directed Work Picking Work Reference by Order Number and Operation"
+		#		If I verify variable "cnz_mode" is assigned
+		#			And I verify text $cnz_mode is equal to "TRUE" ignoring case
+		#			And I execute scenario "Mobile Check for Count Near Zero Prompt"
+		#		EndIf
+		#		Then I press keys "F6" in web browser
+		#		If I see " Deposit" in element "className:appbar-title" in web browser within $wait_long seconds
+		#		Else I echo "Retrying F6 operation"
+		#			And I press keys "F6" in web browser
+		#		EndIf
+		#	EndIf
+        #        And I execute scenario "Mobile Wait for Processing"
+		#	EndIf
+		#Else I echo "The current work is not a threshold pick or the work is not assigned to the current user. Exiting..."
+		#	And I assign "TRUE" to variable "DONE"
+		#EndIf 
+		If I see "Threshold Pick" in web browser
+			If I verify text $cancel_pick is equal to "YES" ignoring case
+				And I execute scenario "Mobile Cancel Pick from Tools Menu"
+				And I execute scenario "Mobile Logout"
+			Elsif I verify text $cancel_pick is equal to "NO" ignoring case
+				If I see element "name:lodnum" in web browser
+					And I "enter inventory identifier"
+					If I verify text $source_lpn_wrong is equal to "TRUE" ignoring case
+						Then I type $value_source_lpn_wrong in element "name:lodnum" in web browser 
+						Then I press keys "ENTER" in web browser
+						If I "take a web browser screen shot if requested"
+							And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+							Once I see "Inventory identifier is invalid" in web browser
+							Then I save web browser screenshot
+						EndIf
+						Then I press keys "ENTER" in web browser
+						Then I execute scenario  "Test Completion" 
+					Endif
+				
+					When I press keys "F2" in web browser
+						And I wait $wait_med seconds
+						Once I see element "xPath://div[@class='data-area']" in web browser
+					When I copy text inside element "xPath://div[@class='data-area']" in web browser to variable "lodnum"
+						And I echo $lodnum
+					When I press keys "F1" in web browser
+						And I execute Groovy "lodnum = lodnum.split(' ')[0]" within $wait_med seconds
+						Once I see element "name:lodnum" in web browser
+						Then I type $lodnum in element "name:lodnum" in web browser
+						And I press keys "ENTER" in web browser
+						And I wait $wait_med seconds
+					Then I "see Inventory falls outside of threshold pick variance. Ok to pickup? Y/N"
+						If I see "Inventory falls outside of threshold pick variance. Ok to pickup? Y/N" in web browser 
+							Then I press keys "Y" in web browser
+						EndIf
+				EndIf
+				
+				If I see element "name:stoloc" in web browser
+					Then I "enter location"
+					When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+						Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+					Given I assign row 0 column "locvrc" to variable "location_verification_code"
+						Then I type $location_verification_code in element "name:stoloc" in web browser
+						And I press keys "ENTER" in web browser
+				
+					And I "enter item number"
+					If I see element "name:prtnum" in web browser within 3 seconds 
+							If I verify text $sku_wrong is equal to "TRUE" ignoring case
+								Then I type $value_sku_wrong in element "name:prtnum" in web browser 
+								Then I press keys "ENTER" in web browser
+							EndIf
+							If I "take a web browser screen shot if requested"
+								And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+								If I see "Invalid Item Number" in web browser
+									Then I save web browser screenshot
+									Then I press keys "ENTER" in web browser
+									Then I execute scenario  "Test Completion"  
+								EndIf
+							Endif
+						When I copy text inside element "xPath://span[contains(text(),'Item Number')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "prtnum"
+						Then I type $prtnum in element "name:prtnum" in web browser
+						And I press keys "ENTER" in web browser
+					EndIf
+				EndIf
+				Then I "enter client ID"
+				If I see element "name:dspprtcli" in web browser within $wait_med seconds 
+					Then I press keys "ENTER" in web browser
+				EndIf
+				And I "enter unit qty"
+				If I see element "name:untqty" in web browser 
+					If I verify text $extra_pick is equal to "TRUE" ignoring case
+						Then I copy text inside element "name:untqty" in web browser to variable "pick_qty"
+							And I convert string variable "pick_qty" to integer variable "pick_qty2"
+							And I increase variable "pick_qty2" by $extra_pick_qty
+							Then I type $pick_qty2 in element "name:untqty" in web browser within $wait_med seconds
+							And I press keys "ENTER" in web browser
+							Once I see element "name:uomcod" in web browser
+							Then I press keys "ENTER" in web browser
+						If I "take a web browser screen shot if requested"
+							And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+							Once I see "Invalid Quantity" in web browser
+							Then I save web browser screenshot
+						Endif
+						And I press keys "ENTER" in web browser
+						Then I execute scenario  "Test Completion"
+					Endif
+					And I press keys "ENTER" in web browser
+					And I "enter uom"
+					Once I see element "name:uomcod" in web browser 
+					And I press keys "ENTER" in web browser
+				EndIf
+			EndIf
+			ElsIf I execute scenario "MultiLPN Pallet"
+				And I wait $wait_med seconds
+			EndIf
+			
+			If I see "Threshold Split" in web browser within 3 seconds
+				And I "get the Split LPN"
+					Then I execute MOCA script "Scripts\MSQL_Files\Custom\generate_lpn.msql"
+					And I verify MOCA status is 0
+					Then I assign row 0 column "lodnum" to variable "spltlod"
+					Then I type $spltlod in element "name:spltlod" in web browser within $max_response seconds
+					And I press keys "ENTER" in web browser
+
+				And I "copy split qty to input"
+					Once I see element "name:usrspltqty" in web browser
+					When I copy text inside element "xPath://span[contains(text(),'Splt Qty Rqd:')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "spltqty" within $short_sec_wait seconds
+						And I echo $lodnum
+					
+					And I execute Groovy "spltqty = spltqty.split(' ')[0]" within $wait_med seconds
+					Once I see element "name:usrspltqty" in web browser
+					Then I type $spltqty in element "name:usrspltqty" in web browser
+					And I press keys "ENTER" in web browser
+
+				And I "see element UOM"
+				If I see element "name:uomcod" in web browser within $wait_med seconds
+					And I press keys "ENTER" in web browser
+				EndIf
+			EndIf
+			If I see "MRG Threshold Deposit" in web browser
+				And I execute scenario "Mobile Threshold Deposit"
+			EndIf
+
+        And I wait $wait_med seconds
+	EndWhile
+
+@wip @private
+Scenario: Select Picking Process
+############################################################
+# Description: Sets down the list to pallet LPN to a PND location        
+# with Set Down option. Handles logic to resume the list through         
+# directed work.
+# MSQL Files:
+#	get_pndloc_for_lpck_set_down.msql
+# Inputs:
+# 	Required:
+#		oprcod must be equal to LPCK, PCK or CART
+# 	Optional:
+#       None
+# Outputs:
+#	None
+#############################################################
+When I "perform verify the type of pick and perform the pick"
+	If I verify text $oprcod is equal to "LPCK"
+		And I execute scenario "Mobile Perform Directed List Pick"
+	Elsif I verify text $oprcod is equal to "CHANNELWA"
+		And I execute scenario "Mobile Perform Directed List Pick"
+    Elsif I verify text $oprcod is equal to "PCK"
+    	Then I execute scenario "Mobile Perform Pallet Pick for Order"
+    Elsif I verify text $oprcod is equal to "CART"
+    	Then I execute scenario "Mobile Perform Directed Carton Pick"
+	Elsif I verify text $oprcod is equal to "TPCK"
+		Then I execute scenario "Mobile Perform Threshold Picking"
+    EndIf

@@ -1,0 +1,11 @@
+[ {
+  "resources" : "..",
+  "classes" : [ ],
+  "namespaces" : [ ]
+}, {
+  "name" : "Outbound_1_web",
+  "feature" : "..\\Test Cases\\ABB_Click_N_Win\\Outbound Stress\\Outbound_1_web.feature",
+  "devices" : "..\\Test Case Inputs\\outbound_hp.csv",
+  "tags" : "ABB-SHP-01",
+  "enabled" : "true"
+} ]

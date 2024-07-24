@@ -1,0 +1,5 @@
+publish data
+    where stop_id = $stop_id
+|
+deassign stop from outbound load
+ where stop_id = @stop_id

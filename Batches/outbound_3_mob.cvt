@@ -1,0 +1,11 @@
+[ {
+  "resources" : "..",
+  "classes" : [ ],
+  "namespaces" : [ ]
+}, {
+  "name" : "Stage the picked LPNs",
+  "feature" : "..\\Test Cases\\ABB_Click_N_Win\\Outbound Stress\\Outbound_3_move_inv.feature",
+  "devices" : "..\\Test Case Inputs\\outbound_hp.csv",
+  "tags" : "",
+  "enabled" : "true"
+} ]

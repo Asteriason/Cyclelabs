@@ -1,0 +1,18 @@
+Playlist: 
+
+Resources: ..\..
+
+Working Directory: 
+
+Namespaces: 
+
+FailFast: ALL_TESTS
+
+Items:
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Receiving\ABB-RCV-01 Review Inbound Shipment.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Receiving\ABB-RCV-02 Check In Inbound Shipment.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Receiving\ABB-RCV-03 Receive Inbound Shipment.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Receiving\ABB-RCV-04 Inbound Complete OSD Receipt.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Receiving\ABB-RCV-05 Close And Dispatch Inbound.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Receiving\ABB-RCV-06  Store Received Inventory.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Receiving\ABB-RCV-07 Store-Pallet Work Directed.feature

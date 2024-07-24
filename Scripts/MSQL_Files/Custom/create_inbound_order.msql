@@ -1,0 +1,27 @@
+publish data
+ where invnum = $invnum
+   and wh_id = $wh_id
+   and rim_lines = 0
+   and adddte = $adddte
+   and trknum = $trknum
+   and client_id = 'ABB'
+|
+create receive invoice from master
+ WHERE adddte = @adddte
+   AND idn_rcvqty = null
+   AND cstms_typ = ''
+   AND exp_rcvqty = null
+   AND invnum = @invnum
+   AND invtyp = 'P'
+   AND rim_lines = @rim_lines
+   AND client_id = @client_id
+   AND orgref = ''
+   AND sadnum = ''
+   AND wh_id = @wh_id
+   AND invdte = null
+   AND waybil = ''
+   AND supnum = '0001'
+   AND clsdte = null
+   AND rimsts = 'OPEN'
+   AND trknum = @trknum
+   AND wh_id = @wh_id CATCH(-1403)

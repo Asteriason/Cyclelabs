@@ -1,0 +1,21 @@
+/*
+   MSQL File: get_prtnum_counts.msql
+   Description: This MSQL gets putaway inventory for validating deposit location
+ */
+publish data
+ where wh_id = $wh_id
+   and stoloc = $stoloc
+|
+[WITH publish_data_cte AS (SELECT COUNT(DISTINCT prtnum) AS publish_data
+                             FROM inventory_view
+                            WHERE stoloc = @stoloc
+                              AND wh_id = @wh_id)
+ SELECT iv.untqty,
+        iv.prtnum,
+        SUM(iv.untqty) OVER(PARTITION BY iv.prtnum) AS total_untqty_per_prtnum,
+        cte.publish_data
+   FROM inventory_view iv
+  CROSS
+   JOIN publish_data_cte cte
+  WHERE iv.stoloc = @stoloc
+    AND iv.wh_id = @wh_id;]

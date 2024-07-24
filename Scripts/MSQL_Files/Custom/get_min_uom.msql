@@ -1,0 +1,19 @@
+publish data
+ where prtnum = $prtnum
+   and wh_id = $wh_id
+|
+[select uomcod, prtftp.ftpcod
+   from prtftp_dtl
+   join prtftp
+     on prtftp.prtnum = prtftp_dtl.prtnum
+    and prtftp.prt_client_id = prtftp_dtl.prt_client_id
+    and prtftp.wh_id = prtftp_dtl.wh_id
+    and prtftp.ftpcod = prtftp_dtl.ftpcod
+  where prtftp_dtl.prtnum = @prtnum
+    and prtftp_dtl.uomlvl = '0'
+    and prtftp.prt_client_id = 'ABB'
+    and prtftp.wh_id = @wh_id]
+|
+publish data
+ where uomcod = @uomcod 
+   and ftpcod = @ftpcod

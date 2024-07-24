@@ -1,0 +1,11 @@
+publish data
+ where ordnum = $ordnum_1
+|
+[select ship_id
+   from shipment_line
+  where ordnum = @ordnum]
+|
+[select stop_id,
+        ship_id
+   from shipment
+  where ship_id = @ship_id]

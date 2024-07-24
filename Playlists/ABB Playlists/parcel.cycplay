@@ -1,0 +1,17 @@
+Playlist: 
+
+Resources: ..\..
+
+Working Directory: 
+
+Namespaces: 
+
+FailFast: NONE
+
+Items:
+Feature: ..\..\Test Cases\ABB Test Cases\Outbound\ABB-WAV-02 Outbound Plan Wave.feature
+Feature: ..\..\Test Cases\ABB Test Cases\Outbound\ABB-WAV-03 Outbound Create Load.feature
+Feature: ..\..\Test Cases\ABB Test Cases\Outbound\ABB-WAV-04 Outbound Allocate Wave.feature
+Feature: ..\..\Test Cases\ABB Test Cases\Outbound\ABB-SHP-07 Outbound Assign Picks.feature
+Feature: ..\..\Test Cases\ABB Test Cases\Outbound\ABB-PCK-08 Outbound Carton Pick Directed.feature
+Feature: ..\..\Test Cases\ABB Test Cases\Outbound\ABB-PACK Pack and Manifest Close.feature

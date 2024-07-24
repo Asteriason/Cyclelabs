@@ -1,0 +1,11 @@
+[ {
+  "resources" : "..",
+  "classes" : [ ],
+  "namespaces" : [ ]
+}, {
+  "name" : "Create and Close Equipment",
+  "feature" : "..\\Test Cases\\ABB_Click_N_Win\\Outbound Stress\\Outbound_4_web.feature",
+  "devices" : "..\\Test Case Inputs\\outbound_hp.csv",
+  "tags" : "",
+  "enabled" : "true"
+} ]

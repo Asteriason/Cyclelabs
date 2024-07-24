@@ -1,0 +1,22 @@
+publish data
+ where wh_id = $wh_id
+   and mobile_devcod = $mobile_devcod
+   and performance_user = $username
+|
+[SELECT TOP 1 yard_loc
+   FROM yard_loc_trlr_view
+  WHERE wh_id = @wh_id
+    AND locsts = 'E'
+    AND yard_loc LIKE 'DK%'
+    AND yard_loc NOT IN (SELECT polval
+                           FROM poldat
+                          WHERE wh_id_tmpl = @wh_id
+                            AND polcod = 'CYCLELOCK'
+                            AND polvar = 'DOCK')]
+|
+[INSERT
+   INTO poldat(polcod, polvar, polval, wh_id_tmpl, rtstr1, srtseq, moddte, mod_usr_id, grp_nam)
+ VALUES ('CYCLELOCK', 'DOCK', @yard_loc, @wh_id, @mobile_devcod, 1, sysdate, @performance_user, 'CYCLE')]
+|
+publish data
+ where yard_loc = @yard_loc;

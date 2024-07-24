@@ -4,7 +4,7 @@
     "compatibilityVersion" : "2.3.0"
   },
   "settings" : {
-    "LocalReportOutputFormat" : "HTML",
+    "LocalReportOutputFormat" : "PDF",
     "FeatureFailureStrategy" : "SCENARIO",
     "StepDelay" : 300,
     "DefaultTerminalConnectWithin" : 90000,
@@ -19,7 +19,7 @@
     "KeyMappingFile" : null,
     "LocalReportCustomPath" : null,
     "VariableBlackListEnabled" : false,
-    "GroupTestFailureStrategy" : "RESTART_WORKER",
+    "GroupTestFailureStrategy" : "NONE",
     "ControlVisPaste" : true,
     "DefaultWithinTerminal" : 100,
     "OnceWaitTime" : 30000,
@@ -31,12 +31,12 @@
     "StoredConnections" : [ {
       "connectionName" : "ABB",
       "connectionType" : "MOCA",
-      "url" : "https://bc60-abb-wms-app-np1.jdadelivers.com/service"
+      "url" : "https://bc60-abb-wms-app-np2.jdadelivers.com/service"
     } ],
     "RemoteWebDriverHeadlessKey" : true,
     "WaitDurationBeforeRestart" : 5000,
     "MinimizeCycleDuringTest" : false,
-    "LocalReport" : "Default",
+    "LocalReport" : "Detailed",
     "TerminalSteadyStateDuration" : 1000,
     "SkipMocaCertValidation" : false,
     "PlaylistFailureStrategy" : "NONE",

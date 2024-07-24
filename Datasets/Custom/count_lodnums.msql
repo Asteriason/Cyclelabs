@@ -1,0 +1,16 @@
+publish data
+	where ordnum = $ordnum
+	and wh_id = $wh_id
+|
+[SELECT COUNT(*) AS total_count
+FROM (
+    SELECT DISTINCT inventory_pckwrk_view.lodnum,
+                    inventory_pckwrk_view.ordnum,
+                    pckmov.stoloc,
+                    pckmov.seqnum
+    FROM inventory_pckwrk_view
+    JOIN pckmov ON inventory_pckwrk_view.cmbcod = pckmov.cmbcod
+    WHERE inventory_pckwrk_view.wh_id = @wh_id
+      AND inventory_pckwrk_view.ordnum = @ordnum
+      AND pckmov.seqnum > 0
+) AS subquery]

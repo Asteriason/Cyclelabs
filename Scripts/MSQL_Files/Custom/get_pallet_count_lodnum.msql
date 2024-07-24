@@ -1,0 +1,13 @@
+/*
+MSQL File: get_pallet_count_lodnum.msql
+Description: This MSQL is used to determine the sourc location in the wave
+*/
+
+publish data
+ where stoloc = $srcloc
+   and wh_id = $wh_id
+|
+[SELECT COUNT(*) AS total_count
+   FROM (select lodnum
+           from invlod
+          where stoloc = @srcloc) AS subquery];

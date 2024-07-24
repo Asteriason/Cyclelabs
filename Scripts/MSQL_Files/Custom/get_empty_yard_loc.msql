@@ -1,0 +1,8 @@
+publish data
+  where wh_id = $wh_id
+|
+[select yard_loc
+   from yard_loc_trlr_view
+  where wh_id = @wh_id
+    and locsts = 'E'
+    and yard_loc LIKE 'DK%']

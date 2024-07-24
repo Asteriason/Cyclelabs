@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Web Wave Utilities.feature
 # 
 # Functional Area: Allocation
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: utility
 # Blue Yonder Interfaces Interacted With: WEB, MOCA
@@ -94,6 +94,14 @@ And I "select the wave and verify"
     Once I see "Planned" in web browser
 
 @wip @public
+Scenario: Web Navigate to Picking Waves and Picks
+Given I "Use Search Box for Waves and Picks"
+	Then I assign "Waves and Picks" to variable "wms_screen_to_open"
+	When I execute scenario "Web Screen Search"
+	Once I see element "xPath://span[text()='Waves and Picks']" in web browser
+
+
+@wip @public
 Scenario: Web Plan Wave
 #############################################################
 # Description: This scenario plans customer orders into a wave using the WEB
@@ -125,12 +133,12 @@ When I "am on Wave Screen, first step is to plan a wave"
  
 And I "am looking for all orders for customer"
 	Given I assign variable "elt" by combining $xPath ""
-	And I assign variable "elt" by combining $elt "//table[starts-with(@id,'customerlookup-')"
+	And I assign variable "elt" by combining $elt "//table[starts-with(@id,'orderNumberLookup-')"
 	And I assign variable "elt" by combining $elt " and contains(@id,'-triggerWrap')]"
 	And I assign variable "elt" by combining $elt "//input"
-	And I assign $elt to variable "cust_lookup"
-	When I click element $cust_lookup in web browser within $max_response seconds 
-	And I type $cstnum in element $cust_lookup in web browser within $max_response seconds
+	And I assign $elt to variable "order_lookup"
+	When I click element $order_lookup in web browser within $max_response seconds 
+	And I type $ordnum in element $order_lookup in web browser within $max_response seconds
 	And I wait $wait_med seconds 
 	And I press keys TAB in web browser
 	And I wait $wait_med seconds 
@@ -142,8 +150,8 @@ And I "press the Search button to fetch this customer's orders"
 And I "select the order"
 	Given I assign variable "order_id" by combining "text:" $ordnum
 	When I click element $order_id in web browser within $max_response seconds 
-	And I wait $wait_med seconds 
- 
+	And I wait $wait_med seconds
+
 And I "press the button to Plan the Wave"
 	Given I assign "Plan Wave" to variable "text"
 	And I execute scenario "Web xPath for Span Text"
@@ -151,10 +159,139 @@ And I "press the button to Plan the Wave"
 	When I assign $elt to variable "plan_wave_button"
 	And I click element $plan_wave_button in web browser within $max_response seconds 
 	And I wait $wait_med seconds 
- 
+	
+Once I see "Plan Wave" in web browser
+
+And I "enter the Wave Number"
+	Then I assign variable "elt" by combining "xPath://input[contains(@placeholder, 'System Generated If Blank') and contains(@name, 'waveNumber')]"
+	And I click element $elt in web browser within $max_response seconds
+	#And I echo $wave_num
+	#And I echo $schbat1
+	When I type $wave_num in element $elt in web browser within $max_response seconds
+	And I press keys "TAB" in web browser
+	
 And I "am on the Plan Wave confirmation dialog.  I only need to press 'OK' and wait for wave planning to end"
 	Then I click element $xPath_span_OK_sibling in web browser within $max_response seconds 
 	And I wait $wait_med seconds
+
+Given I "search by Wave Number"
+	And I assign "wave" to variable "component_to_search_for"
+    And I assign $wave_num to variable "string_to_search_for"
+	When I execute scenario "Web Component Search"
+ 
+And I "select the wave from the list"
+	Given I assign variable "search2" by combining "text:" $wave_num
+	When I click element $search2 in web browser within $max_response seconds 
+	And I wait $wait_med seconds 
+
+@wip @public
+Scenario: Web Plan Wave Multiorder
+#############################################################
+# Description: This scenario plans customer orders into a wave using the WEB
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		ordnum - Order Number
+#		cstnum - Customer Number
+#	Optional:
+#		None
+# Outputs:
+#	None         
+#############################################################
+
+Given I "Use Search Box for Waves and Picks"
+	Then I assign "Waves and Picks" to variable "wms_screen_to_open"
+	When I execute scenario "Web Screen Search"
+	Once I see element "xPath://span[text()='Waves and Picks']" in web browser
+
+When I "am on Wave Screen, first step is to plan a wave"
+	Given I assign variable "elt" by combining $xPath ""
+	And I assign variable "elt" by combining $elt "//span[starts-with(@id,'moreactionsbutton-')"
+	And I assign variable "elt" by combining $elt " and contains(@id,'-btnIconEl')]"
+	And I assign $elt to variable "waves_Actions_button"
+	When I click element $waves_Actions_button in web browser within $max_response seconds 
+	And I click element "text:Plan Wave" in web browser within $max_response seconds 
+	And I wait $wait_med seconds 
+ 
+And I "select the Carrier"
+	Then I execute scenario "Get Carrier Name from Carrier Code"
+	And I click element "xPath://input[@name='carcod']" in web browser within $max_response seconds
+	And I type $carnam in element "xPath://input[@name='carcod']" in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+	And I assign variable "elt" by combining "xPath://li[. = '" $carnam "']"
+   	And I click element $elt in web browser within $max_response seconds
+	Then I wait $wait_short seconds
+	And I click element "xPath://a[contains(@class, 'x-btn') and .//span[contains(text(), 'Search')]]" in web browser 
+	Then I wait $wait_long seconds
+ 
+And I "select the order"
+	Once I see "Orders Selected" in web browser
+	If I verify number $ord_rows is equal to 2
+		Then I assign 0 to variable "ords_selected"
+        Then I assign 2 to variable "next_page"
+		While I verify number $ords_selected is not equal to 2
+        	And I "prepare xPaths"
+              Then I assign variable "first_checkbox" by combining $xPath "//tr[td[contains(.,'" $ordnum_1 "')]]//div[contains(@class,'x-grid-row-checker')]"
+              Then I assign variable "second_checkbox" by combining $xPath "//tr[td[contains(.,'" $ordnum_2 "')]]//div[contains(@class,'x-grid-row-checker')]"
+			If I see element $first_checkbox in web browser within $wait_med seconds
+				Then I click element $first_checkbox in web browser
+				And I increase variable "ords_selected" by 1
+			EndIf
+			If I see element $second_checkbox in web browser within $wait_med seconds
+				Then I click element $second_checkbox in web browser
+				And I increase variable "ords_selected" by 1
+			EndIf
+			If I verify number $ords_selected is not equal to 2
+            	When I assign "xPath://input[starts-with(@id, 'numberfield') and @name='inputItem' and contains(@class, 'x-form-field') and @value='1']" to variable "input_page_number"
+                
+				Then I clear all text in element $input_page_number in web browser
+                Then I type $next_page in element $input_page_number in web browser
+                And I wait $wait_short seconds
+                And I press keys "ENTER" in web browser
+                And I increase variable "next_page" by 1
+				And I wait $wait_med seconds
+                While I see "Loading..." in web browser
+    				Then I wait $wait_med seconds
+				EndWhile
+			EndIf
+		EndWhile
+	EndIf
+
+And I "press the button to Plan the Wave"
+	Given I assign "Plan Wave" to variable "text"
+	And I execute scenario "Web xPath for Span Text"
+	And I execute scenario "Web xPath Add Sibling"
+	When I assign $elt to variable "plan_wave_button"
+	And I click element $plan_wave_button in web browser within $max_response seconds 
+	And I wait $wait_med seconds 
+	
+Once I see "Plan Wave" in web browser
+
+And I "enter the Wave Number"
+	Then I assign variable "elt" by combining "xPath://input[contains(@placeholder, 'System Generated If Blank') and contains(@name, 'waveNumber')]"
+	And I click element $elt in web browser within $max_response seconds
+	#And I echo $wave_num
+	#And I echo $schbat1
+	When I type $wave_num in element $elt in web browser within $max_response seconds
+	And I press keys "TAB" in web browser
+	
+And I "am on the Plan Wave confirmation dialog.  I only need to press 'OK' and wait for wave planning to end"
+	Then I click element $xPath_span_OK_sibling in web browser within $max_response seconds 
+	And I wait $wait_med seconds
+
+Given I "search by Wave Number"
+	And I assign "wave" to variable "component_to_search_for"
+    And I assign $wave_num to variable "string_to_search_for"
+	When I execute scenario "Web Component Search"
+ 
+And I "select the wave from the list"
+	Given I assign variable "search2" by combining "text:" $wave_num
+	When I click element $search2 in web browser within $max_response seconds 
+	And I wait $wait_med seconds 
+
+
+
 
 @wip @public
 Scenario: Get Wave Number
@@ -198,11 +335,11 @@ Scenario: Web Allocate Wave
 
 Given I "search by Wave Number"
 	And I assign "wave" to variable "component_to_search_for"
-    And I assign $schbat1 to variable "string_to_search_for"
+    And I assign $wave_num to variable "string_to_search_for"
 	When I execute scenario "Web Component Search"
  
 And I "select the wave from the list"
-	Given I assign variable "search2" by combining "text:" $schbat1
+	Given I assign variable "search2" by combining "text:" $wave_num
 	When I click element $search2 in web browser within $max_response seconds 
 	And I wait $wait_med seconds 
  
@@ -251,7 +388,7 @@ And I "am in the Allocate Wave dialog box and I need to set staging lane"
         And I wait $wait_short seconds 
         Then I assign variable "stglane_in_wave" by combining "text:" $alc_staging_lane
         Then I click element $stglane_in_wave in web browser within $max_response seconds 
-		And I wait $wait_med seconds 
+		And I wait $wait_short seconds 
     EndIf
 
 And I "am in the Allocate Wave dialog box and I need to set Wave Priority"
@@ -447,8 +584,8 @@ Given I "open the Outbound Plannner Waves and Picks screen"
 
 And I unassign variables "wms_screen_to_open,wms_parent_menu"
 
-@wip @public    
-Scenario: Web Navigate to Picking Waves and Picks
+#@wip @public    
+#Scenario: Web Navigate to Picking Waves and Picks
 #############################################################
 # Description: Use Web Search to navigate to Picking/Waves and Picks screen
 # MSQL Files:
@@ -462,13 +599,15 @@ Scenario: Web Navigate to Picking Waves and Picks
 #	None
 #############################################################
 
-Given I "open the Outbound Plannner screen"
-	Then I assign "Waves and Picks" to variable "wms_screen_to_open"
-	And I assign "Picking" to variable "wms_parent_menu"
-	Then I execute scenario "Web Screen Search"
+#Given I "Go to Search box and enter ABB Outbound Planner Screen"
+#	Then I assign "Waves and Picks" to variable "wms_parent_menu"
+#	And I assign "ABB Outbound Planner" to variable "wms_screen_to_open"
+#	When I execute scenario "Web Screen Search"
+	
+#	And I wait $wait_med seconds 
+#	Once I see "Waves and Picks" in web browser
 
-And I unassign variables "wms_screen_to_open,wms_parent_menu"
-    
+#And I unassign variables "wms_parent_menu,wms_screen_to_open"
 
 @wip @public
 Scenario: Web Assign Picks
@@ -477,18 +616,18 @@ Given I "search by Wave Number"
 	And I assign "wave" to variable "component_to_search_for"
     And I assign $schbat1 to variable "string_to_search_for"
 	When I execute scenario "Web Component Search"
- 
+
 #And I "select the wave from the list"
 #	Given I assign variable "search2" by combining "text:" $schbat1
 #	When I click element $search2 in web browser within $max_response seconds 
 #	And I wait $wait_med seconds 
 
-And I "click Picks tab"
-    Then I assign variable "elt" by combining "xPath://span[text()='Picks']/ancestor::a"
+And I "select checkbox for picks"
+	Then I assign variable "elt" by combining "xPath://div[starts-with(@id,'gridcolumn-')]/descendant::span[contains(@class,'x-column-header-text')]"
+	Once I see element $elt in web browser
 	And I click element $elt in web browser within $max_response seconds
 
 Then I "assign user from actions menu"
-	And I click element "xPath://tr[contains(@id,'rpMultiLevelGridView')]/descendant::div[contains(@class,'grid-row-checker')]" in web browser within $max_response seconds
 	And I click element "xPath://span[text()='Actions']/.." in web browser within $max_response seconds
 	And I click element "xPath://span[text()='Assign User']" in web browser within $max_response seconds
 
@@ -501,7 +640,7 @@ And I "click element select the user"
 	And I press keys "ENTER" in web browser
     
 And I "select the user"
-	Then I assign variable "elt" by combining $xPath "//td[contains(@class,'headerId-gridcolumn')]/descendant::div[text()='" $username "']"
+	Then I assign variable "elt" by combining $xPath "//td[contains(@class,'headerId-gridcolumn')]/descendant::div[text()='" $userlogin "']"
 	And I click element $elt in web browser within $max_response seconds
     And i click element "xPath://span[text()='Select']/.." in web browser within $max_response seconds
     Once I see element "xPath://div[contains(text(),'The selected work has been assigned')]" in web browser
@@ -729,3 +868,214 @@ Scenario: Validate Wave Unplan
 # Private Scenarios:
 # None
 #############################################################
+@wip @public
+Scenario: Web Wave info
+#############################################################
+# Description: This scenario gets the planned wave number to use for allocation
+# MSQL Files:
+#   get_schbat_for_shipment.msql
+# Inputs:
+#   Required:
+#       wave_num - Wave Number
+#   Optional:
+#       None
+# Outputs:
+#   schbat1 - schbat value renamed    
+#############################################################
+ 
+Given I "search by Wave Number"
+    And I assign "wave" to variable "component_to_search_for"
+    And I assign $wave_num to variable "string_to_search_for"
+    When I execute scenario "Web Component Search"
+    And I wait $wait_short seconds
+ 
+    And I "select the wave from the list"
+    Given I assign variable "search2" by combining "text:" $wave_num
+    When I click element $search2 in web browser within $max_response seconds
+    And I wait $wait_med seconds
+########################################################
+
+@wip @public
+Scenario: Check for shorts
+#############################################################
+# Description: This scenario checks for shorts in wave screen
+# MSQL Files:
+#   None
+# Inputs:
+#   Required:
+#       wave_num - Wave number
+#       cancel_short_method - cancel code (Cancel Short and Reallocate or Cancel Short)
+#   Optional:
+#       None
+# Outputs:
+#   None                
+#############################################################
+ 
+#Given I "select the Wave from the grid"
+#   Then I assign variable "elt" by combining "xPath://tr[starts-with(@id,'gridview') and contains(@id,'" $wave_num "')]/td/div/span"
+#   And I click element $elt in web browser within $max_response seconds
+    Given I click element "xPath://span[starts-with(@id,'rpCountButton') and text()='Shorts']/ancestor::a" in web browser within $max_response seconds
+#Then I execute MOCA script "Scripts\MSQL_Files\Custom\get_if_shorts.msql"
+#If I verify MOCA status is 0
+    #Then I assign row 0 column "shrtqty" to variable "untqty"
+    #And I echo $untqty
+    #If I verify $untqty is not equal to "0"
+        #Given I "Open terminal and transfer items"
+            #Then I "login to the terminal"
+            #And I execute scenario "Terminal Login"
+        #When I "navigate to the transfer screen and perform transfer"
+            #Then I execute scenario "Terminal Navigate to Inventory Transfer Menu"
+            #And I execute scenario "Terminal Inventory Transfer Undirected"
+ 
+#Then I "logout of the terminal"
+    #And I execute scenario "Terminal Logout"
+    #Endif
+#Endif
+ 
+ 
+@wip @public
+Scenario: Check for shorts web
+#############################################################
+# Description: This scenario checks for shorts in wave screen
+# MSQL Files:
+#   None
+# Inputs:
+#   Required:
+#       wave_num - Wave number
+#       cancel_short_method - cancel code (Cancel Short and Reallocate or Cancel Short)
+#   Optional:
+#       None
+# Outputs:
+#   None                
+#############################################################
+ 
+Given I "select the Wave from the grid"
+And I assign "Shorta" to variable "actcod"
+           Then I assign $wave_num to variable "actkey"
+           Then I execute scenario "Start Timer"
+    Then I assign variable "elt" by combining "xPath://tr[starts-with(@id,'gridview') and contains(@id,'" $wave_num "')]/td/div/span"
+        Given I click element "xPath://span[starts-with(@id,'rpCountButton') and text()='Shorts']/ancestor::a" in web browser within $max_response seconds
+    Once I see $wave_num in web browser
+    Then I execute scenario "Stop Timer"
+ 
+Then I wait $wait_short seconds
+########################################################
+@wip @public
+Scenario: Check for pending replens
+#############################################################
+# Description: This scenario checks for pending replens in wave screen
+# MSQL Files:
+#   None
+# Inputs:
+#   Required:
+#       wave_num - Wave number
+#       cancel_short_method - cancel code (Cancel Short and Reallocate or Cancel Short)
+#   Optional:
+#       None
+# Outputs:
+#   None                
+#############################################################
+Given I "select tab pending replenishments"
+    Once I see element "xPath://span[starts-with(@id,'rpCountButton') and text()='Pending Replens']/ancestor::a" in web browser within $wait_med seconds
+    Then I click element "xPath://span[starts-with(@id,'rpCountButton') and text()='Pending Replens']/ancestor::a" in web browser
+Then I execute MOCA script "Scripts\MSQL_Files\Custom\get_if_pendReplens.msql"
+If I verify MOCA status is 0
+    Given I "Go to Work Queue And Assign User"
+        And I execute scenario "Terminal Login"
+        And I execute scenario "Terminal Navigate to Directed Work Menu"
+        When I execute scenario "Terminal Pending Replenishment"
+        And I execute scenario "Terminal Logout"
+Endif
+########################################################
+@wip @public
+Scenario: Move inventory in case of shorts
+ 
+Given I "see shorts in wave"
+Then I assign "xPath://div[@class='x-component rpux-tag-component rpux-tag-urgent x-component-default' and text()='Short']" to variable "short_flag"
+
+And I assign 1 to variable "i"
+While I see element $short_flag in web browser
+	And I "select checkbox for shorts"
+		Then I assign variable "elt" by combining "xPath://div[starts-with(@id,'gridcolumn-')]/descendant::span[contains(@class,'x-column-header-text')]"
+		Once I see element $elt in web browser
+		And I click element $elt in web browser within $max_response seconds
+
+	And I "select the 'Actions' drop-down"
+	#When I "click the collapse button first"
+		#And I click element "xPath://a[contains(@class, 'documentheader-info-expandable-btn') and contains(@class, 'x-btn-pressed')]" in web browser within $wait_long seconds
+		And I wait $wait_short seconds
+		Then I click element "xPath://a[contains(@class, 'x-btn') and contains(@class, 'rp-menu-btn') and contains(@class, 'x-unselectable') and contains(@class, 'rp-btn-shadow') and contains(@class, 'x-box-item') and contains(@class, 'x-btn-default-small') and contains(@class, 'x-noicon') and contains(@class, 'x-btn-noicon') and contains(@class, 'x-btn-default-small-noicon') and @hidefocus='on'  and @tabindex='0']" in web browser within $max_response seconds
+		Then I click element "xPath://div[contains(@class,'x-menu-item')]/a[contains(@class,'x-menu-item-link')]/span[@class='x-menu-item-text' and text()='Cancel Short']" in web browser within $max_response seconds
+		And I wait $wait_med seconds
+EndWhile
+#And I "copy item identifier"
+#Then I assign variable "Order_identifier" by combining "xPath://tr[contains(@class, 'x-grid-row')]/td[contains(@class, 'x-grid-cell') and contains(@class, 'x-grid-cell-headerId-rpMultiDataColumn-1797')]/div[contains(@class, 'x-grid-cell-inner')]/span/div[contains(@class, 'overflow-text')][1]"
+#Then I copy text inside element $Order_identifier in web browser to variable "Order_identifier2"
+ 
+#And I execute scenario "Web Navigate to Inventory Screen"
+#Given I "look for the items to move"
+#Then I assign $Order_identifier2 to variable "string_to_search_for"
+#And I assign "Item" to variable "component_to_search_for"
+#And I execute scenario "Web Component Search"
+#And I assign "xPath://a[contains(@class, 'rp-count-button') and .//span[@class='rpux-count-btn-text' and text()='LPNs']]" to variable "LPNs_button"
+#And I click element $LPNs_button in web browser
+#Then I "start cheking for appropiate LPN using counter"
+#And I assign "xPath://div[contains(@class, 'x-component') and contains(@class, 'rpux-tag-component') and contains(@class, 'rpux-tag-non-urgent') and contains(@class, 'x-box-item') and contains(@class, 'x-component-default') and text()='Pending Move']" to variable "PendingMovement_flag"
+#And I assign "xPath://div[@id='wm-inventorydisplay-inventorydisplay_header']//span[@style='display:table;']/div[@style='height: 100%; vertical-align: top; display: table-cell;']/a/span[@class='x-btn-wrap']" to variable "back_button"
+#Then I assign variable "LPN" by combining "xPath:(//td[contains(@class, 'x-grid-cell-headerId-rpLinkColumn-1273') and contains(@class, 'rpux-link-grid-column')]/div[contains(@class, 'x-grid-cell-inner')]/span[contains(@class, 'rpux-link-grid-column-link')])[1]"
+#And I click element $LPN in web browser
+#And I wait 5 seconds
+# Initialize the counter
+#And I assign 2 to variable "n"
+#while I see element $PendingMovement_flag in web browser
+#    Then I click element $back_button in web browser
+#    Then I assign variable "LPN_var" by combining "xPath:(//td[contains(@class, 'x-grid-cell-headerId-rpLinkColumn-1273') and contains(@class, 'rpux-link-grid-column')]/div[contains(@class, 'x-grid-cell-inner')]/span[contains(@class, 'rpux-link-grid-column-link')])[" $n "]"
+ 
+    # Increment the counter
+#    Then I assign variable "n" by combining "" $n ""+1
+#    Then I click element $LPN_var in web browser
+#endwhile
+#Then I "Click move inventory and select location"
+#Then I click element "xPath://span[@class='x-btn-button' and @role='presentation' and span[@class='x-btn-inner x-btn-inner-center' and @style='line-height: 21px;']/text()='Actions']" in web browser within $max_response seconds
+#Then I click element "xPath://div[contains(@class, 'x-menu-item')]/a[contains(@class, 'x-menu-item-link')]/span[contains(@class, 'x-menu-item-text') and text()='Move Inventory']" in web browser within $max_response seconds
+#Then I see "Move LPN" in web browser within $max_response seconds
+#Then I assign "xPath:(//input[contains(@class, 'x-form-field') and contains(@class, 'x-form-required-field') and contains(@class, 'x-form-text')])[2]" to variable "destination_box"
+#Then I click element $destination_box in web browser
+#Then I type $stoloc1 in element $destination_box in web browser
+#And I wait 5 seconds
+#And I assign variable "location1" by combining "xPath://li[@role='option' and text()='" $stoloc1 "']"
+#If I see element $location1 in web browser
+#And I wait 3 seconds
+#Then I press keys "ENTER" in web browser
+#And I wait 3 seconds
+#And I click element "xPath:(//input[contains(@class, 'x-form-field') and contains(@class, 'x-form-required-field') and contains(@class, 'x-form-text')])[1]"in web browser within $max_response seconds
+#else I clear all text in element $destination_box in web browser
+#Then I type $stoloc2 in element $destination_box in web browser
+#And I wait 3 seconds
+#Then I press keys "ENTER" in web browser
+#And I wait 3 seconds
+#And I click element "xPath:(//input[contains(@class, 'x-form-field') and contains(@class, 'x-form-required-field') and contains(@class, 'x-form-text')])[1]"in web browser within $max_response seconds
+#endif
+#Then I click element "xPath:(//input[@type='button' and @role='radio' and contains(@class, 'x-form-field') and contains(@class, 'x-form-radio') and contains(@class, 'x-form-cb')])[1]" in web browser within $max_response seconds
+#Then I click element "xPath://a[contains(@class, 'x-btn') and contains(@class, 'x-btn-default-medium') and contains(@class, 'x-noicon') and contains(@class, 'x-btn-noicon') and contains(@class, 'x-btn-default-medium-noicon') and .//span[@class='x-btn-inner x-btn-inner-center' and text()='Move']]" in web browser within $max_response seconds
+#Then I click element "xPath://a[contains(@class, 'x-btn') and contains(@class, 'x-unselectable') and contains(@class, 'x-btn-default-small') and contains(@class, 'x-noicon') and contains(@class, 'x-btn-noicon') and contains(@class, 'x-btn-default-small-noicon') and .//span[@class='x-btn-inner x-btn-inner-center' and text()='OK']]" in web browser within $max_response seconds
+#And I click element "xPath://span[contains(@class, 'x-btn-inner') and contains(@class, 'x-btn-inner-left') and text()='ABB INVENTORY']" in web browser within $max_response seconds
+#And I click element "xPath://div[@class='x-component x-box-item x-component-default x-menu-item']/a[@class='x-menu-item-link ']/span[text()='ABB OUTBOUND PLANNER']" in web browser within $max_response seconds
+#And I execute scenario "Web Wave info"
+#And I click element "xPath://span[contains(@class, 'x-btn-inner') and contains(@class, 'x-btn-inner-center') and span[@class='rpux-count-btn-text' and text()='Shorts']]" in web browser
+#Then I click element "xPath:(//tr[contains(@class, 'x-grid-row') and contains(@class, 'x-grid-data-row')])[3]" in web browser
+
+#Endwhile
+########################################################
+@wip @public
+Scenario: Check for replenishments
+Given I "Check for replenishments tab"
+ Once I see element "xPath://span[starts-with(@id,'rpCountButton') and text()='Pending Replens']/ancestor::a" in web browser within $wait_med seconds
+    Then I click element "xPath://span[starts-with(@id,'rpCountButton') and text()='Pending Replens']/ancestor::a" in web browser
+
+@wip @public
+Scenario: Navigate to Waves and Picks
+Given I "Use Search Box for Waves and Picks"
+	Then I assign "Waves and Picks" to variable "wms_screen_to_open"
+	When I execute scenario "Web Screen Search"
+	Once I see element "xPath://span[text()='Waves and Picks']" in web browser

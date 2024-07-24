@@ -1,0 +1,10 @@
+/* GENERATE LNP */
+
+generate next number
+where numcod = 'lodnum'
+|
+[select replace(@nxtnum, 'L', '9') as lodnum
+   from dual]
+|
+publish data
+ where lodnum = @lodnum

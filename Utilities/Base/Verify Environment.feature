@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Verify Environment.feature
 # 
 # Functional Area: Connections
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: utility
 # Blue Yonder Interfaces Interacted With: Terminal, WEB, MOCA, Native, Mobile
@@ -34,6 +34,7 @@
 #
 # Notes:
 # None
+#
 #
 ############################################################
 Feature: Verify Environment

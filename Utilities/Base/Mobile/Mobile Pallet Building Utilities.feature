@@ -1,5 +1,5 @@
 ############################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at
@@ -13,7 +13,7 @@
 # Utility: Mobile Pallet Building Utilities.feature
 # 
 # Functional Area: Pallet Building
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: Regression
 # Blue Yonder Interfaces Interacted With: Mobile

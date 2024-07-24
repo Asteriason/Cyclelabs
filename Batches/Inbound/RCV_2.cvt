@@ -1,0 +1,11 @@
+[ {
+  "resources" : "..\\..",
+  "classes" : [ ],
+  "namespaces" : [ ]
+}, {
+  "name" : "RCV_2",
+  "feature" : "..\\..\\Test Cases\\ABB_Click_N_Win\\Inbound\\rcv-all_3 copy.feature",
+  "devices" : "..\\..\\Test Case Inputs\\ABB_Click_N_Win\\Inbound\\performance_trknum.csv",
+  "tags" : "ABB-RCV-01",
+  "enabled" : "true"
+} ]

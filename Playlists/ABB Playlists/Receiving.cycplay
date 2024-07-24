@@ -1,0 +1,14 @@
+Playlist: 
+
+Resources: ..\..
+
+Working Directory: 
+
+Namespaces: 
+
+FailFast: NONE
+
+Items:
+Feature: ..\..\Test Cases\ABB Test Cases\Receiving\ABB-RCV-01 Review Inbound Shipment.feature
+Feature: ..\..\Test Cases\ABB Test Cases\Receiving\ABB-RCV-02 Check In Inbound Shipment.feature
+Feature: ..\..\Test Cases\ABB Test Cases\Receiving\ABB-RCV-03 Receive Inbound Shipment.feature

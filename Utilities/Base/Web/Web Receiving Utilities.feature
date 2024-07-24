@@ -1,5 +1,5 @@
 ############################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Web Receiving Utilities.feature
 # 
 # Functional Area: Receiving
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: utility
 # Blue Yonder Interfaces Interacted With: WEB, MOCA
@@ -143,19 +143,19 @@ And I unassign variables "wms_screen_to_open,wms_parent_menu"
 
 
 @wip @public
-Scenario: Web Check Over Receipt Inbound Shipment
-When I assign variable "elt" by combining "xPath://span[contains(text(), '" $trknum "')]"
+Scenario: Web Check Red Bar
+When I assign variable "elt" by combining "xPath://span[contains(text(), '" $inb_ship "')]"
 Once I see element $elt in web browser within $wait_med seconds
-If I see element "xPath://div[@class='progress-bar over']" in web browser
-	Then I assign "Shipment is Over Receipt" to variable "result"
+If I see element "xPath://td[contains(@class, 'receivingStatus')]//div[@class='progress-bar over']" in web browser
+	Then I assign "Bar is red" to variable "result"
+	And I save web browser screenshot
+Elsif I see element "xPath://td[contains(@class, 'receivingStatus')]//div[@class='progress-bar under']" in web browser
+	Then I assign "Bar is blue" to variable "result"
+	And I fail step with error message $result
+Elsif I see element "xPath://td[contains(@class, 'receivingStatus')]//div[@class='progress-bar complete']" in web browser
+	Then I assign "Bar is green" to variable "result"
+	And I fail step with error message $result
 EndIf
-If I see element "xPath://div[@class='progress-bar under']" in web browser
-	Then I assign "Shipment is in progress" to variable "result"
-EndIf
-If I see element "xPath://div[@class='progress-bar complete']" in web browser
-	Then I assign "Shipment is complete" to variable "result"
-EndIf
-
 
 @wip @public
 Scenario: Web Open Receiving Door Activity Screen
@@ -174,7 +174,7 @@ Scenario: Web Open Receiving Door Activity Screen
 
 Given I "open the Receiving/Door Activity screen"
 	And I assign "Door Activity" to variable "wms_screen_to_open"
-	And I assign "Receiving" to variable "wms_parent_menu"
+	And I assign "ABB Receiving" to variable "wms_parent_menu"
 	And I execute scenario "Web Screen Search"
 	Once I see "Door Activity" in web browser
 
@@ -307,6 +307,23 @@ And I "select Staging Lane and Save"
 And I "receive and perform putaway"
 	Then I execute scenario "Web Receiving Perform Receiving and Putaway"
 
+
+@wip @public
+Scenario: Web Perform Close And Dispatch
+
+And I "Go to the Search box and enter my search arguments"
+	Then I execute scenario "Web Open Receiving Door Activity Screen"
+
+And I "search for my truck sitting at my dock door"
+	Then I execute scenario "Web Dock Door Search for Trailer"
+    
+And I "click on Trailer"
+	Then I execute scenario "Web Door Activity Select Trailer"
+    
+And I "complete receive and dispatch equipment"
+	Then I execute scenario "Web Trailer Close and Dispatch Equipment"
+
+
 @wip @public
 Scenario: Web Perform Receiving
 #############################################################
@@ -374,12 +391,18 @@ Scenario: Web Trailer Close and Dispatch Equipment
 # Outputs:
 #	None
 #############################################################
-
+And I "create an xPath to the Dock Door Actions drop-down"
+	Then I assign variable "elt" by combining $xPath
+	And I assign variable "elt" by combining $elt "//div[starts-with(@id,'wm-loaddetails')]"
+	And I assign variable "elt" by combining $elt "//div[starts-with(@id,'wm-loaddetails-bottomcontrols-')"
+	And I assign variable "elt" by combining $elt " and contains(@id,'-innerCt')]"
+	And I assign variable "elt" by combining $elt "//span[text()='Actions']/..//span[2]"
+	When I assign $elt to variable "dock_door_Actions_button"
 Given I "select the 'Actions' drop-down"
 	When I click element $dock_door_Actions_button in web browser within $max_response seconds 
 
+
 And I "close if needed and dispatch trailer"
-	Then I assign "TRUE" to variable "perform_close"
 	If I verify variable "auto_close_flag" is assigned
 	And I verify text $auto_close_flag is equal to "TRUE" ignoring case
 		Then I assign "FALSE" to variable "perform_close"
@@ -395,13 +418,13 @@ And I "close if needed and dispatch trailer"
 		When I click element $dispatch_equipment_choice in web browser within $max_response seconds 
 
 	And I "press ENTER for the YES/NO Confirmation"
-		if I verify text $perform_close is equal to "TRUE"
+		if I see "Yes" in web Browser within $wait_long seconds
 			Then I press keys "ENTER" in web browser
 		EndIf
    
-	And I "wait for the trailer to close/dispatch" which can take between $wait_long seconds and $max_response seconds
 
 And I "get the 'Dispatch Equipment' dialog box. I only need to select 'Dispatch' and we're done"
+	Once I see "Dispatch Equipment" in web browser
 	When I click element $final_dispatch in web browser within $max_response seconds 
  
 And I "get the 'Check Out Complete' Confirmation and press Enter"
@@ -412,7 +435,7 @@ And I "get the 'Check Out Complete' Confirmation and press Enter"
 Scenario: Web Inbound Shipments Search for Shipment
 #############################################################
 # Description: From inbound shipment screen, use search box to 
-# find shipment from the trailer
+# find shipment from the 
 # MSQL Files:
 #	None
 # Inputs:
@@ -428,8 +451,8 @@ Given I "am on the Inbound Shipment screen"
 	Once I see "Inbound Shipments" in web browser
 
 And I "search for trailer/shipment with the Inbound Shipment search box"
-	Then I assign "Equipment Number" to variable "component_to_search_for"
-	And I assign $trlr_num to variable "string_to_search_for"
+	Then I assign "Inbound Shipment Number" to variable "component_to_search_for"
+	And I assign $trknum to variable "string_to_search_for"
 	And I execute scenario "Web Component Search"
     
     And I unassign variables "component_to_search_for,string_to_search_for"
@@ -1015,31 +1038,28 @@ Scenario: Web Receiving Validate Inbound Shipment
 #############################################################
 
 Given I "validate screen data for shipment"
-	Once I see $yard_loc in web browser
 	Once I see $trlr_num in web browser
-        
-And I "click into the shipment from the shipment link"
-	Then I assign variable "elt" by combining "xPath://span[@class='rpux-link-grid-column-link' and text()='" $trlr_num "']"
-	And I click element $elt in web browser within $max_response seconds
-        
-And I "validate inbound shipment screen"
-	Once I see $yard_loc in web browser
-	And I assign variable "inb_ship_string" by combining "Inbound Shipment - " $trlr_num
-	Once I see $inb_ship_string in web browser
-        
-And I "click into the order"
-	Then I assign variable "elt" by combining "xPath://a[contains(@id, 'rpHyperlink-') and text()='" $trlr_num "']"
-	And I click element $elt in web browser within $max_response seconds
-        
-And I "validate the planned inbound order"
-	Once I see $yard_loc in web browser
-	Once I see $prtnum in web browser
-	And I assign variable "planned_ord_string" by combining "Planned Inbound Order - " $trlr_num
-    Once I see $planned_ord_string in web browser
-    And I assign variable "expected_quantity" by combining $expqty " Units"
-	Once I see $expected_quantity in web browser
 
-And I unassign variables "planned_ord_string,inb_ship_string,expected_quantity,elt"
+Given I "click to activate Perform Workflow"
+	Then I execute scenario "Web Perform Transport Equipment Workflow Safety Check Pass"
+
+	If I do not see element "text:Capture Seal" in web browser within $wait_med seconds
+		Then I execute scenario "Web Perform Transport Equipment Workflow Safety Check Pass"
+	EndIf
+
+When I "see the window Capture Seal"
+	Once I see element "text:Capture Seal" in web browser
+	And I click element "xPath://div[starts-with(@id, 'container') and contains(@class, 'wm-questiongrouper-row-column')]//table[contains(@class, 'x-form-item')]//label[contains(text(), 'Value')]/ancestor::table//input[starts-with(@id, 'textfield') and contains(@class, 'x-form-field')]" in web browser within $wait_med seconds
+	And I type $seal in element "xPath://div[starts-with(@id, 'container') and contains(@class, 'wm-questiongrouper-row-column')]//table[contains(@class, 'x-form-item')]//label[contains(text(), 'Value')]/ancestor::table//input[starts-with(@id, 'textfield') and contains(@class, 'x-form-field')]" in web browser within $max_response seconds
+	And I click element "xPath://div[contains(@class, 'x-window') and .//span[text()='User Instruction Actions']]//a[contains(@class, 'x-btn') and .//span[contains(@class, 'x-btn-inner') and text() = 'Save']]" in web browser within $wait_med seconds
+	
+	If I do not see element "text:Check In Successful" in web browser within $wait_med seconds
+		Then I execute scenario "Web Perform Transport Equipment Workflow Safety Check Pass"
+	EndIf
+	
+Given I "screen equipment is checked "
+	Once I see element "text:Check In Successful" in web browser
+	And I click element "xPath://span[text()='OK']/..//span[2]" in web browser within $wait_med seconds
 
 @wip @public
 Scenario: Validate Putaway Process
@@ -1256,7 +1276,7 @@ Given I "am on the Inbound Shipment screen"
 
 And I "search for trailer/shipment with the Inbound Shipment search box"
 	Then I assign "Inbound Shipment Number" to variable "component_to_search_for"
-	And I assign $trknum to variable "string_to_search_for"
+	And I assign $inb_ship to variable "string_to_search_for"
 	And I execute scenario "Web Component Search"
     
 And I unassign variables "component_to_search_for,string_to_search_for"    
@@ -1889,7 +1909,7 @@ Given I "search for trailer relative to dock door with search box"
 And I unassign variables "component_to_search_for,string_to_search_for"
 
 @wip @private
-Scenario: Create local xPaths
+Scenario: Create Receiving Local xPaths
 #############################################################
 # Description: Create xpath variables for use in this utility
 # MSQL Files:
@@ -2429,4 +2449,484 @@ Then I "validate reversed LPN details in the View LPNs Tab"
 	If I do not see element $elt in web browser within $max_response seconds
 		Then I echo "reversed LPN is not listed"
 	Else I fail step with error message "ERROR: reversed LPN is listed and that is not expected"
+	EndIf
+
+@wip @public
+Scenario: Web Open Check In Inbound Shipment Screen
+#############################################################
+# Description: Traverse to top-level Search Box in Web UI
+# and search/open the main Inventory screen
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		None
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "Go to Search box and enter ABB Receiving"
+	Then I assign "ABB Receiving" to variable "wms_parent_menu"
+	And I assign "Check In" to variable "wms_screen_to_open"
+	When I execute scenario "Web Screen Search"
+	And I wait $wait_med seconds 
+	Once I see "Check In" in web browser
+
+And I unassign variables "wms_parent_menu,wms_screen_to_open"
+
+@wip @public
+Scenario: Web Select Check In Without Appointment
+#############################################################
+# Description: This scenario selects the Check In Without Appointment option in the web
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		None
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "click the Check In Without Appointment link"
+	When I assign variable "elt" by combining "xPath://a[text()='Check in without appointment']"
+	Then I click element $elt in web browser within $max_response seconds
+
+@wip @public
+Scenario: Web Search for Inbound Trailer Without Appointment
+#############################################################
+# Description: This scenario selects the trailer to check in
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		trlr_num - Trailer Number
+#		carcod - Carrier Code
+#	Optional:
+#		None
+# Outputs:
+#   None
+#############################################################
+
+Given I "search for the trailer to check in"
+	When I assign variable "elt" by combining "xPath://input[starts-with(@id,'trailerlookup-') and contains(@id,'-inputEl')]"
+	Then I click element $elt in web browser within $max_response seconds 
+	And I type $trlr_num in element $elt in web browser within $max_response seconds
+	And I assign variable "elt" by combining "xPath://div[starts-with(@class,'x-boundlist-') and text()='" $trlr_num "']"
+	Once I see element $elt in web browser
+	Then I click 2nd element $elt in web browser within $max_response seconds
+	And I press keys "ENTER"
+
+@wip @public
+Scenario: Web Select Dock Door for Check In
+#############################################################
+# Description: This scenario selects the Input dock door
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		dock - the Input dock door for Check In
+#	Optional:
+#		None
+# Outputs:
+#   None
+#############################################################
+
+Given I "select the Input dock door from the list of doors"
+	When I assign variable "elt" by combining "xPath://div[text()='" $dock "']"
+	Once I see element $elt in web browser
+	Then I click element $elt in web browser within $max_response seconds 
+	
+@wip @public
+Scenario: Web Check In Inbound Trailer
+#############################################################
+# Description: This scenario selects the Check In option in the web
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		None
+#	Optional:
+#		None
+# Outputs:
+#   None
+#############################################################
+
+Given I "click the Check In button"
+	When I assign variable "elt" by combining "xPath://span[starts-with(@id,'button-') and text()='Check In']/.."
+	Then I click element $elt in web browser within $max_response seconds
+	
+@wip @public
+Scenario: Web Verify Inbound Trailer Check In
+#############################################################
+# Description: This scenario verifies in the web that trailer check in was successful
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		xPath_span_OK_sibling - A prebuilt variable in Web Element Utilities for child OK buttons
+#	Optional:
+#		None
+# Outputs:
+#   None                     
+#############################################################
+
+Given I "ensure that I see a successful check-in and click the 'OK' button"
+	Once I see "Check In Successful" in web browser
+	Then I click element $xPath_span_OK_sibling in web browser within $max_response seconds
+
+@wip @public
+Scenario: Assign Trailer to Shipment
+#############################################################
+# Description: This scenario assigns a receiving trailer to inbound shipment
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		
+#	Optional:
+#		None
+# Outputs:
+#   None                     
+#############################################################
+
+Given I "select the Actions Drop Down"
+	Then I assign variable "elt" by combining "xPath://span[starts-with(@id,'button-') and contains(@id,'-btnInnerEl') and .= 'Actions']/ancestor::a[starts-with(@id,'button-')]"
+	And I click element $elt in web browser within $max_response seconds
+
+And I "click the Modify Inbound Shipment"
+	Then I assign variable "elt" by combining "xPath://span[starts-with(@id,'inboundLoadHeader_modifyaction-textEl') and text()='Modify Inbound Shipment']"
+	And I click element $elt in web browser within $max_response seconds
+	
+#And I "verify the Modify Inbound Shipment window appears"  
+#  And I assign variable "elt" by combining "xPath://div[starts-with(@id, 'wm-inboundloads-addload-1534_header_hd-textEl')]"
+#  Once I see element $elt in web browser
+
+And I "enter trailer number"
+	Then I assign variable "elt" by combining "xPath://input[contains(@name, 'trailerId')]"
+    And I click element $elt in web browser within $max_response seconds
+	And I type $trlr_num in element $elt in web browser within $max_response seconds
+   	And I click element "xPath://input[contains(@name, 'masterReceiptReference')]" in web browser within $max_response seconds
+    And I press keys "ENTER" in web browser
+
+And I "press Save button"
+	#Then I assign variable "elt" by combining "xPath://div[starts-with(@id, 'wm-inboundloads-addload')]/descendant::span[text()='Save']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn')]"
+	Then I click element "xPath://div[starts-with(@id, 'wm-inboundloads-addload')]/descendant::span[text()='Save']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn')]" in web browser within $max_response seconds
+    
+And I "verify inbound shipment is saved"
+	Then I assign variable "elt" by combining "xPath://span[starts-with(@id, 'wm-inboundloads-inboundloads_header_hd-') and text() = 'Inbound Shipment - " $trknum "']"
+	And I see element $elt in web browser within $wait_med seconds
+
+@wip @public
+Scenario: Web Receiving Validate Inbound Shipment Part 1
+#############################################################
+# Description: Validates the shipment and order in the Web
+# MSQL Files:
+#	None
+# Inputs:
+# 	Required:
+#		yard_loc - yard location
+#		trlr_num - trailer number
+#		prtnum - part number
+#		expqty - expected quantity of prtnum
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "validate screen data for shipment"
+	Once I see $trknum in web browser
+        
+And I "click into the shipment from the shipment link"
+	Then I assign variable "elt" by combining "xPath://span[@class='rpux-link-grid-column-link' and text()='" $trknum "']"
+	And I click element $elt in web browser within $max_response seconds
+And I unassign variables "elt"
+
+@wip @public
+Scenario: Web Navigate to Inbound Planner Work Queue Screen
+#############################################################
+# Description: Use Web Search to navigate to Outbound Planner/Outbound Screen
+# MSQL Files:
+#	None
+# Inputs:
+# 	Required:
+#		None
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "open the Inbound Planner screen"
+	Then I assign "Work Queue" to variable "wms_screen_to_open"
+	And I assign "ABB Receiving" to variable "wms_parent_menu"
+	Then I execute scenario "Web Screen Search"
+
+@wip @public
+Scenario: Web OSD Complete
+#############################################################
+# Description: Complete the OSD process
+# MSQL Files:
+#   None
+# Inputs:
+#   Required:
+#       trknum- the inbound shipment number
+#        wh_id - warehouse id
+#   Optional:
+#       None
+# Outputs:
+#     detail_lpn - detail lpn for receiving
+#############################################################
+
+Given I "click OSD/Complete button"
+	If I "take a web browser screen shot if requested"
+		And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+		Then I save web browser screenshot
+	EndIf
+	And I "click the 'OSD/Complete' button"
+	Given I assign variable "elt" by combining "xPath://span[text()='OSD/Complete']/..//span[2]"
+	When I click element $elt in web browser within $max_response seconds
+
+Once I see "OSD" in web browser 
+And I unassign variable "elt"
+
+Given I "see the OSD tab"
+	And I "clic the 'Complete Inbound Shipment' button"
+	Given I assign variable "elt" by combining "xPath://span[text()='Complete Inbound Shipment']/..//span[2]"
+	When I click element $elt in web browser within $max_response seconds
+
+Once I see "Confirmation" in web browser
+And I unassign variable "elt"
+
+Then I "click the Leave equipment at door radio button"
+			And I assign variable "elt" by combining "xPath://label[text()='Leave equipment at door']/..//input[@type='button']"
+			And I click element $elt in web browser within $max_response seconds
+
+And I "press the OK Button"
+	Then I assign variable "elt" by combining "xPath://span[text()='OK']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn')]"
+	When I click element $elt in web browser within $max_response seconds
+	And I wait $wait_short seconds 
+
+@wip @public
+Scenario: Web Navigate to Inbound Planner Work Queue Screen
+#############################################################
+# Description: Use Web Search to navigate to Inbound Planner/Inbound Screen
+# MSQL Files:
+#   None
+# Inputs:-
+#   Required:
+#       None
+#   Optional:
+#       None
+# Outputs:
+#   None
+#############################################################
+ 
+Given I "open the Inbound Planner screen"
+    Then I assign "Work Queue" to variable "wms_screen_to_open"
+    And I assign "ABB Receiving" to variable "wms_parent_menu"
+    Then I execute scenario "Web Screen Search"
+   
+#############################################################
+ 
+@wip @public
+Scenario: Web Assign Store-Pallet Work
+#
+#
+#
+ 
+Given I "search by operation"
+    And I assign "operation" to variable "component_to_search_for"
+    And I assign "Store-Pallet" to variable "string_to_search_for"
+    When I execute scenario "Web Component Search"
+ 
+Given I "search by operation"
+    And I assign "operation" to variable "component_to_search_for"
+    And I assign "Store-Long" to variable "string_to_search_for"
+    When I execute scenario "Web Component Search"
+ 
+Given I "click the botton to select OR/AND"
+	Once I see "and" in web browser
+	And I click element "xPath://a[contains(@class, 'x-btn') and contains(@class, 'rp-filter-conjunction') and contains(@class, 'x-unselectable') and contains(@class, 'x-btn-default-small') and contains(@class, 'x-noicon') and contains(@class, 'x-btn-noicon') and contains(@class, 'x-btn-default-small-noicon')]" in web browser
+	And I click element "xPath://span[contains(@class, 'x-menu-item-text') and text()='or']" in web browser 
+
+And I "select checkbox for work"
+    Then I assign variable "elt" by combining "xPath://div[starts-with(@class,'x-grid-row-checker')]"
+    Once I see element $elt in web browser
+    And I click element $elt in web browser within $max_response seconds
+ 
+Then I "Resume Work user from actions menu"
+    And I click element "xPath://span[text()='Actions']/.." in web browser within $max_response seconds
+   
+    And I click element "xPath://span[text()='Assign User']" in web browser within $max_response seconds
+ 
+And I "click element select the user"  
+    Then I assign variable "elt" by combining "xPath://td[contains(@id,'rpuxFilterComboBox')]/descendant::input[contains(@id,'rpuxFilterComboBox-')]"
+    And I click element $elt in web browser within $max_response seconds
+    When I clear all text in element $elt in web browser
+    And I assign variable "user_search_string" by combining "login=" $userlogin
+    Then I type $user_search_string in element $elt in web browser
+    And I press keys "ENTER" in web browser
+   
+And I "select the user"
+    Given I assign variable "elt" by combining $xPath "//td[contains(@class,'headerId-gridcolumn')]/descendant::div[text()='" $userlogin "']"
+    And I click element $elt in web browser within $max_response seconds
+    Then i click element "xPath://span[text()='Select']/.." in web browser within $max_response seconds
+    Once I see element "xPath://div[contains(text(),'The selected work has been assigned')]" in web browser
+    And I click element "xPath://span[text()='OK']/.." in web browser within $max_response seconds
+ 
+And I "remove applied filter"
+    Given I assign variable "elt" by combining "xPath://a[@data-qtip='Delete']"
+    If I see element $elt in web browser within $screen_wait seconds
+        Then I click element $elt in web browser within $max_response seconds
+    EndIf
+
+@wip 
+Scenario: Get Inbound Variables Dynamically
+Given I "get data from the shipment"
+	When I execute MOCA script "Scripts\MSQL_Files\Custom\get_inbound_variables.msql"
+	And I assign row 0 column "supnum" to variable "supnum"
+	And I assign row 0 column "prtnum" to variable "prtnum"
+	Then I assign row 0 column "invlin" to variable "invlin"
+	And I assign row 0 column "invnum" to variable "invnum"
+	And I assign row 0 column "trlr_num" to variable "trlr_num"
+
+
+@wip
+Scenario: Review Inbound Shipment
+    And I execute scenario "Web Open Inbound Shipments Screen"
+
+Then I execute MOCA script "Scripts/MSQL_Files/Custom/Create_Trailer.msql"
+And I verify MOCA status is 0
+
+When I "find and validate the inbound shipment"
+	Then I execute scenario "Web Inbound Shipments Search for Shipment"
+	When I execute scenario "Web Receiving Validate Inbound Shipment Part 1"
+	And I execute scenario "Assign Trailer to Shipment" 
+	Then I wait $wait_long seconds
+
+@wip
+Scenario: Enter One to start
+Given I assign 0 to variable "rtnum1"
+While I verify number $rtnum1 is not equal to 1
+	Then I execute MOCA script "Scripts\MSQL_Files\Custom\start_cycle.msql"
+	And I assign row 0 column "rtnum1" to variable "rtnum1"
+EndWhile
+
+
+@wip
+Scenario: Check In Inbound Shipment
+
+If I verify text $check_in is equal to "TRUE"
+	Then I "navigate to the Inbound Shipments Screen"
+		And I execute scenario "Web Open Receiving Transport Equipment Screen"
+
+	When I "find and validate the inbound shipment"
+		And I execute scenario "Web Search for Inbound Trailer"
+
+	And I "check in the trailer"
+		Given I execute scenario "Web Check In Inbound Trailer"
+		#And I execute scenario "Enter One to start"
+		Then I execute scenario "Web Verify Inbound Trailer Check In"
+		And I execute scenario "Web Receiving Validate Inbound Shipment"
+		Then I wait $wait_long seconds
+EndIf
+
+@wip
+Scenario: Inbound Complete OSD Receipt
+	Then I execute scenario "Web Open Inbound Shipments Screen"
+	And I execute scenario "Web Inbound Shipments Search for Shipment"
+	Then I execute scenario "Web Receiving Validate Inbound Shipment Part 1"
+	
+	And I "complete OSD shipment"
+		Then I execute scenario "Web OSD Complete"
+		And I wait $wait_long seconds
+
+@wip 
+Scenario: Inbound Close And Dispatch
+	And I "create xpaths"
+	When I execute scenario "Create Receiving Local xPaths"
+    
+	And I execute scenario "Web Perform Close And Dispatch"
+	Then I wait $wait_long seconds
+
+
+@wip
+Scenario: Store Received Inventory
+	And I execute scenario "Web Navigate to Inbound Planner Work Queue Screen"
+	And I execute scenario "Web Assign Store-Pallet Work"
+	Then I wait $wait_long seconds
+
+@wip
+Scenario: Assign Variables RCV-ALL
+	If I verify variable "override_1" is assigned
+		Then I assign $override_1 to variable "override"
+		Then I assign $override_f2_1 to variable "override_f2"
+		Then I assign $over_code_1 to variable "over_code"
+	EndIf
+		And I assign "" to variable "wrong_location"
+
+@wip
+Scenario: Close Web Browser
+	When I wait $screen_wait seconds 
+	Then I close web browser
+
+@wip
+Scenario: Web Full Create Footprint
+
+And I "given in case FTPCOD is equal to YES or BOGUS"
+	If I verify variable "prtnum" is assigned
+	And I verify text $prtnum is not equal to ""
+		Then I execute moca script "Scripts\MSQL_Files\Custom\get_min_uom.msql"
+		And I verify MOCA status is 0
+		And I assign row 0 column "ftpcod" to variable "ftpcod"
+		Then I echo $ftpcod
+		If I verify text $ftpcod is equal to ""
+			Then I "create a footprint"
+				And I execute scenario "Web Open Inventory Item Overrides Screen"
+				And I execute scenario "Web Item Overrides Search for Item"
+				And I execute scenario "Web Footprint Validate Item"
+				And I execute scenario "Web Create FootPrint"
+		Elsif I verify text $ftpcod is equal to "BOGUS"
+			Then I echo "FTPCOD is equal to BOGUS"
+			When I "log into web browser to create a footprint"
+				Then I "login into the web and navigate to the inventory screen"
+				And I execute scenario "Web Open Inventory Item Overrides Screen"
+				And I execute scenario "Web Item Overrides Search for Item"
+				And I execute scenario "Web Footprint Validate Item"
+				And I execute scenario "Web Create FootPrint"
+		EndIf
+	EndIf
+
+@wip
+Scenario: Assign User, Change Priority and get Vehicle Type
+
+Given I "get the number of work created"
+	When I execute moca script "Scripts\MSQL_Files\Custom\get_lpn_count.msql"
+	And I verify MOCA status is 0
+	Then I assign row 0 column "total_count" to variable "max_count"
+	And I assign 1 to variable "cnt_effpri"
+	And I assign 0 to variable "counter"
+While I verify number $counter is less than $max_count
+	Given I "change work priority"
+		When I assign $dep_loc to variable "srcloc"
+		And I execute MOCA script "Scripts\MSQL_Files\Custom\change_priority_store_pallet.msql"
+		And I verify MOCA status is 0
+		Then I assign row 0 column "chg_reqnum" to variable "reqnum"
+		And I increase variable "counter" by 1
+		And I increase variable "cnt_effpri" by 1
+EndWhile
+Then I unassign variable "dep_loc"
+
+Then I "use the reqnum to get the oprcod for the work operation"
+	When I execute MOCA script "Scripts\MSQL_Files\Custom\get_oprcod_with_reqnum.msql"
+	And I assign row 0 column "oprcod" to variable "oprcod"
+	If I verify text $oprcod is equal to "LNGSTO"
+		Then I assign "PJ" to variable "vehtyp"
+		Elsif I verify text $oprcod is equal to "PALSTO"
+		Then I assign "RT" to variable "vehtyp"
 	EndIf

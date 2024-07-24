@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Work Assignment Utilities.feature
 # 
 # Functional Area: Work Management
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: Utility
 # Blue Yonder Interfaces Interacted With: MOCA
@@ -207,7 +207,7 @@ Given I "search for location to assign user"
 	Then I assign variable "elt" by combining "xPath://div[contains(@id,'wm-common-workqueueoperationsgrid')]/descendant::input[contains(@id,'rpFilterComboBox-')]"
 	And I click element $elt in web browser within $max_response seconds
 	And I clear all text in element $elt in web browser
-	And I assign variable "yard_search_string" by combining "source=" $yard_loc
+	And I assign variable "yard_search_string" by combining "source=" $stoloc
 	And I type $yard_search_string in element $elt in web browser
 	And I press keys "ENTER" in web browser
     
@@ -227,6 +227,7 @@ And I "click element select the user"
 And I "select the user"
 	Then I assign variable "elt" by combining $xPath "//td[contains(@class,'headerId-gridcolumn')]/descendant::div[text()='" $username "']"
 	And I click element $elt in web browser within $max_response seconds
+	And I size web browser to 2000 x 5000
     And i click element "xPath://span[text()='Select']/.." in web browser within $max_response seconds
     Once I see element "xPath://div[contains(text(),'The selected work has been assigned')]" in web browser
     And I click element "xPath://span[text()='OK']/.." in web browser within $max_response seconds

@@ -5,7 +5,7 @@ Description: This MOCA script gets a single LPN from a given location based on p
 
 publish data
   where wh_id = $wh_id
-    and untqty = $untqty
+    and untqty = $rcv_qty
     and prtnum = $prtnum
     and stoloc = $stoloc
 |

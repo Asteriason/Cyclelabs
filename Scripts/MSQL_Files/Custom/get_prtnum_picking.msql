@@ -1,0 +1,7 @@
+publish data
+ where wh_id = $wh_id
+   and lodnum = $to_id
+[select prtnum
+   from inventory_view
+  where wh_id = @wh_id
+    and lodnum = @lodnum]

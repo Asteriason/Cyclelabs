@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Mobile Navigation Utilities.feature
 # 
 # Functional Area: Mobile
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: Utility
 # Blue Yonder Interfaces Interacted With: Mobile
@@ -629,7 +629,7 @@ Scenario: Mobile Exit Directed Work Mode
 Given I "handle exit from directed work screen"
 	Given I assign 100 to variable "max_exit_loops"
 	And I assign 0 to variable "exit_current_loops"
-	While I do not see "Undirected Menu" in element "className:appbar-title" in web browser
+	While I do not see "Undirected Menu" in element "className:appbar-title" in web browser  
 	And I verify number $exit_current_loops is less than $max_exit_loops
 		Then I wait $wait_short seconds
 		If I see "Directed Mode" in element "className:appbar-title" in web browser
@@ -669,7 +669,7 @@ When I "navigate to the Undirected Menu"
 	And I click element "xPath://span[contains(text(),'Directed Work') and contains(@class,'label')]" in web browser within $max_response seconds
     
 Given I "wait for directed work to appear"
-	Then I "wait some time for directed work" which can take between $wait_med seconds and $wait_long seconds
+	Then I "wait some time for directed work" which can take between $wait_med seconds and $wait_long2 seconds
 
 @wip @public
 Scenario: Mobile Navigate to Cycle Count Menu

@@ -1,0 +1,24 @@
+Playlist: 
+
+Resources: ..\..
+
+Working Directory: 
+
+Namespaces: 
+
+FailFast: ALL_TESTS
+
+Items:
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-SHP-01 Outbound Validate Order.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-WAV-02 Outbound Plan Wave.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-WAV-03 Outbound Create Load.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-WAV-04 Outbound Allocate Wave.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-WAV-05 Check For Shorts And Replenishments.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-SHP-07 Outbound Assign Picks.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-PCK-08 Outbound Pallet Pick Directed.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-PCK-08 Outbound List Pick Directed.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-INV-09 Outbound Stage Picked LPNs.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-YRD-11 Create Outbound Trailer And Check In.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-WAV-14 LTL Split More Than One Load.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-WAV-12 Outbound Load Equipment.feature
+Feature: ..\..\Test Cases\ABB Test Cases NP5\Outbound\ABB-WAV-13 Outbound Dispatch Load.feature

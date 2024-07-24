@@ -1,0 +1,14 @@
+Playlist: 
+
+Resources: ..\..\..
+
+Working Directory: 
+
+Namespaces: 
+
+FailFast: ALL_TESTS
+
+Items:
+Feature: ..\..\..\Test Cases\ABB_Click_N_Win\Inbound\rcv-all_1.feature
+Feature: ..\..\..\Test Cases\ABB_Click_N_Win\Inbound\rcv-all_2.feature
+Feature: ..\..\..\Test Cases\ABB_Click_N_Win\Inbound\rcv-all_3.feature

@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Mobile Inventory Utilities.feature
 # 
 # Functional Area: Inventory
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: Utility
 # Blue Yonder Interfaces Interacted With: Mobile
@@ -116,6 +116,14 @@ And I "perform the Inventory Move"
 	When I execute scenario "Mobile Deposit"
 
 And I unassign variables "loc_to_check,lodnum_cnt,srclod_local,srclod_list_local"
+
+@wip @public
+Scenario: Get LPN with Item and Location
+Given I "get the orders' lodnum"
+    Then I assign $rcv_prtnum to variable "prtnum"
+    Then I assign $dep_loc to variable "stoloc"
+    And I execute MOCA script "Scripts\MSQL_Files\Base\get_lodnum_by_location_prtnum.msql"
+    Then I assign row 0 column "lodnum" to variable "lpn"
 
 @wip @public
 Scenario: Mobile Inventory Location Display
@@ -513,6 +521,85 @@ Once I see "Full Inventory Move" in element "className:appbar-title" in web brow
 And I unassign variables "loc_to_check,lodnum_cnt,xfer_lodnum_local,xfer_lodnum_list_local"
 
 @wip @public
+Scenario: Mobile Stage Picked LPNs
+
+Given I execute moca script "Datasets\Custom\count_lodnums.msql"
+When I verify MOCA status is 0
+And I assign row 0 column "total_count" to variable "max_count"
+And I assign 0 to variable "counter"
+While I verify number $counter is less than $max_count
+	Once I see element "name:src_id" in web browser
+    Given I execute moca script "Datasets\Custom\all_lpns_in_ordnum.msql"
+    Then I assign row $counter column "lodnum" to variable "lodnum"
+    And I assign row $counter column "stoloc" to variable "stoloc"
+    Then I type $lodnum in element "name:src_id" in web browser
+    And I press keys "ENTER" in web browser
+    And I wait $wait_med seconds
+    Then I press keys "F6" in web browser
+    
+    Once I see element "name:lodnum" in web browser
+    Then I type $lodnum in element "name:lodnum" in web browser
+    Then I press keys "ENTER" in web browser
+And I "copy location to input"
+	If I see element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser within $wait_med seconds
+	And I wait $wait_short seconds
+      When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location" within $wait_long seconds
+      Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+      Given I assign row 0 column "locvrc" to variable "location_verification_code"
+	  Once I verify element "name:dstloc" is clickable in web browser
+		Then I click element "name:dstloc" in web browser
+      Then I type $location_verification_code in element "name:dstloc" in web browser within $wait_med seconds
+      And I press keys "ENTER" in web browser
+    Else I assign $stoloc to variable "verify_location"
+    And I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+      Given I assign row 0 column "locvrc" to variable "location_verification_code"
+	  	Once I verify element "name:dstloc" is clickable in web browser
+		Then I click element "name:dstloc" in web browser
+      Then I type $location_verification_code in element "name:dstloc" in web browser within $wait_long seconds
+      And I press keys "ENTER" in web browser
+    EndIf
+    
+    And I increase variable "counter" by 1
+EndWhile
+
+@wip @public
+Scenario: Mobile Stage Picked Subnums
+
+Given I execute moca script "Datasets\Custom\count_lodnums.msql"
+When I verify MOCA status is 0
+And I assign row 0 column "total_count" to variable "max_count"
+And I assign 0 to variable "counter"
+While I verify number $counter is less than $max_count
+	Once I see element "name:src_id" in web browser
+    Given I execute moca script "Datasets\Custom\all_lpns_in_ordnum.msql"
+    Then I assign row $counter column "lodnum" to variable "lodnum"
+    And I assign row $counter column "stoloc" to variable "stoloc"
+    Then I type $lodnum in element "name:src_id" in web browser
+    And I press keys "ENTER" in web browser
+    And I wait $wait_med seconds
+    Then I press keys "F6" in web browser
+    
+    Once I see element "name:subnum" in web browser
+    Then I type $lodnum in element "name:subnum" in web browser
+    Then I press keys "ENTER" in web browser
+And I "copy location to input"
+	If I see element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser
+      When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+      Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+      Given I assign row 0 column "locvrc" to variable "location_verification_code"
+      Then I type $location_verification_code in element "name:dstloc" in web browser
+      And I press keys "ENTER" in web browser
+    Else I assign $stoloc to variable "verify_location"
+    And I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+      Given I assign row 0 column "locvrc" to variable "location_verification_code"
+      Then I type $location_verification_code in element "name:dstloc" in web browser
+      And I press keys "ENTER" in web browser
+    EndIf
+    
+    And I increase variable "counter" by 1
+EndWhile
+
+@wip @public
 Scenario: Mobile Inventory Transfer Invalid
 #############################################################
 # Description: Perform an inventory transfer with an
@@ -884,6 +971,38 @@ Given I "specify the Inventory Adjustments References, Reason and Confirm"
 	And I press keys "ENTER" in web browser
 
 	And I wait $screen_wait seconds
+
+
+ 
+@wip @public
+Scenario: Mobile Full Inventory Before OSD Validation
+##############################################################################
+# Description: This scenario will try to perform a Full Inventory Move before OSD process
+# MSQL Files:
+#   None
+# Inputs:
+#   Required:
+#       lpn - LPN to be transferred
+#   Optional:
+#      
+# Outputs:
+#   None          
+###############################################################################
+ 
+And I "validate I am on the full inventory move screen"
+    Once I see "Full Inventory Move" in element "className:appbar-title" in web browser
+   
+When I "input each LPN to be transferred"
+    And I assign "Source ID" to variable "input_field_with_focus"
+    Then I execute scenario "Mobile Check for Input Focus Field"
+    And I type $lpn in element "name:src_id" in web browser within $max_response seconds
+    And I press keys "ENTER" in web browser
+   
+    If I see "LPN not ready for putaway, OSD not completed" in web browser within $wait_med seconds
+        Then I execute scenario "Mobile Generate Screenshot"
+        And I press keys "ENTER"
+    EndIf
+ 
 
 @wip @public
 Scenario: Mobile Inventory Adjustment Menu

@@ -1,0 +1,11 @@
+[ {
+  "resources" : "..",
+  "classes" : [ ],
+  "namespaces" : [ ]
+}, {
+  "name" : "List Picking",
+  "feature" : "..\\Test Cases\\ABB_Click_N_Win\\Outbound\\picks_only.feature",
+  "devices" : "..\\Test Case Inputs\\picking-group-test.csv",
+  "tags" : "Picking-ABB",
+  "enabled" : "true"
+} ]

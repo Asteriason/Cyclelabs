@@ -1,0 +1,11 @@
+publish data
+ where trknum = $trknum 
+ and wh_id = $wh_id
+|
+[select rcvkey
+   from rcvlin
+  where trknum = @trknum]
+|
+[select lodnum
+   from inventory_view
+  where rcvkey = @rcvkey]

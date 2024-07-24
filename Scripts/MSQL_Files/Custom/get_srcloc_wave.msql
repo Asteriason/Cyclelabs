@@ -1,0 +1,14 @@
+/*
+MSQL File: get_srcloc_wave.msql
+Description: This MSQL is used to determine the sourc location in the wave
+*/
+
+publish data
+ where schbat = $wave_num
+   and wh_id = $wh_id
+|
+[select srcloc
+   from wrkque
+  where schbat = @schbat
+    and oprcod = 'PCK'
+    and wrksts = 'ACK']

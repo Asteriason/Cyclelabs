@@ -1,0 +1,2 @@
+ordnum,oprcod,mobile_start_loc,vehtyp,cancel_and_reallocate,generate_screenshot,wrong_dest_lpn,value_wrong_dest_lpn,sku_wrong,value_sku_wrong,extra_pick,value_extra_pick
+0813534921,CHANNELWA,001-004-A-B-454,CB,FALSE,TRUE,TRUE,FAKE,TRUE,FAKE,TRUE,5

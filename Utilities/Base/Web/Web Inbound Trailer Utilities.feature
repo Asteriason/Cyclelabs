@@ -1,5 +1,5 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Web Inbound Trailer Utilities.feature
 # 
 # Functional Area: Inbound
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: utility
 # Blue Yonder Interfaces Interacted With: WEB
@@ -57,7 +57,7 @@ Scenario: Web Open Receiving Transport Equipment Screen
 
 Given I "go to the Search box and find my Receiving option"
 	When I assign "Transport Equipment" to variable "wms_screen_to_open"
-	And  I assign "Receiving" to variable "wms_parent_menu"
+	And  I assign "ABB Receiving" to variable "wms_parent_menu"
 	Then I execute scenario "Web Screen Search"
 
 @wip @public
@@ -129,6 +129,16 @@ Given I "select the Check In option from the Actions pull-down button on the top
 	And I click element $elt in web browser within $max_response seconds 
 	And I click element "id:actionmenu_checkinEquipment-textEl" in web browser within $max_response seconds 
 	Once I see "Check In" in web browser
+
+When I "get an empty yard location"
+	If I verify variable "is_batch" is assigned
+		#When I wait $worker_wait seconds
+		When I execute MOCA script "Scripts\MSQL_Files\Custom\get_empty_yard_loc_cyclelock.msql"
+		And I assign row 0 column "yard_loc" to variable "yard_loc"
+	Else I execute MOCA script "Scripts\MSQL_Files\Custom\get_empty_yard_loc.msql"
+	And I assign row 0 column "yard_loc" to variable "yard_loc"
+	EndIf
+	And I echo $yard_loc
 	
 When I "select the door to receive the trailer and click 'Check In' to check it in"
 	Then I assign variable "elt" by combining "xPath://*[@data-recordid='" $yard_loc "*!" $wh_id "']"
@@ -270,3 +280,22 @@ When I "select the door to receive the trailer and click 'Check In' to check it 
 And I "press the 'Check In' button"
 	When I assign "xPath://span[text()='Check In' and starts-with(@id,'button')]//..//span[2]" to variable "elt"
 	Then I click element $elt in web browser within $max_response seconds
+
+@wip @public
+Scenario: Web Verify Inbound Trailer Check In
+#############################################################
+# Description: This scenario verifies in the web that trailer check in was successful
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		xPath_span_OK_sibling - A prebuilt variable in Web Element Utilities for child OK buttons
+#	Optional:
+#		None
+# Outputs:
+#	None                 
+#############################################################
+
+Given I "ensure that I see a successful check-in and click the 'OK' button"
+	#Once I see "Check In Successful" in web browser
+	#Then I click element $xPath_span_OK_sibling in web browser within $max_response seconds

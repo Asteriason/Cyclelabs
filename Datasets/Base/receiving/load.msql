@@ -10,6 +10,7 @@
     and prtnum = $prtnum
     and rcvsts = $rcvsts
     and yard_loc = $yard_loc
+    and stoloc = $stoloc
 
 |
 [select count(1) trlrcnt

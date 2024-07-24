@@ -1,0 +1,11 @@
+/*
+MSQL File: get_lodnum_pallet.msql
+Description: This MSQL is used to determine the sourc location in the wave
+*/
+publish data
+ where stoloc = $srcloc
+   and wh_id = $wh_id
+|
+[select lodnum
+   from invlod
+  where stoloc = @srcloc];

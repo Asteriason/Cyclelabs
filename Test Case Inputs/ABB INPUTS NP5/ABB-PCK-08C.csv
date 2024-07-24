@@ -1,0 +1,2 @@
+ordnum,oprcod,mobile_start_loc,vehtyp,cancel_and_reallocate,srcloc,generate_screenshot,wrong_dest_lpn,value_wrong_dest_lpn,sku_wrong,value_sku_wrong,extra_pick,value_extra_pick
+080014520,LPCK,005-028-A-A-310,CART,FALSE,,TRUE,FALSE,FAKE,FALSE,FAKE,TRUE,5

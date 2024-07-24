@@ -3,4 +3,5 @@ screen_wait,2.5
 wait_short,1
 wait_med,5
 wait_long,10
+wait_long2,20
 max_response,30

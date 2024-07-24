@@ -1,0 +1,16 @@
+/*
+MSQL File: get_untqty_counts.msql
+Description: This MSQL gets putaway inventory for validating deposit location
+*/
+
+publish data
+ where wh_id = $wh_id
+   and client_id = 'ABB'
+   and stoloc = $stoloc
+   and prtnum = $prtnum
+|
+[select untqty
+   from inventory_view
+  where stoloc = @stoloc
+    and wh_id = @wh_id
+    and prtnum = @prtnum];

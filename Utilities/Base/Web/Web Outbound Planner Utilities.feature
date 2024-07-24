@@ -1,19 +1,19 @@
 ###########################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
-# This file is subject to the license terms found at 
+# This file is subject to the license terms found at
 # https://www.cycleautomation.com/end-user-license-agreement/
 #
 # The methods and techniques described herein are considered
-# confidential and/or trade secrets. 
+# confidential and/or trade secrets.
 # No part of this file may be copied, modified, propagated,
 # or distributed except as authorized by the license.
-############################################################ 
+############################################################
 # Utility: Web Outbound Planner Utilities.feature
-# 
+#
 # Functional Area: Allocation
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: utility
 # Blue Yonder Interfaces Interacted With: WEB, MOCA
@@ -63,1515 +63,2140 @@
 ############################################################
 Feature: Web Outbound Planner Utilities
 
-@wip @public
-Scenario: Web Create Load
-#############################################################
-# Description: This scenario create a new load in the Web.
-# It will also add assign the shipment to the load.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		ordnum - order number
-#		ship_id - shipment ID
-#		carcod - carrier code
-#		ui_move_id - load to create in the Web
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+	@wip @public
+	Scenario: Web Create Load for LTL More Than One Load
+		#############################################################
+		# Description: This scenario create a new load in the Web.
+		# It will also add assign the shipment to the load.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		ship_id - shipment ID
+		#		carcod - carrier code
+		#		ui_move_id - load to create in the Web
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-Given I "verify we are on Outbound Screen"
-	Once I see "Orders" in web browser
-    
-And I "search for order"
-	Then I assign "order" to variable "component_to_search_for"
-	And I assign $ordnum to variable "string_to_search_for"
-	And I execute scenario "Web Component Search"
-    
-And I "click on the Loads Tab"
-	Then I assign variable "elm_loads_id" by combining "xPath://span[text()='Loads']/../.."
-	And I click element $elm_loads_id in web browser within $max_response seconds
+		Given I "verify we are on Outbound Screen"
+		Once I see "Orders" in web browser
 
-And I "select the 'Actions' drop-down and select Add Shipment Menu Item"
-	Then I click element "xPath://span[starts-with(@id,'wmMultiViewActionButton-') and text()='Actions']/.." in web browser within $max_response seconds 
-	And I click element "xPath://span[text()='Add Load']" in web browser within $max_response seconds 
-	Once I see "Add Load" in web browser
+		#And I "search for order"
+		#	Then I assign "order" to variable "component_to_search_for"
+		#	And I assign $ordnum to variable "string_to_search_for"
+		#	And I execute scenario "Web Component Search"
 
-And I "add a new load"
-	Then I execute scenario "Web Add Load Info"
-    
-And I unassign variables "component_to_search_for,string_to_search_for,elm_loads_id"
+		And I "click on the Loads Tab"
+		Then I assign variable "elm_loads_id" by combining "xPath://span[text()='Loads']/../.."
+		And I click element $elm_loads_id in web browser within $max_response seconds
 
-@wip @public
-Scenario: Web Add Load Info
-#############################################################
-# Description: This scenario processes the add Load screen
-# and assigns a shipment
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		ordnum - order number
-#		ui_move_id - Load Name to use to create in Web
-#		carcod - carrier code
-#		ship_id - shipment ID
-#	Optional:
-#		None
-# Outputs:
-#	None
-#############################################################
+		And I "select the 'Actions' drop-down and select Add Shipment Menu Item"
+		Then I click element "xPath://span[starts-with(@id,'wmMultiViewActionButton-') and text()='Actions']/.." in web browser within $max_response seconds
+		And I click element "xPath://span[text()='Add Load']" in web browser within $max_response seconds
+		Once I see "Add Load" in web browser
 
-Given I "process ui_move_id if defined"
-	If I verify variable "ui_move_id" is assigned
-	And I verify text $ui_move_id is not equal to ""
-		Then I click element "name:carrierMoveId" in web browser within $max_response seconds        
+		And I "add a load"
+		And I click element "name:carrierMoveId" in web browser
+		And I press keys "2" in web browser
+		When I assign $wave_num to variable "lodnum"
+		And I type $lodnum in web browser
+		And I copy text inside element "name:carrierMoveId" in web browser to variable "2lodnum"
+		And I wait $wait_med seconds
+		And I type $carcod in element "name:carrier" in web browser
+		And I "click on Next"
+		Then I assign variable "elt" by combining "xPath://span[text()='Next']/.."
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+		And I "click on finish"
+		Then I assign variable "elt" by combining "xPath://span[text()='Finish']/.."
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+		Given I "open the Shipping and loads section screen"
+		Then I assign "Loads" to variable "wms_screen_to_open"
+		And I assign "ABB Shipping" to variable "wms_parent_menu"
+		Then I execute scenario "Web Screen Search"
+		And I unassign variables "wms_screen_to_open,wms_parent_menu"
+
+		Once I see "Route" in web browser
+		#Then I execute scenario "load info"
+		Given I "search by Wave Number"
+		And I assign "load" to variable "component_to_search_for"
+		And I assign $lodnum to variable "string_to_search_for"
+		When I execute scenario "Web Component Search"
+		And I wait $wait_short seconds
+
+		And I "select the load from the list"
+		Given I assign variable "search2" by combining "text:" $lodnum
+		Given I assign variable "lodnum2" by combining "xPath://div[@class='x-grid-cell-inner ' and contains(text(), '" $lodnum "')]"
+		And I copy text inside element "xPath://td[contains(@class, 'x-grid-cell') and contains(@class, 'x-grid-td') and contains(@class, 'x-grid-cell-headerId-wm-Routes-column-')]" from character "1" through "1" in web browser to variable "stops_num"
+
+		When I click element $lodnum2 in web browser within $max_response seconds
+		And I wait $wait_med seconds
+		And I assign variable "stops2" by combining "xPath://div[contains(@class, 'x-panel') and contains(@class, 'wm-stopcard') and contains(@class, 'wm-expand-document-details-header') and contains(@class, 'wm-document-details-header') and contains(@class, 'rpux-store-view-record-dd') and contains(@class, 'x-panel-default')][" $stops_num "]"
+		And I click element $stops2 in web browser
+		Then I click element "xPath://tr[contains(@class, 'x-grid-row') and contains(@class, 'level-1') and contains(@class, 'x-grid-data-row') and contains(@class, 'rp-above-rowbody')][1]" in web browser within $wait_med seconds
+		And I click element "xPath://a[normalize-space(.)='Actions']" in web browser within $wait_med seconds
+		And I click element "xPath://div[contains(@class, 'x-component') and contains(@class, 'x-box-item') and contains(@class, 'x-component-default') and contains(@class, 'x-menu-item') and .//span[contains(@class, 'x-menu-item-text') and text()='Split Shipment']]" in web browser within $wait_med seconds
+		Then I click element "xPath://table[contains(@class, 'x-field') and contains(@class, 'wm-comboboxcolumn-list') and contains(@class, 'x-table-plain') and contains(@class, 'x-form-item') and contains(@class, 'x-form-type-text') and contains(@class, 'x-field-default') and contains(@class, 'x-autocontainer-form-item') and contains(@class, 'x-form-invalid')]//td[contains(@class, 'x-trigger-cell') and contains(@class, 'x-unselectable') and contains(@style, 'width:28px;')]" in web browser within $wait_med seconds
+		And I assign variable "var" by combining "xPath://div[@class='x-combo-list-item x-boundlist-item']/div[@class='label' and text()='" $2lodnum "']"
+		And I click element $var in web browser within $wait_med seconds
+		And I click element "xPath://a[contains(@class, 'x-btn') and contains(@class, 'x-unselectable') and contains(@class, 'rp-important-btn') and contains(@class, 'rp-btn-shadow') and contains(@class, 'x-box-item') and contains(@class, 'x-btn-default-small') and contains(@class, 'x-noicon') and contains(@class, 'x-btn-noicon') and contains(@class, 'x-btn-default-small-noicon') and contains(@class, 'blue')]" in web browser within $wait_med seconds
+		Given I "confirm the shipment was split by clicking ok"
+		When I click element "xPath://a[contains(@class, 'x-btn') and contains(@class, 'x-btn-default-small') and contains(@class, 'x-noicon') and contains(@class, 'x-btn-noicon') and contains(@class, 'x-btn-default-small-noicon') and contains(., 'OK')]" in web browser within $max_response seconds
+	################################################################################
+
+	@wip @public
+	Scenario: Web Create Load
+		#############################################################
+		# Description: This scenario create a new load in the Web.
+		# It will also add assign the shipment to the load.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		ship_id - shipment ID
+		#		carcod - carrier code
+		#		ui_move_id - load to create in the Web
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "verify we are on Outbound Screen"
+		Once I see "Orders" in web browser
+
+		#And I "search for order"
+		#	Then I assign "order" to variable "component_to_search_for"
+		#	And I assign $ordnum to variable "string_to_search_for"
+		#	And I execute scenario "Web Component Search"
+
+		And I "click on the Loads Tab"
+		Then I assign variable "elm_loads_id" by combining "xPath://span[text()='Loads']/../.."
+		And I click element $elm_loads_id in web browser within $max_response seconds
+
+		And I "select the 'Actions' drop-down and select Add Shipment Menu Item"
+		Then I click element "xPath://span[starts-with(@id,'wmMultiViewActionButton-') and text()='Actions']/.." in web browser within $max_response seconds
+		And I click element "xPath://span[text()='Add Load']" in web browser within $max_response seconds
+		Once I see "Add Load" in web browser
+
+		And I "add a new load"
+		Then I execute scenario "Web Add Load Info"
+
+		And I unassign variables "component_to_search_for,string_to_search_for,elm_loads_id"
+
+	@wip @public
+	Scenario: Web Add Load Info
+		#############################################################
+		# Description: This scenario processes the add Load screen
+		# and assigns a shipment
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		ui_move_id - Load Name to use to create in Web
+		#		carcod - carrier code
+		#		ship_id - shipment ID
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "process ui_move_id if defined"
+		If I verify variable "ui_move_id" is assigned
+		And I verify text $ui_move_id is not equal to ""
+		Then I click element "name:carrierMoveId" in web browser within $max_response seconds
 		And I type $ui_move_id in element "name:carrierMoveId" in web browser within $max_response seconds
+		EndIf
+
+		And I "select/Add the Carrier"
+		Then I execute scenario "Get Carrier Name from Carrier Code"
+		And I click element "name:carrier" in web browser within $max_response seconds
+		And I type $carnam in element "name:carrier" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[. = '" $carnam "']"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "select/Add the Transportation Mode"
+		Then I click element "name:transportationMode" in web browser within $max_response seconds
+		And I type "Truckload" in element "name:transportationMode" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[contains(text(),'Truckload')]"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "click on Next"
+		Then I assign variable "elt" by combining "xPath://span[text()='Next']/.."
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+		Once I see "Unassigned Shipments" in web browser
+
+		And I "search for shipment"
+		Then I assign "shipment" to variable "component_to_search_for"
+		And I assign $ship_id to variable "string_to_search_for"
+		And I execute scenario "Web Outbound Search Assign Shipments"
+
+		And I "select the shipment"
+		Then I assign variable "elt" by combining "text:" $ship_id
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "click on finish"
+		Then I assign variable "elt" by combining "xPath://span[text()='Finish']/.."
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+
+	@wip @public
+	Scenario: Web Add Load Info Multiple Orders
+		#############################################################
+		# Description: This scenario processes the add Load screen
+		# and assigns a shipment
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		ui_move_id - Load Name to use to create in Web
+		#		carcod - carrier code
+		#		ship_id - shipment ID
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "process ui_move_id if defined"
+		If I verify variable "ui_move_id" is assigned
+		And I verify text $ui_move_id is not equal to ""
+		Then I click element "name:carrierMoveId" in web browser within $max_response seconds
+		And I type $ui_move_id in element "name:carrierMoveId" in web browser within $max_response seconds
+		EndIf
+
+		And I "select/Add the Carrier"
+		Then I execute scenario "Get Carrier Name from Carrier Code"
+		And I click element "name:carrier" in web browser within $max_response seconds
+		When I clear all text in element "name:carrier" in web browser
+		And I type $carnam in element "name:carrier" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[. = '" $carnam "']"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "select/Add the Transportation Mode"
+		Then I click element "name:transportationMode" in web browser within $max_response seconds
+		And I type "Truckload" in element "name:transportationMode" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[contains(text(),'Truckload')]"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "click on Next"
+		Then I assign variable "elt" by combining "xPath://span[text()='Next']/.."
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+		Once I see "Unassigned Shipments" in web browser
+
+		And I "search for shipment"
+		Then I assign "shipment" to variable "component_to_search_for"
+		And I assign $shipment_list to variable "string_to_search_for"
+		And I execute scenario "Web Outbound Search Assign Shipments"
+
+		#And I "select the shipment"
+		#	Then I assign variable "elt" by combining "text:" $ship_id
+		#	And I click element $elt in web browser within $max_response seconds
+
+		And I "click on finish"
+		Then I assign variable "elt" by combining "xPath://span[text()='Finish']/.."
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+
+	@wip @public
+	Scenario: Get Multiple Shipments For Search
+		#When I assign 2 to variable "ord_rows"
+		If I verify number $ord_rows is greater than or equal to 2
+		And I assign "" to variable "shipment_list"
+		While I assign values in next row from $multiple_orders_path to variables
+		Then I execute MOCA script "Scripts/MSQL_Files/Base/get_ship_id_with_ordnum.msql"
+		And I verify MOCA status is 0
+		And I assign row 0 column "ship_id" to variable "ship_id"
+		If I verify text $shipment_list is equal to "" ignoring case
+		Then I assign variable "shipment_list" by combining $ship_id
+		Elsif I assign variable "shipment_list" by combining $shipment_list " or " $ship_id
+		EndIf
+		EndWhile
+		And I echo $shipment_list
 	EndIf
-    
-And I "select/Add the Carrier"
-	Then I execute scenario "Get Carrier Name from Carrier Code"
-	And I click element "name:carrier" in web browser within $max_response seconds
-	And I type $carnam in element "name:carrier" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[. = '" $carnam "']"
-   	And I click element $elt in web browser within $max_response seconds
 
-And I "select/Add the Transportation Mode"
-	Then I click element "name:transportationMode" in web browser within $max_response seconds
-	And I type "Truckload" in element "name:transportationMode" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[contains(text(),'Truckload')]"
-   	And I click element $elt in web browser within $max_response seconds
+	@wip @public
+	Scenario: Web Create Shipment
+		#############################################################
+		# Description: This scenario create a new shipment in the Web.
+		# It will also add the shipment line to the already created order
+		# and validate screen data relative to shipment.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		adr_id - address ID
+		#		ship_id - shipment ID
+		#		carcod - carrier code
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-And I "click on Next"
-	Then I assign variable "elt" by combining "xPath://span[text()='Next']/.."
-	And I click element $elt in web browser within $max_response seconds
-	And I wait $screen_wait seconds
-   	Once I see "Unassigned Shipments" in web browser
-    
-And I "search for shipment"
-	Then I assign "shipment" to variable "component_to_search_for"
-	And I assign $ship_id to variable "string_to_search_for"
-	And I execute scenario "Web Outbound Search Assign Shipments"
-    
-And I "select the shipment"
-	Then I assign variable "elt" by combining "text:" $ship_id
-	And I click element $elt in web browser within $max_response seconds
-    
-And I "click on finish"
-	Then I assign variable "elt" by combining "xPath://span[text()='Finish']/.."
-	And I click element $elt in web browser within $max_response seconds
-	And I wait $screen_wait seconds
+		Given I "verify we are on Outbound Screen"
+		Once I see "Shipments" in web browser
 
-@wip @public
-Scenario: Web Create Shipment
-#############################################################
-# Description: This scenario create a new shipment in the Web.
-# It will also add the shipment line to the already created order
-# and validate screen data relative to shipment.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		ordnum - order number
-#		adr_id - address ID
-#		ship_id - shipment ID
-#		carcod - carrier code
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		And I "search for order"
+		Then I assign "order" to variable "component_to_search_for"
+		And I assign $ordnum to variable "string_to_search_for"
+		And I execute scenario "Web Component Search"
 
-Given I "verify we are on Outbound Screen"
-	Once I see "Shipments" in web browser
-    
-And I "search for order"
-	Then I assign "order" to variable "component_to_search_for"
-	And I assign $ordnum to variable "string_to_search_for"
-	And I execute scenario "Web Component Search"
-    
-And I "click on the Shipments Tab"
-	Then I assign variable "elm_ship_id" by combining "xPath://span[text()='Shipments']/../.."
-    And I click element $elm_ship_id in web browser within $max_response seconds
+		And I "click on the Shipments Tab"
+		Then I assign variable "elm_ship_id" by combining "xPath://span[text()='Shipments']/../.."
+		And I click element $elm_ship_id in web browser within $max_response seconds
 
-And I "select the 'Actions' drop-down and select Add Shipment Menu Item"
-	Then I click element "xPath://span[starts-with(@id,'wmMultiViewActionButton-') and text()='Actions']/.." in web browser within $max_response seconds 
-	And I click element "xPath://span[text()='Add Shipment']" in web browser within $max_response seconds 
-	Once I see "Add Shipment" in web browser
+		And I "select the 'Actions' drop-down and select Add Shipment Menu Item"
+		Then I click element "xPath://span[starts-with(@id,'wmMultiViewActionButton-') and text()='Actions']/.." in web browser within $max_response seconds
+		And I click element "xPath://span[text()='Add Shipment']" in web browser within $max_response seconds
+		Once I see "Add Shipment" in web browser
 
-And I "add a new shipment"
-	Then I execute scenario "Web Add Shipment Info"
+		And I "add a new shipment"
+		Then I execute scenario "Web Add Shipment Info"
 
-And I "select the shipment"
-	Then I assign variable "elt" by combining "text:" $ship_id
-	And I click element $elt in web browser within $max_response seconds
-    
-And I "add shipment to order"
-	Then I execute scenario "Web Add Order to Shipment"
+		And I "select the shipment"
+		Then I assign variable "elt" by combining "text:" $ship_id
+		And I click element $elt in web browser within $max_response seconds
 
-And I "validate Web screen order information"
-	Once I see $ship_id in web browser
-	Once I see $carcod in web browser
-   	Once I see $adr_id in web browser
-    
-And I unassign variables "component_to_search_for,string_to_search_for,elm_ship_id"
+		And I "add shipment to order"
+		Then I execute scenario "Web Add Order to Shipment"
 
-@wip @public
-Scenario: Web Add Order to Shipment
-#############################################################
-# Description: This scenario will add a selected order to a shipment
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		ordnum - order number
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		And I "validate Web screen order information"
+		Once I see $ship_id in web browser
+		Once I see $carcod in web browser
+		Once I see $adr_id in web browser
 
-Given I "choose Action Menu and select Add Order to Shipment"
-	Then I assign variable "elt" by combining $xPath "//div[starts-with(@id,'toolbar-')]"
-	And I assign variable "elt" by combining $elt "//span[contains(@id,'-btnEl') and child::span[text()='Actions']]"
-	And I click element $elt in web browser within $max_response seconds
-	And I click element "xPath://span[text()='Add Order to Shipment']" in web browser within $max_response seconds
-    
-And I "delete any existing filters"
-	Then I assign variable "elt" by combining "xPath://a[@data-qtip='Delete']"
-	And I click element $elt in web browser within $max_response seconds
-    
-And I "search for order"
-	Then I assign "order" to variable "component_to_search_for"
-	And I assign $ordnum to variable "string_to_search_for"
-	And I execute scenario "Web Outbound Search Assign Orders"
+		And I unassign variables "component_to_search_for,string_to_search_for,elm_ship_id"
 
-And I "select the order"
-	Then I assign variable "elt" by combining "xPath://tr[starts-with(@id,'gridview') and contains(@id,'" $ordnum "')]//div[@class='x-grid-row-checker']"
-	And I click element $elt in web browser within $max_response seconds
-    
-And I "click on Add Shipment Line button"
-	Then I assign variable "elt" by combining "xPath://span[text()='Add Shipment Line']/.."
-	And I click element $elt in web browser within $max_response seconds
-	And I wait $screen_wait seconds
-    
-And I "save the order with the shipment added"
-	Then I assign variable "elt" by combining "xPath://div[contains(@class,'docked-bottom')]/descendant::span[text()='Save']/.."
-	And I click element $elt in web browser within $max_response seconds
-	And I wait $screen_wait seconds
-    
-@wip @public
-Scenario: Web Add Shipment Info
-#############################################################
-# Description: This scenario processes the Add Shipment TAB
-# and create a new shipment from the input parameters
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		ordnum - order number
-#		adr_id - address ID
-#		ship_id - shipment ID
-#		carcod - carrier code
-#		route_to_addr - route to address (has to be same as used with order)
-#		srvlvl - service level
-#		eshp_dte - early ship date
-#		lshp_dte - late ship date
-#		edel_dte - early delivery date
-#		ldel_dte - late delivery date
-#		aesnum - aes number
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+	@wip @public
+	Scenario: Web Add Order to Shipment
+		#############################################################
+		# Description: This scenario will add a selected order to a shipment
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-Given I "process ship_id if defined"
-	If I verify variable "ship_id" is assigned
-	And I verify text $ship_id is not equal to ""
-		Then I click element "name:shipmentId" in web browser within $max_response seconds        
+		Given I "choose Action Menu and select Add Order to Shipment"
+		Then I assign variable "elt" by combining $xPath "//div[starts-with(@id,'toolbar-')]"
+		And I assign variable "elt" by combining $elt "//span[contains(@id,'-btnEl') and child::span[text()='Actions']]"
+		And I click element $elt in web browser within $max_response seconds
+		And I click element "xPath://span[text()='Add Order to Shipment']" in web browser within $max_response seconds
+
+		And I "delete any existing filters"
+		Then I assign variable "elt" by combining "xPath://a[@data-qtip='Delete']"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "search for order"
+		Then I assign "order" to variable "component_to_search_for"
+		And I assign $ordnum to variable "string_to_search_for"
+		And I execute scenario "Web Outbound Search Assign Orders"
+
+		And I "select the order"
+		Then I assign variable "elt" by combining "xPath://tr[starts-with(@id,'gridview') and contains(@id,'" $ordnum "')]//div[@class='x-grid-row-checker']"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "click on Add Shipment Line button"
+		Then I assign variable "elt" by combining "xPath://span[text()='Add Shipment Line']/.."
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+
+		And I "save the order with the shipment added"
+		Then I assign variable "elt" by combining "xPath://div[contains(@class,'docked-bottom')]/descendant::span[text()='Save']/.."
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+
+	@wip @public
+	Scenario: Web Add Shipment Info
+		#############################################################
+		# Description: This scenario processes the Add Shipment TAB
+		# and create a new shipment from the input parameters
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		adr_id - address ID
+		#		ship_id - shipment ID
+		#		carcod - carrier code
+		#		route_to_addr - route to address (has to be same as used with order)
+		#		srvlvl - service level
+		#		eshp_dte - early ship date
+		#		lshp_dte - late ship date
+		#		edel_dte - early delivery date
+		#		ldel_dte - late delivery date
+		#		aesnum - aes number
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "process ship_id if defined"
+		If I verify variable "ship_id" is assigned
+		And I verify text $ship_id is not equal to ""
+		Then I click element "name:shipmentId" in web browser within $max_response seconds
 		And I type $ship_id in element "name:shipmentId" in web browser within $max_response seconds
-	EndIf
-    
-And I "select/Add the Route To Address"
-	Then I click element "name:routeToAddressId" in web browser within $max_response seconds
-	And I type $route_to_addr in element "name:routeToAddressId" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://div[contains(text(),'" $route_to_addr "')]"
-   	And I click element $elt in web browser within $max_response seconds
-    
-And I "select/Add the host client ID"
-	If I verify text $client_id is not equal to "----"
+		EndIf
+
+		And I "select/Add the Route To Address"
+		Then I click element "name:routeToAddressId" in web browser within $max_response seconds
+		And I type $route_to_addr in element "name:routeToAddressId" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://div[contains(text(),'" $route_to_addr "')]"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "select/Add the host client ID"
+		If I verify text $client_id is not equal to "----"
 		Then I click element "name:hostClientId" in web browser within $max_response seconds
 		And I type $client_id in element "name:hostClientId" in web browser within $max_response seconds
-	EndIf
-    
-And I "select/Add the carrier"
-	Then I execute scenario "Get Carrier Name from Carrier Code"
-	And I click element "name:carrier" in web browser within $max_response seconds
-	And I type $carnam in element "name:carrier" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[text()='" $carcod "']"
-	And I click element $elt in web browser within $max_response seconds
-    
-And I "select/Add the Service Level"
-	Then I click element "name:serviceLevel" in web browser within $max_response seconds
-	And I type $srvlvl in element "name:serviceLevel" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[text()='" $srvlvl "']"
-	And I click element $elt in web browser within $max_response seconds
+		EndIf
 
-And I "select/Add ship dates"
-	Then I assign variable "elt" by combining "xPath://label[text()='Early Ship Date']/../../descendant::input[contains(@id,'datefield-')]"
-	And I click element $elt in web browser within $max_response seconds
-	And I type $eshp_dte in element $elt in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-    
-	Then I assign variable "elt" by combining "xPath://label[text()='Early Ship Date']/../../descendant::input[contains(@id,'timefield-')]"
-	And I click element $elt in web browser within $max_response seconds
-	And I type "12:00 am" in element $elt in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-    
-	Then I assign variable "elt" by combining "xPath://label[text()='Late Ship Date']/../../descendant::input[contains(@id,'datefield-')]"
-	And I click element $elt in web browser within $max_response seconds
-	And I type $lshp_dte in element $elt in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-    
-	Then I assign variable "elt" by combining "xPath://label[text()='Late Ship Date']/../../descendant::input[contains(@id,'timefield-')]"
-	And I click element $elt in web browser within $max_response seconds
-	And I type "12:00 am" in element $elt in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-    
-And I "select/Add delivery dates"  
-	Then I assign variable "elt" by combining "xPath://label[text()='Early Delivery Date']/../../descendant::input[contains(@id,'datefield-')]"
-	And I click element $elt in web browser within $max_response seconds
-	And I type $edel_dte in element $elt in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-    
-	Then I assign variable "elt" by combining "xPath://label[text()='Early Delivery Date']/../../descendant::input[contains(@id,'timefield-')]"
-	And I click element $elt in web browser within $max_response seconds
-	And I type "12:00 am" in element $elt in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-    
-	Then I assign variable "elt" by combining "xPath://label[text()='Late Delivery Date']/../../descendant::input[contains(@id,'datefield-')]"
-	And I click element $elt in web browser within $max_response seconds
-	And I type $ldel_dte in element $elt in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-    
-	Then I assign variable "elt" by combining "xPath://label[text()='Late Delivery Date']/../../descendant::input[contains(@id,'timefield-')]"
-	And I click element $elt in web browser within $max_response seconds
-	And I type "12:00 am" in element $elt in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-    
-And I "select/Add the AES Number"
-	Then I click element "name:aesNumber" in web browser within $max_response seconds
-	And I type $aesnum in element "name:aesNumber" in web browser within $max_response seconds
-    
-And I "click to Save"
-	Then I assign variable "elt" by combining "xPath://span[text()='Save']/ancestor::a[contains(@class,'important')]"
-	And I click element $elt in web browser within $max_response seconds
-	And I wait $screen_wait seconds
+		And I "select/Add the carrier"
+		Then I execute scenario "Get Carrier Name from Carrier Code"
+		And I click element "name:carrier" in web browser within $max_response seconds
+		And I type $carnam in element "name:carrier" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[text()='" $carcod "']"
+		And I click element $elt in web browser within $max_response seconds
 
-@wip @public
-Scenario: Web Create Order
-#############################################################
-# Description: This scenario will create a new order in the web
-# It will also created a single orderline and validate screen
-# wise the that order was created.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		ordnum - order number
-#		prtnum - part number in the order line
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		And I "select/Add the Service Level"
+		Then I click element "name:serviceLevel" in web browser within $max_response seconds
+		And I type $srvlvl in element "name:serviceLevel" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[text()='" $srvlvl "']"
+		And I click element $elt in web browser within $max_response seconds
 
-Given I "select the 'Actions' drop-down"
-	Then I click element "xPath://span[starts-with(@id,'wmMultiViewActionButton-') and text()='Actions']/.." in web browser within $max_response seconds 
+		And I "select/Add ship dates"
+		Then I assign variable "elt" by combining "xPath://label[text()='Early Ship Date']/../../descendant::input[contains(@id,'datefield-')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I type $eshp_dte in element $elt in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
 
-And I "select the Add Order Menu Item"
-	Then I click element "xPath://span[text()='Add Order']" in web browser within $max_response seconds 
-	Once I see "Add Order" in web browser
+		Then I assign variable "elt" by combining "xPath://label[text()='Early Ship Date']/../../descendant::input[contains(@id,'timefield-')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I type "12:00 am" in element $elt in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
 
-And I "add the order and an order line"
-	Then I execute scenario "Web Add Order and Order Lines"
+		Then I assign variable "elt" by combining "xPath://label[text()='Late Ship Date']/../../descendant::input[contains(@id,'datefield-')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I type $lshp_dte in element $elt in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
 
-And I "select the order"
-	Then I assign variable "order_id" by combining "text:" $ordnum
-	And I click element $order_id in web browser within $max_response seconds
+		Then I assign variable "elt" by combining "xPath://label[text()='Late Ship Date']/../../descendant::input[contains(@id,'timefield-')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I type "12:00 am" in element $elt in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
 
-And I "validate Web screen order information"
+		And I "select/Add delivery dates"
+		Then I assign variable "elt" by combining "xPath://label[text()='Early Delivery Date']/../../descendant::input[contains(@id,'datefield-')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I type $edel_dte in element $elt in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+
+		Then I assign variable "elt" by combining "xPath://label[text()='Early Delivery Date']/../../descendant::input[contains(@id,'timefield-')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I type "12:00 am" in element $elt in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+
+		Then I assign variable "elt" by combining "xPath://label[text()='Late Delivery Date']/../../descendant::input[contains(@id,'datefield-')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I type $ldel_dte in element $elt in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+
+		Then I assign variable "elt" by combining "xPath://label[text()='Late Delivery Date']/../../descendant::input[contains(@id,'timefield-')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I type "12:00 am" in element $elt in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+
+		And I "select/Add the AES Number"
+		Then I click element "name:aesNumber" in web browser within $max_response seconds
+		And I type $aesnum in element "name:aesNumber" in web browser within $max_response seconds
+
+		And I "click to Save"
+		Then I assign variable "elt" by combining "xPath://span[text()='Save']/ancestor::a[contains(@class,'important')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+
+	@wip @public
+	Scenario: Web Create Order
+		#############################################################
+		# Description: This scenario will create a new order in the web
+		# It will also created a single orderline and validate screen
+		# wise the that order was created.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		prtnum - part number in the order line
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "select the 'Actions' drop-down"
+		Then I click element "xPath://span[starts-with(@id,'wmMultiViewActionButton-') and text()='Actions']/.." in web browser within $max_response seconds
+
+		And I "select the Add Order Menu Item"
+		Then I click element "xPath://span[text()='Add Order']" in web browser within $max_response seconds
+		Once I see "Add Order" in web browser
+
+		And I "add the order and an order line"
+		Then I execute scenario "Web Add Order and Order Lines"
+
+		And I "select the order"
+		Then I assign variable "order_id" by combining "text:" $ordnum
+		And I click element $order_id in web browser within $max_response seconds
+
+		And I "validate Web screen order information"
 	Once I see "Notes" in web browser
 	Once I see $prtnum in web browser
 	Once I see $ordnum in web browser
 
-@wip @public
-Scenario: Web Add Order and Order Lines
-#############################################################
-# Description: This scenario will create a new order in the web
-# It will also created a single orderline and validate screen
-# wise the that order was created.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		ordnum - order number
-#		prtnum - part number in the order line
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+	@wip @public
+	Scenario: Web Add Order and Order Lines
+		#############################################################
+		# Description: This scenario will create a new order in the web
+		# It will also created a single orderline and validate screen
+		# wise the that order was created.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		prtnum - part number in the order line
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-Given I "process the Order Tab"
-	THen I execute scenario "Web Process Order Tab"
-	And I wait $wait_med seconds
+		Given I "process the Order Tab"
+		THen I execute scenario "Web Process Order Tab"
+		And I wait $wait_med seconds
 
-And I "process the Order Line Tab"
-	Then I execute scenario "Web Process Order Line Tab"
-	And I wait $wait_med seconds
+		And I "process the Order Line Tab"
+		Then I execute scenario "Web Process Order Line Tab"
+		And I wait $wait_med seconds
 
-And I "try the delete and copy operation (cancel out of them, do not execute)"
-	Then I execute scenario "Web Validate Copy and Delete Options"
+		And I "try the delete and copy operation (cancel out of them, do not execute)"
+		Then I execute scenario "Web Validate Copy and Delete Options"
 
-And I "close the 'Order/Order Lines' screen by clicking the 'X' in the upper right corner"
-	Then I assign variable "elt" by combining $xPath "//i[starts-with(@id,'tool-') and contains(@id,'-toolEl')]"
-	And I click element $elt in web browser within $max_response seconds
+		And I "close the 'Order/Order Lines' screen by clicking the 'X' in the upper right corner"
+		Then I assign variable "elt" by combining $xPath "//i[starts-with(@id,'tool-') and contains(@id,'-toolEl')]"
+		And I click element $elt in web browser within $max_response seconds
 
-@wip @public
-Scenario: Web Validate Order
-#############################################################
-# Description: This scenario will navigate to Outbound Planner/Oubound screen and
-# search for and select the order.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		ordnum - order number
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+	@wip @public
+	Scenario: Web Validate Order
+		#############################################################
+		# Description: This scenario will navigate to Outbound Planner/Oubound screen and
+		# search for and select the order.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-Given I "verify we are on Outbound Screen"
-	Once I see "Orders" in web browser
-    
-And I "Click on the Orders Tab"
-	Then I assign variable "elm_order_id" by combining "xPath://span[text()='Orders']/../.."
-	And I click element $elm_order_id in web browser within $max_response seconds
+		Given I "verify we are on Outbound Screen"
+		Once I see "Orders" in web browser
 
-And I "Select Quick Filters/Not Allocated filter"
-	Then I assign "Not Allocated" to variable "qf_filter_item"
-	And I execute scenario "Web Quick Filter"
+		And I "Click on the Orders Tab"
+		Then I assign variable "elm_order_id" by combining "xPath://span[text()='Orders']/../.."
+		And I click element $elm_order_id in web browser within $max_response seconds
 
-And I "search for order"
-	Then I assign "order" to variable "component_to_search_for"
-	And I assign $ordnum to variable "string_to_search_for"
-	And I execute scenario "Web Component Search"
+		And I "Select Quick Filters/Not Allocated filter"
+		Then I assign "Not Allocated" to variable "qf_filter_item"
+		And I execute scenario "Web Quick Filter"
 
-And I "select the order"
-	Then I assign variable "order_id" by combining "text:" $ordnum
-	And I click element $order_id in web browser within $max_response seconds
-    
-And I unassign variables "qf_filter_item,component_to_search_for,string_to_search_for,elm_order_id"
+		And I "search for order"
+		Then I assign "order" to variable "component_to_search_for"
+		And I assign $ordnum to variable "string_to_search_for"
+		And I execute scenario "Web Component Search"
 
-@wip @public
-Scenario: Web Validate Order Info
-#############################################################
-# Description: This scenario will validate from the screen and
-# from the system that the order is valid.
-# MSQL Files:
-#	check_order_created.msql
-# is valid.
-# Inputs:
-#	Required:
-#		ordnum - order number
-#		prtnum - part number for order
-#		untqty - unit quantity for order
-#		client_id - client ID
-#		carcod - carrier info
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		And I "select the order"
+		Then I assign variable "order_id" by combining "text:" $ordnum
+		And I click element $order_id in web browser within $max_response seconds
 
-Given I "validate order information on screen"
-	Once I see $prtnum in web browser
-	Once I see $untqty in web browser
-	Once I see $carcod in web browser
-	Once I see "Unallocated" in web browser
-    If I verify text $client_id is not equal to "----"
+		And I unassign variables "qf_filter_item,component_to_search_for,string_to_search_for,elm_order_id"
+
+	@wip @public
+	Scenario: Web Validate Order Info
+		#############################################################
+		# Description: This scenario will validate from the screen and
+		# from the system that the order is valid.
+		# MSQL Files:
+		#	check_order_created.msql
+		# is valid.
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		prtnum - part number for order
+		#		untqty - unit quantity for order
+		#		client_id - client ID
+		#		carcod - carrier info
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "validate order information on screen"
+		#Once I see $prtnum in web browser
+		#Once I see $untqty in web browser
+		#Once I see $carcod in web browser
+		Once I see "Unallocated" in web browser
+		If I verify text $client_id is not equal to "----"
 		Once I see $client_id in web browser
-	EndIf
-    
-And I "validate order was generated"
-	Then I execute scenario "Validate Order Created"
+		EndIf
 
-@wip @public
-Scenario: Web Validate Shipment
-#############################################################
-# Description: This scenario will navigate to Outbound Planner/Oubound screen and
-# search for and select the shipment.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		ship_id - shipment id
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		And I "validate order was generated"
+		Then I execute scenario "Validate Order Created"
 
-Given I "verify we are on Outbound Screen"
-	Once I see "Shipments" in web browser
+	@wip @public
+	Scenario: Web Validate Shipment
+		#############################################################
+		# Description: This scenario will navigate to Outbound Planner/Oubound screen and
+		# search for and select the shipment.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ship_id - shipment id
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-And I "Click on the Shipments Tab"
-	Then I assign variable "elm_ship_id" by combining "xPath://span[text()='Shipments']/../.."
-	And I click element $elm_ship_id in web browser within $max_response seconds
+		Given I "verify we are on Outbound Screen"
+		Once I see "Shipments" in web browser
 
-And I "Select Quick Filters/Not Allocated filter"
-	Then I assign "Not Allocated" to variable "qf_filter_item"
-	And I execute scenario "Web Quick Filter"
+		And I "Click on the Shipments Tab"
+		Then I assign variable "elm_ship_id" by combining "xPath://span[text()='Shipments']/../.."
+		And I click element $elm_ship_id in web browser within $max_response seconds
 
-And I "search for shipment"
-	Then I assign "shipment" to variable "component_to_search_for"
-	And I assign $ship_id to variable "string_to_search_for"
-	And I execute scenario "Web Component Search"
+		And I "Select Quick Filters/Not Allocated filter"
+		Then I assign "Not Allocated" to variable "qf_filter_item"
+		And I execute scenario "Web Quick Filter"
 
-And I "select the Shipment"
-	Then I assign variable "elm_ship_id" by combining "text:" $ship_id
-	And I click element $elm_ship_id in web browser within $max_response seconds
+		And I "search for shipment"
+		Then I assign "shipment" to variable "component_to_search_for"
+		And I assign $ship_id to variable "string_to_search_for"
+		And I execute scenario "Web Component Search"
 
-And I unassign variables "qf_filter_item,component_to_search_for,string_to_search_for,elm_ship_id"
+		And I "select the Shipment"
+		Then I assign variable "elm_ship_id" by combining "text:" $ship_id
+		And I click element $elm_ship_id in web browser within $max_response seconds
 
-@wip @public
-Scenario: Web Validate Shipment Info
-#############################################################
-# Description: This scenario will validate from the screen and
-# from the system that the shipment is valid.
-# is valid.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		ordnum - order number
-#		ship_id - shipment id
-#		client_id - client ID
-#		carcod - carrier info
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		And I unassign variables "qf_filter_item,component_to_search_for,string_to_search_for,elm_ship_id"
 
-Given I "validate shipment information on screen"
-	Once I see $carcod in web browser
-	Once I see "Ready" in web browser
-	Once I see "Shipments" in web browser
-    If I verify text $client_id is not equal to "----"
+	@wip @public
+	Scenario: Web Validate Shipment Info
+		#############################################################
+		# Description: This scenario will validate from the screen and
+		# from the system that the shipment is valid.
+		# is valid.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		ship_id - shipment id
+		#		client_id - client ID
+		#		carcod - carrier info
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "validate shipment information on screen"
+		Once I see $carcod in web browser
+		Once I see "Ready" in web browser
+		Once I see "Shipments" in web browser
+		If I verify text $client_id is not equal to "----"
 		Once I see $client_id in web browser
+		EndIf
+
+		And I "validate shipment was generated"
+	#Then I execute scenario "Validate Shipment Created"
+
+	@wip @public
+	Scenario: Web Validate Load
+		#############################################################
+		# Description: This scenario will navigate to Outbound Planner/Oubound screen and
+		# search for and select the load.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		move_id - load/carrier move id
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "verify we are on Outbound Screen"
+		Once I see "Loads" in web browser
+
+		And I "Click on the Load Tab"
+		Then I assign variable "elm_ship_id" by combining "xPath://span[text()='Loads']/../.."
+		And I click element $elm_ship_id in web browser within $max_response seconds
+
+		And I "remove applied filter if visible"
+		Then I assign variable "elt" by combining "xPath://a[@data-qtip='Delete']"
+		If I see element $elt in web browser within $screen_wait seconds
+		Then I click element $elt in web browser within $max_response seconds
+		EndIf
+
+		And I "search for load"
+		Then I assign "load" to variable "component_to_search_for"
+		And I assign $move_id to variable "string_to_search_for"
+		And I execute scenario "Web Component Search"
+
+		And I "select the Load"
+		Then I assign variable "elm_move_id" by combining "text:" $move_id
+		And I click element $elm_move_id in web browser within $max_response seconds
+
+		And I unassign variables "component_to_search_for,string_to_search_for,elm_move_id"
+
+	@wip @public
+	Scenario: Web Validate Load Info
+		#############################################################
+		# Description: This scenario will validate from the screen and
+		# from the system that the load is valid.
+		# is valid.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		move_id - load/carrier move id
+		#		client_id - client ID
+		#		carcod - carrier info
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "validate load information on screen"
+		Once I see $carcod in web browser
+		Once I see "Loads" in web browser
+		Once I see $move_id in web browser
+
+		Given I "click Actions to add an equipment"
+		Then I assign variable "elt" by combining "xPath://span[starts-with(@id,'moreactionsbutton-') and contains(@id,'-btnWrap') and .= 'Actions']/ancestor::a[starts-with(@id,'moreactionsbutton-')]"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "click the Modify Load"
+		Then I assign variable "elt" by combining "xPath://span[starts-with(@id,'menuitem-') and text()='Modify Load']"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "enter trailer number"
+		Then I assign variable "elt" by combining "xPath://input[contains(@name, 'trailerId')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I type $trlr_num in element $elt in web browser within $max_response seconds
+		And I assign variable "elt" by combining "xPath://div[starts-with(@class,'x-boundlist-item') and text()='" $trlr_num "|" $carcod "']"
+		Once I see element $elt in web browser
+		Then I click element $elt in web browser within $max_response seconds
+
+		And I "press Next button"
+		Then I click element "xPath://span[starts-with(@id, 'button-')]/descendant::span[text()='Next']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn')]" in web browser within $max_response seconds
+
+		And I "press Finish button"
+		Then I click element "xPath://span[starts-with(@id, 'button-')]/descendant::span[text()='Finish']/ancestor::a[starts-with(@id, 'button-') and contains(@class, 'x-btn')]" in web browser within $max_response seconds
+
+		Given I "get back to Load tab"
+		And I click element "xPath://input[@type='button']" in web browser within $wait_long seconds
+
+		Given I "click the load stop button"
+		When I click element "xPath://span[text()='Load Stop']/..//span[2]" in web browser within $max_response seconds
+
+		And I "use Move immediate option"
+		If I verify text $inventory_move_mode is equal to "IMMEDIATE"
+		Then I "click the Move Immediately radio button"
+		And I assign variable "elt" by combining "xPath://label[text()='Move Immediately']/..//input[@type='button']"
+		And I click element $elt in web browser within $max_response seconds
+
+		Then I "close equipment"
+		And I press keys "TAB" in web browser
+		And I wait $wait_med seconds
+		And I press keys "ENTER" in web browser
+		And I wait $wait_med seconds
+		Then I "save the Quality Issue"
+		And I assign variable "elt" by combining "xPath://span[starts-with(@id, 'button-') and text()='Save']/ancestor::a[contains(@class, 'x-btn')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $wait_long seconds
+		EndIf
+
+		And I "use Move through work queue option"
+		If I verify text $inventory_move_mode is equal to "WORK QUEUE"
+		Then I "click the Work Queue radio button"
+		And I assign variable "elt" by combining "xPath://label[text()='Add to Work Queue']/..//input[@type='button']"
+		And I click element $elt in web browser within $max_response seconds
+
+		Then I "save the Quality Issue"
+		And I assign variable "elt" by combining "xPath://span[starts-with(@id, 'button-') and text()='Save']/ancestor::a[contains(@class, 'x-btn')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $wait_long seconds
+		EndIf
+
+		If I see "Transport Equipment Workflow" in web browser within $wait_long seconds
+		Given I "create the xPath to click to run through the Safety Check"
+		Then I assign variable "elt" by combining "xPath://a[not(contains(@class,'x-pressed'))]"
+		And I assign variable "elt" by combining $elt "//span[text()='Yes']/.."
+		And I assign variable "yes_not_pressed" by combining $elt
+
+		When I "click Yes to all the safety check questions"
+		While I see element $yes_not_pressed in web browser within $wait_med seconds
+		Then I click element $yes_not_pressed in web browser within $max_response seconds
+		EndWhile
+
+		Then I "click Complete Button"
+		And I click element "xPath://span[text()='Complete']/ancestor::span[@class='x-btn-button']/span[2]" in web browser within $max_response seconds
+		Endif
+
+		And I wait $wait_long seconds
+
+		If I see "Transport Equipment Workflow" in web browser within $wait_long seconds
+		Given I "create the xPath to click to run through the Safety Check"
+		Then I assign variable "elt" by combining "xPath://a[not(contains(@class,'x-pressed'))]"
+		And I assign variable "elt" by combining $elt "//span[text()='Yes']/.."
+		And I assign variable "yes_not_pressed" by combining $elt
+
+		When I "click Yes to all the safety check questions"
+		While I see element $yes_not_pressed in web browser within $wait_med seconds
+		Then I click element $yes_not_pressed in web browser within $max_response seconds
+		EndWhile
+
+		Then I "click Complete Button"
+		And I click element "xPath://span[text()='Complete']/ancestor::span[@class='x-btn-button']/span[2]" in web browser within $max_response seconds
+		Endif
+
+		Given I "validate load was confirmed and closed"
+		When I assign variable "elt" by combining "xPath://span[text()='OK']/.."
+		If I see element $elt in web browser within $wait_med seconds
+		Then I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
 	EndIf
 
-And I "validate shipment was generated"
-	Then I execute scenario "Validate Shipment Created"
+	@wip @public
+	Scenario: Web Quick Filter
+		#############################################################
+		# Description: Use Quick Filter to apply a specified filter
+		# MSQL Files:
+		#	None
+		# Inputs:
+		# 	Required:
+		#		qf_filter_item - menu item filter to select
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-@wip @public
-Scenario: Web Validate Load
-#############################################################
-# Description: This scenario will navigate to Outbound Planner/Oubound screen and
-# search for and select the load.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		move_id - load/carrier move id
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		Given I "select Quick Filter and look for filter to apply"
+		Then I assign variable "elt" by combining "xPath://span[text()='Quick Filters']/.."
+		And I click element $elt in web browser within $max_response seconds
+		And I assign variable "elt" by combining "xPath://td[text()='" $qf_filter_item "']"
+		And I click element $elt in web browser within $max_response seconds
 
-Given I "verify we are on Outbound Screen"
-	Once I see "Loads" in web browser
+	@wip @public
+	Scenario: Web Navigate to Outbound Planner Outbound Screen
+		#############################################################
+		# Description: Use Web Search to navigate to Outbound Planner/Outbound Screen
+		# MSQL Files:
+		#	None
+		# Inputs:
+		# 	Required:
+		#		None
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-And I "Click on the Load Tab"
-	Then I assign variable "elm_ship_id" by combining "xPath://span[text()='Loads']/../.."
-	And I click element $elm_ship_id in web browser within $max_response seconds
+		Given I "open the Outbound Plannner screen"
+		Then I assign "Outbound" to variable "wms_screen_to_open"
+		And I assign "ABB Outbound Planner" to variable "wms_parent_menu"
+		Then I execute scenario "Web Screen Search"
 
-And I "Select Quick Filters/Not Allocated filter"
-	Then I assign "Not Allocated" to variable "qf_filter_item"
-	And I execute scenario "Web Quick Filter"
+	@wip @public
+	Scenario: Web Navigate to Inventory Screen
+		#############################################################
+		# Description: Use Web Search to navigate to Inventory/Inventory Screen
+		# MSQL Files:
+		#	None
+		# Inputs:
+		# 	Required:
+		#		None
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-And I "search for load"
-	Then I assign "load" to variable "component_to_search_for"
-	And I assign $move_id to variable "string_to_search_for"
-	And I execute scenario "Web Component Search"
+		Given I "open the Inventory screen"
+		Then I assign "Inventory" to variable "wms_screen_to_open"
+		And I assign "ABB Inventory" to variable "wms_parent_menu"
+		Then I execute scenario "Web Screen Search"
 
-And I "select the Load"
-	Then I assign variable "elm_move_id" by combining "text:" $move_id
-	And I click element $elm_move_id in web browser within $max_response seconds
+	@wip @public
+	Scenario: Validate Shipment Info
+		#############################################################
+		# Description: This scenario validates the shipment by order
+		# was created and stores ship_id
+		# MSQL Files:
+		#	check_shipment_created.msql
+		# Inputs:
+		#	Required:
+		#		ordnum - Order number
+		#	Optional:
+		#		None
+		# Outputs:
+		# 	ship_id - Shipment ID generated in planning
+		#############################################################
 
-And I unassign variables "qf_filter_item,component_to_search_for,string_to_search_for,elm_move_id"
+		Given I "validate the shipment was created and return ship_id"
+		Then I assign "check_shipment_created.msql" to variable "msql_file"
+		When I execute scenario "Perform MSQL Execution"
+		Then I verify MOCA status is 0
+		And I assign row 0 column "ship_id" to variable "ship_id"
 
-@wip @public
-Scenario: Web Validate Load Info
-#############################################################
-# Description: This scenario will validate from the screen and
-# from the system that the load is valid.
-# is valid.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		move_id - load/carrier move id
-#		client_id - client ID
-#		carcod - carrier info
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+	@wip @public
+	Scenario: Get Carrier Name from Carrier Code
+		#############################################################
+		# Description: This scenario converts a carrier code to a carrier name
+		# MSQL Files:
+		#	get_carrier_name.msql
+		# Inputs:
+		#	Required:
+		#		carcod - carrier code (or carrier name)
+		#	Optional:
+		#		None
+		# Outputs:
+		# 	carnam - Carrier Name
+		#############################################################
 
-Given I "validate load information on screen"
-	Once I see $carcod in web browser
-	Once I see "Loads" in web browser
-	Once I see $move_id in web browser
+		Given I "get the carrier name for a passed in carrier code"
+		Then I assign "get_carrier_name.msql" to variable "msql_file"
+		When I execute scenario "Perform MSQL Execution"
+		Then I verify MOCA status is 0
+		And I assign row 0 column "carnam" to variable "carnam"
 
-And I "validate load was generated"
-	Then I execute scenario "Validate Load Created"
+	@wip @public
+	Scenario: Validate Load Created
+		#############################################################
+		# Description: This scenario validates the load was created
+		# MSQL Files:
+		#	check_load_created.msql
+		# Inputs:
+		#	Required:
+		#		move_id - load / carrier move id
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-@wip @public
-Scenario: Web Quick Filter
-#############################################################
-# Description: Use Quick Filter to apply a specified filter
-# MSQL Files:
-#	None
-# Inputs:
-# 	Required:
-#		qf_filter_item - menu item filter to select
-#	Optional:
-#		None
-# Outputs:
-#	None
-#############################################################
+		Given I "validate the load was created"
+		Then I assign "check_load_created.msql" to variable "msql_file"
+		When I execute scenario "Perform MSQL Execution"
+		Then I verify MOCA status is 0
 
-Given I "select Quick Filter and look for filter to apply"
-	Then I assign variable "elt" by combining "xPath://span[text()='Quick Filters']/.."
-	And I click element $elt in web browser within $max_response seconds
-    And I assign variable "elt" by combining "xPath://td[text()='" $qf_filter_item "']"
-	And I click element $elt in web browser within $max_response seconds
-    
-@wip @public
-Scenario: Web Navigate to Outbound Planner Outbound Screen
-#############################################################
-# Description: Use Web Search to navigate to Outbound Planner/Outbound Screen
-# MSQL Files:
-#	None
-# Inputs:
-# 	Required:
-#		None
-#	Optional:
-#		None
-# Outputs:
-#	None
-#############################################################
+	@wip @public
+	Scenario: Validate Shipment Created
+		#############################################################
+		# Description: This scenario validates the shipment was created
+		# MSQL Files:
+		#	check_shipment_info.msql
+		# Inputs:
+		#	Required:
+		#		ship_id - shipment id
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-Given I "open the Outbound Plannner screen"
-	Then I assign "Outbound" to variable "wms_screen_to_open"
-	And I assign "ABB Outbound Planner" to variable "wms_parent_menu"
-	Then I execute scenario "Web Screen Search"
-    
-@wip @public
-Scenario: Validate Shipment Info
-#############################################################
-# Description: This scenario validates the shipment by order
-# was created and stores ship_id
-# MSQL Files:
-#	check_shipment_created.msql
-# Inputs:
-#	Required:
-#		ordnum - Order number
-#	Optional:
-#		None
-# Outputs:
-# 	ship_id - Shipment ID generated in planning               
-#############################################################
+		Given I "validate the shipment was created"
+		Then I assign "check_shipment_info.msql" to variable "msql_file"
+		When I execute scenario "Perform MSQL Execution"
+		Then I verify MOCA status is 0
 
-Given I "validate the shipment was created and return ship_id"
-	Then I assign "check_shipment_created.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	Then I verify MOCA status is 0
-    And I assign row 0 column "ship_id" to variable "ship_id"
-    
-@wip @public
-Scenario: Get Carrier Name from Carrier Code
-#############################################################
-# Description: This scenario converts a carrier code to a carrier name
-# MSQL Files:
-#	get_carrier_name.msql
-# Inputs:
-#	Required:
-#		carcod - carrier code (or carrier name)
-#	Optional:
-#		None
-# Outputs:
-# 	carnam - Carrier Name               
-#############################################################
+	@wip @public
+	Scenario: Validate Order Created
+		#############################################################
+		# Description: This scenario validates the order was created
+		# MSQL Files:
+		#	check_order_created.msql
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-Given I "get the carrier name for a passed in carrier code"
-	Then I assign "get_carrier_name.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	Then I verify MOCA status is 0
-	And I assign row 0 column "carnam" to variable "carnam"
-    
-@wip @public
-Scenario: Validate Load Created
-#############################################################
-# Description: This scenario validates the load was created
-# MSQL Files:
-#	check_load_created.msql
-# Inputs:
-#	Required:
-#		move_id - load / carrier move id
-#	Optional:
-#		None
-# Outputs:
-#	None              
-#############################################################
+		Given I "validate the order was created"
+		Then I assign "check_order_created.msql" to variable "msql_file"
+		And I execute scenario "Perform MSQL Execution"
+		Then I verify MOCA status is 0
 
-Given I "validate the load was created"
-	Then I assign "check_load_created.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	Then I verify MOCA status is 0
-    
-@wip @public
-Scenario: Validate Shipment Created
-#############################################################
-# Description: This scenario validates the shipment was created
-# MSQL Files:
-#	check_shipment_info.msql
-# Inputs:
-#	Required:
-#		ship_id - shipment id
-#	Optional:
-#		None
-# Outputs:
-#	None              
-#############################################################
+	@wip @public
+	Scenario: Validate Load Removed from Transport Equipment
+		#############################################################
+		# Description: This scenario will Validate Load Removed from Transport Equipment
+		# MSQL Files:
+		#	validate_trailer_assign_to_load.msql
+		# Inputs:
+		#	Required:
+		#		None
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-Given I "validate the shipment was created"
-	Then I assign "check_shipment_info.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	Then I verify MOCA status is 0
-    
-@wip @public
-Scenario: Validate Order Created
-#############################################################
-# Description: This scenario validates the order was created
-# MSQL Files:
-#	check_order_created.msql
-# Inputs:
-#	Required:
-#		ordnum - order number
-#	Optional:
-#		None
-# Outputs:
-#	None              
-#############################################################
-
-Given I "validate the order was created"
-	Then I assign "check_order_created.msql" to variable "msql_file"
-	And I execute scenario "Perform MSQL Execution"
-	Then I verify MOCA status is 0
-    
-@wip @public
-Scenario: Validate Load Removed from Transport Equipment
-#############################################################
-# Description: This scenario will Validate Load Removed from Transport Equipment
-# MSQL Files:
-#	validate_trailer_assign_to_load.msql
-# Inputs:
-#	Required:
-#		None
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
-
-Given I "Validate Load Removed from Transport Equipment"
-	Then I assign "validate_trailer_assign_to_load.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	If I verify MOCA status is 0
-    	Then I assign row 0 column "trlr_id" to variable "trailer"
+		Given I "Validate Load Removed from Transport Equipment"
+		Then I assign "validate_trailer_assign_to_load.msql" to variable "msql_file"
+		When I execute scenario "Perform MSQL Execution"
+		If I verify MOCA status is 0
+		Then I assign row 0 column "trlr_id" to variable "trailer"
 		If I verify text $trailer is equal to "" ignoring case
-			Then I echo "Load has been Removed from Transport Equipment"
-		Else I fail step with error message "ERROR: Load was not removed from Transport Equipment"    
-		EndIf       	
-    Else I fail step with error message "ERROR: validate_trailer_assign_to_load.msql failed"
-    Endif
+		Then I echo "Load has been Removed from Transport Equipment"
+		Else I fail step with error message "ERROR: Load was not removed from Transport Equipment"
+		EndIf
+		Else I fail step with error message "ERROR: validate_trailer_assign_to_load.msql failed"
+		Endif
 
-And I unassign variable "trailer"
+		And I unassign variable "trailer"
 
-@wip @public
-Scenario: Web Outbound Remove Load from Trailer
-#############################################################
-# Description: This scenario will Remove Load from Trailer
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		trlr_id - Unique identifier for the trailer in the system.
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+	@wip @public
+	Scenario: Web Outbound Remove Load from Trailer
+		#############################################################
+		# Description: This scenario will Remove Load from Trailer
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		trlr_id - Unique identifier for the trailer in the system.
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-Given I execute scenario "Create Outbound local xPaths"
+		Given I execute scenario "Create Outbound local xPaths"
 
-Then I "select Dock Door with Transport Equipment"
-	And I assign variable "elt" by combining "xPath://div[contains(@class,'x-panel wm-doorandyardactivity-yardsgrid')]//input[starts-with(@id,'rpuxFilterComboBox-')]"
-	And I click element $elt in web browser within $max_response seconds
-	And I type "Equipment Number = " in web browser
-	And I type $trlr_id in web browser
-	And I press keys "ENTER" in web browser
+		Then I "select Dock Door with Transport Equipment"
+		And I assign variable "elt" by combining "xPath://div[contains(@class,'x-panel wm-doorandyardactivity-yardsgrid')]//input[starts-with(@id,'rpuxFilterComboBox-')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I type "Equipment Number = " in web browser
+		And I type $trlr_id in web browser
+		And I press keys "ENTER" in web browser
 
-	Then I assign variable "elt" by combining "xPath://div[contains(@class,'outer') and contains(text(), '" $trlr_id "')]/.."
-	And I click element $elt in web browser within $max_response seconds
+		Then I assign variable "elt" by combining "xPath://div[contains(@class,'outer') and contains(text(), '" $trlr_id "')]/.."
+		And I click element $elt in web browser within $max_response seconds
 
-And I "press Assign under the Outbound Load section"
-	Then I click element $click_load in web browser within $max_response seconds
-	And I wait $screen_wait seconds
-    
-And I "select Actions Dropdown Button"
-	Then I click element "xPath://span[starts-with(@id,'moreactionsbutton-') and text()='Actions']/.." in web browser within $max_response seconds
-	And I click element "xPath://span[starts-with(@id,'menuitem-') and text()='Modify Load']" in web browser within $max_response seconds
-    
-And I "select the Equipment Field"
-	Then I assign variable "elt" by combining "xPath://input[starts-with(@name,'trailerId')]"
-	Then I click element $elt in web browser within $max_response seconds
-	And I clear all text in element $elt in web browser within $max_response seconds
-	And I wait $screen_wait seconds
+		And I "press Assign under the Outbound Load section"
+		Then I click element $click_load in web browser within $max_response seconds
+		And I wait $screen_wait seconds
 
-And I "press Next button"
-	Then I click element "xPath://span[starts-with(@id,'button-') and text()='Next']/.." in web browser within $max_response seconds
-	And I wait $screen_wait seconds
-    
-And I "click Finish Button to Remove Load From Transport Equipment"
-	Then I click element "xPath://span[starts-with(@id,'button-') and text()='Finish']/.." in web browser within $max_response seconds
+		And I "select Actions Dropdown Button"
+		Then I click element "xPath://span[starts-with(@id,'moreactionsbutton-') and text()='Actions']/.." in web browser within $max_response seconds
+		And I click element "xPath://span[starts-with(@id,'menuitem-') and text()='Modify Load']" in web browser within $max_response seconds
 
-@wip @public
-Scenario: Web Outbound Assign Transport Equipment to Load
-#############################################################
-# Description: This scenario will Assign Transport Equipment to Load
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		trlr_id - Unique identifier for the trailer in the system.
-#		move_id - Load ID
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		And I "select the Equipment Field"
+		Then I assign variable "elt" by combining "xPath://input[starts-with(@name,'trailerId')]"
+		Then I click element $elt in web browser within $max_response seconds
+		And I clear all text in element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
 
-Given I execute scenario "Create Outbound local xPaths"
+		And I "press Next button"
+		Then I click element "xPath://span[starts-with(@id,'button-') and text()='Next']/.." in web browser within $max_response seconds
+		And I wait $screen_wait seconds
 
-Then I "select Dock Door with Transport Equipment"
-    And I assign variable "elt" by combining "xPath://div[contains(@class,'x-panel wm-doorandyardactivity-yardsgrid')]//input[starts-with(@id,'rpuxFilterComboBox-')]"
-    Then I click element $elt in web browser within $max_response seconds
-    And I type "Equipment Number = " in web browser
-    And I type $trlr_id in web browser
-    And I press keys "ENTER" in web browser
-	And I click element $elt in web browser within $max_response seconds
+		And I "click Finish Button to Remove Load From Transport Equipment"
+		Then I click element "xPath://span[starts-with(@id,'button-') and text()='Finish']/.." in web browser within $max_response seconds
 
-    Then I assign variable "elt" by combining "xPath://div[contains(@class,'outer') and contains(text(), '" $trlr_id "')]/.."
-    And I click element $elt in web browser within $max_response seconds
+	@wip @public
+	Scenario: Web Outbound Assign Transport Equipment to Load
+		#############################################################
+		# Description: This scenario will Assign Transport Equipment to Load
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		trlr_id - Unique identifier for the trailer in the system.
+		#		move_id - Load ID
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-And I "press Assign under the Outbound Load section"
-	Then I click element "xPath://a[starts-with(@class,'x-component x-component-default') and text()='Assign']" in web browser within $max_response seconds
-    
-And I "filter for Load"
-	Then I assign variable "elt" by combining "xPath://input[starts-with(@id,'rpFilterComboBox-') and contains(@type,'text')]"
-	Once I see element $elt in web browser
-    Then I click element $elt in web browser within $max_response seconds
- 	And I type "Load = " in web browser
-    And I type $move_id in web browser
-    And I press keys "ENTER" in web browser
-    
-And I "select the Outbound Load to be assigned" 
-    Then I click element $select_load in web browser within $max_response seconds
+		Given I execute scenario "Create Outbound local xPaths"
 
-And I "press Save button"
-	Then I click element "xPath://div[contains(@class, 'assignload-savebar')]/descendant::span[text()='Save']/.." in web browser within $max_response seconds
-    
-And I "click Ok to Assign Transport Equipment to Load"
-	Then I click element "xPath://div[contains(@id, 'messagebox')]/descendant::span[text()='OK']/.." in web browser within $max_response seconds
-	And I wait $wait_med seconds
+		Then I "select Dock Door with Transport Equipment"
+		And I assign variable "elt" by combining "xPath://div[contains(@class,'x-panel wm-doorandyardactivity-yardsgrid')]//input[starts-with(@id,'rpuxFilterComboBox-')]"
+		Then I click element $elt in web browser within $max_response seconds
+		And I type "Equipment Number = " in web browser
+		And I type $trlr_id in web browser
+		And I press keys "ENTER" in web browser
+		And I click element $elt in web browser within $max_response seconds
 
-@wip @public
-Scenario: Web Validate Transport Equipment Assigned to Load
-#############################################################
-# Description: This scenario will Validate Transport Equipment Assigned to Load
-# MSQL Files:
-#	validate_trailer_assign_to_load.msql
-# Inputs:
-#	Required:
-#		None
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		Then I assign variable "elt" by combining "xPath://div[contains(@class,'outer') and contains(text(), '" $trlr_id "')]/.."
+		And I click element $elt in web browser within $max_response seconds
 
-Given I "validate Transport Equipment Assigned to Load"
-	Then I assign "validate_trailer_assign_to_load.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	If I verify MOCA status is 0
+		And I "press Assign under the Outbound Load section"
+		Then I click element "xPath://a[starts-with(@class,'x-component x-component-default') and text()='Assign']" in web browser within $max_response seconds
+
+		And I "filter for Load"
+		Then I assign variable "elt" by combining "xPath://input[starts-with(@id,'rpFilterComboBox-') and contains(@type,'text')]"
+		Once I see element $elt in web browser
+		Then I click element $elt in web browser within $max_response seconds
+		And I type "Load = " in web browser
+		And I type $move_id in web browser
+		And I press keys "ENTER" in web browser
+
+		And I "select the Outbound Load to be assigned"
+		Then I click element $select_load in web browser within $max_response seconds
+
+		And I "press Save button"
+		Then I click element "xPath://div[contains(@class, 'assignload-savebar')]/descendant::span[text()='Save']/.." in web browser within $max_response seconds
+
+		And I "click Ok to Assign Transport Equipment to Load"
+		Then I click element "xPath://div[contains(@id, 'messagebox')]/descendant::span[text()='OK']/.." in web browser within $max_response seconds
+		And I wait $wait_med seconds
+
+	@wip @public
+	Scenario: Web Validate Transport Equipment Assigned to Load
+		#############################################################
+		# Description: This scenario will Validate Transport Equipment Assigned to Load
+		# MSQL Files:
+		#	validate_trailer_assign_to_load.msql
+		# Inputs:
+		#	Required:
+		#		None
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "validate Transport Equipment Assigned to Load"
+		Then I assign "validate_trailer_assign_to_load.msql" to variable "msql_file"
+		When I execute scenario "Perform MSQL Execution"
+		If I verify MOCA status is 0
 		Then I assign row 0 column "trlr_id" to variable "trailer"
 		If I verify text $trailer is not equal to "" ignoring case
-			Then I echo "Trailer has been assigned to Load successfully"
-		Else I fail step with error message "ERROR: Trailer is not assigned to the Load"    
-		EndIf       	
-	Else I fail step with error message "ERROR: validate_trailer_assign_to_load.msql failed"
-	Endif
+		Then I echo "Trailer has been assigned to Load successfully"
+		Else I fail step with error message "ERROR: Trailer is not assigned to the Load"
+		EndIf
+		Else I fail step with error message "ERROR: validate_trailer_assign_to_load.msql failed"
+		Endif
 
-And I unassign variable "trailer"
+		And I unassign variable "trailer"
 
-@wip @public
-Scenario: Validate Stop Deleted
-#############################################################
-# Description: This scenario validates the stop is deleted from Load
-# MSQL Files:
-#	check_stop_deleted.msql
-# Inputs:
-#	Required:
-#		move_id - Load number. Maps to car_move.car_move_id
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+	@wip @public
+	Scenario: Validate Stop Deleted
+		#############################################################
+		# Description: This scenario validates the stop is deleted from Load
+		# MSQL Files:
+		#	check_stop_deleted.msql
+		# Inputs:
+		#	Required:
+		#		move_id - Load number. Maps to car_move.car_move_id
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-Given I "validate the stop is deleted from Load"
-	Then I assign $move_id to variable "load"
-	And I assign "check_stop_deleted.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	Then I verify MOCA status is 510
+		Given I "validate the stop is deleted from Load"
+		Then I assign $move_id to variable "load"
+		And I assign "check_stop_deleted.msql" to variable "msql_file"
+		When I execute scenario "Perform MSQL Execution"
+		Then I verify MOCA status is 510
 
-@wip @public
-Scenario: Web Navigate to Outbound Planner Work Queue Screen
-#############################################################
-# Description: Use Web Search to navigate to Outbound Planner/Outbound Screen
-# MSQL Files:
-#	None
-# Inputs:
-# 	Required:
-#		None
-#	Optional:
-#		None
-# Outputs:
-#	None
-#############################################################
+	@wip @public
+	Scenario: Web Navigate to Outbound Planner Work Queue Screen
+		#############################################################
+		# Description: Use Web Search to navigate to Outbound Planner/Outbound Screen
+		# MSQL Files:
+		#	None
+		# Inputs:
+		# 	Required:
+		#		None
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-Given I "open the Outbound Plannner screen"
-	Then I assign "Work Queue" to variable "wms_screen_to_open"
-	And I assign "Outbound Planner" to variable "wms_parent_menu"
-	Then I execute scenario "Web Screen Search"
-    
-@wip @public
-Scenario: Web Cancel Replenishment Task in Work Queue
-#############################################################
-# Description: Cancels a Pallet Replenishment generated by the system
-# MSQL Files:
-#	None
-# Inputs:
-# 	Required:
-#		palloc - Source Location
-#		cancel_code - Cancel code
-#	Optional:
-#		None
-# Outputs:
-#	None
-#############################################################
+		Given I "open the Outbound Plannner screen"
+		Then I assign "Work Queue" to variable "wms_screen_to_open"
+		And I assign "ABB Outbound Planner" to variable "wms_parent_menu"
+		Then I execute scenario "Web Screen Search"
 
-Given I "filter on location for replenishment task"
-	Then I assign "Source" to variable "component_to_search_for"
-	And I assign $palloc to variable "string_to_search_for"
-	And I execute scenario "Web Component Search"
-    
-Then I "click check box next to work"
-	Then I click element "xPath://div[contains(@class,'x-column-header x-column-header-ch')]/descendant::span" in web browser within $max_response seconds
+	@wip @public
+	Scenario: Assign User From Actions Button
 
-And I "click Actions"
-	Then I click element "xPath://span[contains(@id,'-btnInnerEl') and text()='Actions']/.." in web browser within $max_response seconds
-    
-And I "click Cancel Picks"
-	Then I click element "xPath://span[text()='Cancel Picks']" in web browser within $max_response seconds
+		Then I "assign user from actions menu"
+		And I click element "xPath://tr[contains(@id,'rpMultiLevelGridView')]/descendant::div[contains(@class,'grid-row-checker')]" in web browser within $max_response seconds
+		And I click element "xPath://span[text()='Actions']/.." in web browser within $max_response seconds
+		And I click element "xPath://span[text()='Assign User']" in web browser within $max_response seconds
 
-And I "click down arrow to choose Pick Cancellation Code"
-	Then I click element "xPath://table[contains(@class,'x-field cancel')]/descendant::div[contains(@class,'x-trigger')]" in web browser within $max_response seconds
-	
-And I "select Cancellation Code"
+		And I "click element select the user"
+		Then I assign variable "elt" by combining "xPath://td[contains(@id,'rpuxFilterComboBox')]/descendant::input[contains(@id,'rpuxFilterComboBox-')]"
+		And I click element $elt in web browser within $max_response seconds
+		And I clear all text in element $elt in web browser
+		And I assign variable "user_search_string" by combining "login=" $userlogin
+		And I type $user_search_string in element $elt in web browser
+		And I press keys "ENTER" in web browser
+
+		And I "select the user"
+		Then I assign variable "elt" by combining $xPath "//td[contains(@class,'headerId-gridcolumn')]/descendant::div[text()='" $userlogin "']"
+		And I click element $elt in web browser within $max_response seconds
+		And i click element "xPath://span[text()='Select']/.." in web browser within $max_response seconds
+		Once I see element "xPath://div[contains(text(),'The selected work has been assigned')]" in web browser
+		And I click element "xPath://span[text()='OK']/.." in web browser within $max_response seconds
+
+		And I "remove applied filter"
+		Then I assign variable "elt" by combining "xPath://a[@data-qtip='Delete']"
+		If I see element $elt in web browser within $screen_wait seconds
+		Then I click element $elt in web browser within $max_response seconds
+	EndIf
+
+	@wip @public
+	Scenario: Web Search Count Task in Work Queue
+
+		Given I "filter on location for replenishment task"
+		Then I assign "Source" to variable "component_to_search_for"
+		And I assign $palloc to variable "string_to_search_for"
+		And I execute scenario "Web Component Search"
+
+		Given I "filter on location for replenishment task"
+		Then I assign "Operation" to variable "component_to_search_for"
+		And I assign $wqoperation to variable "string_to_search_for"
+		And I execute scenario "Web Component Search"
+
+		Then I "click check box next to work"
+	#Then I click element "xPath://div[contains(@class,'x-column-header x-column-header-ch')]/descendant::span" in web browser within $max_response seconds
+
+
+	@wip @public
+	Scenario: Web Cancel Replenishment Task in Work Queue
+		#############################################################
+		# Description: Cancels a Pallet Replenishment generated by the system
+		# MSQL Files:
+		#	None
+		# Inputs:
+		# 	Required:
+		#		palloc - Source Location
+		#		cancel_code - Cancel code
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "filter on location for replenishment task"
+		Then I assign "Source" to variable "component_to_search_for"
+		And I assign $palloc to variable "string_to_search_for"
+		And I execute scenario "Web Component Search"
+
+		Then I "click check box next to work"
+		Then I click element "xPath://div[contains(@class,'x-column-header x-column-header-ch')]/descendant::span" in web browser within $max_response seconds
+
+		And I "click Actions"
+		Then I click element "xPath://span[contains(@id,'-btnInnerEl') and text()='Actions']/.." in web browser within $max_response seconds
+
+		And I "click Cancel Picks"
+		Then I click element "xPath://span[text()='Cancel Picks']" in web browser within $max_response seconds
+
+		And I "click down arrow to choose Pick Cancellation Code"
+		Then I click element "xPath://table[contains(@class,'x-field cancel')]/descendant::div[contains(@class,'x-trigger')]" in web browser within $max_response seconds
+
+		And I "select Cancellation Code"
 		Then I assign variable "elt" by combining "xPath://li[text()='" $cancel_code "']"
 		And I click element $elt in web browser within $max_response seconds
-    
-And I "click Apply"
+
+		And I "click Apply"
 		Then I click element "xPath://span[text()='Apply']/.." in web browser within $max_response seconds
 
-And I "click OK"
-    	Then I click element "xPath://span[text() = 'OK']/.." in web browser within $max_response seconds
+		And I "click OK"
+		Then I click element "xPath://span[text() = 'OK']/.." in web browser within $max_response seconds
 
-@wip @public
-Scenario: Validate Cancelled Replenishment Work
-#############################################################
-# Description: This Scenario verifies the Pallet Replenishment generated by the system is cancelled or not
-# MSQL Files:
-#	None
-# Inputs:
-# 	Required:
-#		oprcod - Operation Code
-#	Optional:
-#		None
-# Outputs:
-#	None
-#############################################################
+	@wip @public
+	Scenario: Validate Cancelled Replenishment Work
+		#############################################################
+		# Description: This Scenario verifies the Pallet Replenishment generated by the system is cancelled or not
+		# MSQL Files:
+		#	None
+		# Inputs:
+		# 	Required:
+		#		oprcod - Operation Code
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-Given I "verify the Replenishment Work is cancelled or not"
-	Then I assign "validate_work_cancelled.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	If I verify MOCA status is 510
-		Then I echo "Replenishment Work Successfully Cancelled" 
+		Given I "verify the Replenishment Work is cancelled or not"
+		Then I assign "validate_work_cancelled.msql" to variable "msql_file"
+		When I execute scenario "Perform MSQL Execution"
+		If I verify MOCA status is 510
+		Then I echo "Replenishment Work Successfully Cancelled"
 	Else I fail step with error message "ERROR: Replenishment Work was not cancelled or validate_work_cancelled.msql failed"
 	Endif
 
-@wip @public
-Scenario: Web Cancel Order and Order Line
-#############################################################
-# Description: This scenario will cancel the Order or Order Line in the Web
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		move_id - load/carrier move id
-#		ordnum - Order Number
-#		cancel_mode - specifies whether to cancel order or order line
-#	Optional:
-#		None
-# Outputs:
-#	None
-#############################################################
-	
-Given I "verify we are on Outbound Screen"
-	Once I see "Loads" in web browser
-    
-And I "click on the Load Tab"
-	Then I assign variable "elm_move_id" by combining "xPath://span[text()='Loads']/../.."
-	And I click element $elm_move_id in web browser within $max_response seconds
-    
-And I "filter for the Load that contains orders to Cancel"
-	Then I assign "load" to variable "component_to_search_for"
-	And I assign $move_id to variable "string_to_search_for"
-	And I execute scenario "Web Component Search"
-    
-And I "drill into the Load to display Load Information"
-	Then I assign variable "elt" by combining "xPath://span[text()='" $move_id "']"
-	And I click element $elt in web browser within $max_response seconds
-    
-And I "click on the Orders Tab"
-	Then I assign variable "elt" by combining "xPath://span[text()='Orders']/../.."
-	And I click element $elt in web browser within $max_response seconds
+	@wip @public
+	Scenario: Web Cancel Order and Order Line
+		#############################################################
+		# Description: This scenario will cancel the Order or Order Line in the Web
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		move_id - load/carrier move id
+		#		ordnum - Order Number
+		#		cancel_mode - specifies whether to cancel order or order line
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-And I "select Order/Order lines and Cancel"
-	Then I assign variable "elt" by combining "xPath://span[text()='" $ordnum "']"
-	And I click element $elt in web browser within $max_response seconds
+		Given I "verify we are on Outbound Screen"
+		Once I see "Loads" in web browser
 
-	If I verify variable "cancel_mode" is assigned
-	And I verify text $cancel_mode is equal to "ORDER" ignoring case
-		Then I click element "xPath://span[contains(@id,'-btnInnerEl') and text()='Actions']/.." in web browser within $max_response seconds 
+		And I "click on the Load Tab"
+		Then I assign variable "elm_move_id" by combining "xPath://span[text()='Loads']/../.."
+		And I click element $elm_move_id in web browser within $max_response seconds
+
+		And I "filter for the Load that contains orders to Cancel"
+		Then I assign "load" to variable "component_to_search_for"
+		And I assign $move_id to variable "string_to_search_for"
+		And I execute scenario "Web Component Search"
+
+		And I "drill into the Load to display Load Information"
+		Then I assign variable "elt" by combining "xPath://span[text()='" $move_id "']"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "click on the Orders Tab"
+		Then I assign variable "elt" by combining "xPath://span[text()='Orders']/../.."
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "select Order/Order lines and Cancel"
+		Then I assign variable "elt" by combining "xPath://span[text()='" $ordnum "']"
+		And I click element $elt in web browser within $max_response seconds
+
+		If I verify variable "cancel_mode" is assigned
+		And I verify text $cancel_mode is equal to "ORDER" ignoring case
+		Then I click element "xPath://span[contains(@id,'-btnInnerEl') and text()='Actions']/.." in web browser within $max_response seconds
 		And I click element "xPath://span[text()='Cancel Order']" in web browser within $max_response seconds
 
 		Then I "confirm I want to Cancel the Order"
-			Once I see element "xPath://div[text()='Are you sure you want to cancel the outbound order?']" in web browser
-			Then I click element "xPath://span[text()='OK']/.." in web browser within $max_response seconds
-	ElsIf I verify variable "cancel_mode" is assigned
-	And I verify text $cancel_mode is equal to "ORDER_LINE"
+		Once I see element "xPath://div[text()='Are you sure you want to cancel the outbound order?']" in web browser
+		Then I click element "xPath://span[text()='OK']/.." in web browser within $max_response seconds
+		ElsIf I verify variable "cancel_mode" is assigned
+		And I verify text $cancel_mode is equal to "ORDER_LINE"
 		Then I "select Lines to Cancel"
-			And I assign variable "elt" by combining "xPath://div[text()='" $prtnum "']"
-			Then I click element $elt in web browser within $max_response seconds
+		And I assign variable "elt" by combining "xPath://div[text()='" $prtnum "']"
+		Then I click element $elt in web browser within $max_response seconds
 
 		And I "click Actions Cancel Order Line"
-			Then I click element "xPath://div[contains(@class,'bottom-bar-')]/descendant::span[text()='Actions']/.." in web browser within $max_response seconds 
-			And I click element "xPath://span[text()='Cancel Order Line']" in web browser within $max_response seconds
+		Then I click element "xPath://div[contains(@class,'bottom-bar-')]/descendant::span[text()='Actions']/.." in web browser within $max_response seconds
+		And I click element "xPath://span[text()='Cancel Order Line']" in web browser within $max_response seconds
 
 		Then I "click OK to Confirm cancellation"
-			Once I see element "xPath://div[text()='Are you sure you want to cancel the selected records?']" in web browser
-			Then I click element "xPath://span[text()='OK']/.." in web browser within $max_response seconds
-	Else I fail step with error message "ERROR: Invalid value for cancel_mode"
-	EndIf
-    
-And I "look for checkmark icon to denote cancel is complete"
-	Once I see element "xPath://div[contains(@style,'checkmark')]" in web browser
-	And I wait $wait_med seconds
+		Once I see element "xPath://div[text()='Are you sure you want to cancel the selected records?']" in web browser
+		Then I click element "xPath://span[text()='OK']/.." in web browser within $max_response seconds
+		Else I fail step with error message "ERROR: Invalid value for cancel_mode"
+		EndIf
 
-@wip @public
-Scenario: Web Validate Order and Order Line Cancelled
-#############################################################
-# Description: This scenario will verify that the Order is cancelled or not
-# MSQL Files:
-#	validate_order_cancelled.msql
-# Inputs:
-#	Required:
-#		ordnum - Order Number
-#		prtnum - Part Number
-#		cancel_mode - Cancellation mode i.e, Order or Order Line
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		And I "look for checkmark icon to denote cancel is complete"
+		Once I see element "xPath://div[contains(@style,'checkmark')]" in web browser
+		And I wait $wait_med seconds
 
-Given I "verify the order is cancelled or not"
-	Then I assign "validate_order_cancelled.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	
-	If I verify variable "cancel_mode" is assigned
-	And I verify text $cancel_mode is equal to "ORDER" ignoring case
-	And I verify MOCA status is 0
-		Then I echo "Order Successfully Cancelled" 
-	ElsIf I verify variable "cancel_mode" is assigned
-	And I verify text $cancel_mode is equal to "ORDER_LINE"
-	And I verify MOCA status is 0
-		Then I echo "Order Line Successfully Cancelled" 
+	@wip @public
+	Scenario: Web Validate Order and Order Line Cancelled
+		#############################################################
+		# Description: This scenario will verify that the Order is cancelled or not
+		# MSQL Files:
+		#	validate_order_cancelled.msql
+		# Inputs:
+		#	Required:
+		#		ordnum - Order Number
+		#		prtnum - Part Number
+		#		cancel_mode - Cancellation mode i.e, Order or Order Line
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "verify the order is cancelled or not"
+		Then I assign "validate_order_cancelled.msql" to variable "msql_file"
+		When I execute scenario "Perform MSQL Execution"
+
+		If I verify variable "cancel_mode" is assigned
+		And I verify text $cancel_mode is equal to "ORDER" ignoring case
+		And I verify MOCA status is 0
+		Then I echo "Order Successfully Cancelled"
+		ElsIf I verify variable "cancel_mode" is assigned
+		And I verify text $cancel_mode is equal to "ORDER_LINE"
+		And I verify MOCA status is 0
+		Then I echo "Order Line Successfully Cancelled"
 	Else I fail step with error message "ERROR: Order or Order Line was not cancelled or validate_order_cancelled.msql failed"
 	Endif
-    
-#############################################################
-# Private Scenarios:
-#	Web Process Order Tab - process inputs during new order creation
-#	Web Process Order Line Tab - process inputs during new order line creation 
-#	Web Add Oder Note - add a new note during creation or order or order line
-#	Web Validate Copy and Delete Options - validate that delete and copy order line operations start
-#	Web Outbound Search Assign Shipments - search for component shipment assignment screen
-#	Web Outbound Search Assign Orders - search for component order assignment screen
-#	Create Outbound local xPaths - Create xpath variables for use in this utility
-#############################################################
-    
-@wip @private
-Scenario: Web Process Order Line Tab
-#############################################################
-# Description: This scenario processes the inputs needed to create a new
-# order line in the Order Line Tab. It will fill in all required inputs
-# and a random sampling of optional inputs.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		prtnum - part number in the order line
-#		untqty - quantity of prtnum in the order line
-#		alloc_profile - allocation profile UI field input
-#		carcod - carrier code field input
-#		project_number - project number field input
-#		dstloc - destination location field input
-#		res_pri - reservation priority field input
-#		ftp_dtl - part foot print detail field input
-#		cert_origin - certificate of origin field input
-#	Optional:
-#		ordlin - order line id field input
-# Outputs:
-#	None            
-#############################################################
 
-And I "click on Add Button to add a order line"
-	Then I assign variable "elt" by combining "xPath://span[text()='Add']/.."
-	And I click element $elt in web browser within $max_response seconds
-    
-Given I "process order line if defined"
-	If I verify variable "ordnum" is assigned
-	And I verify text $ordlin is not equal to ""
-		Then I click element "name:orderLine" in web browser within $max_response seconds        
-        And I type $ordlin in element "name:orderLine" in web browser within $max_response seconds
-	EndIf
+	#############################################################
+	# Private Scenarios:
+	#	Web Process Order Tab - process inputs during new order creation
+	#	Web Process Order Line Tab - process inputs during new order line creation
+	#	Web Add Oder Note - add a new note during creation or order or order line
+	#	Web Validate Copy and Delete Options - validate that delete and copy order line operations start
+	#	Web Outbound Search Assign Shipments - search for component shipment assignment screen
+	#	Web Outbound Search Assign Orders - search for component order assignment screen
+	#	Create Outbound local xPaths - Create xpath variables for use in this utility
+	#############################################################
 
-And I "select/Add the Item / Part"
-	Then I click element "name:itemNumber" in web browser within $max_response seconds
-	And I type $prtnum in element "name:itemNumber" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://div[contains(text(),'" $prtnum "')]"
-    And I click element $elt in web browser within $max_response seconds
+	@wip @private
+	Scenario: Web Process Order Line Tab
+		#############################################################
+		# Description: This scenario processes the inputs needed to create a new
+		# order line in the Order Line Tab. It will fill in all required inputs
+		# and a random sampling of optional inputs.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		prtnum - part number in the order line
+		#		untqty - quantity of prtnum in the order line
+		#		alloc_profile - allocation profile UI field input
+		#		carcod - carrier code field input
+		#		project_number - project number field input
+		#		dstloc - destination location field input
+		#		res_pri - reservation priority field input
+		#		ftp_dtl - part foot print detail field input
+		#		cert_origin - certificate of origin field input
+		#	Optional:
+		#		ordlin - order line id field input
+		# Outputs:
+		#	None
+		#############################################################
 
-And I "select/Add the Order Quantity"
-	Then I click element "name:orderedQuantity" in web browser within $max_response seconds
-	And I type $untqty in element "name:orderedQuantity" in web browser within $max_response seconds
+		And I "click on Add Button to add a order line"
+		Then I assign variable "elt" by combining "xPath://span[text()='Add']/.."
+		And I click element $elt in web browser within $max_response seconds
 
-And I "select/Add the Allocation Profile"
-	Then I click element "name:inventoryStatusProgression" in web browser within $max_response seconds
-	And I type $alloc_profile in element "name:inventoryStatusProgression" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[text()='" $alloc_profile "']"
-    And I click element $elt in web browser within $max_response seconds    
-    
-And I "select/Add the Carrier"
-	Then I execute scenario "Get Carrier Name from Carrier Code"
-	And I click element "name:carrier" in web browser within $max_response seconds
-	And I type $carnam in element "name:carrier" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[text()='" $carcod "']"
-    And I click element $elt in web browser within $max_response seconds
-    
-And I "select/Add the Project Number"
-	Then I click element "name:projectNumber" in web browser within $max_response seconds
-	And I type $project_number in element "name:projectNumber" in web browser within $max_response seconds
+		Given I "process order line if defined"
+		If I verify variable "ordnum" is assigned
+		And I verify text $ordlin is not equal to ""
+		Then I click element "name:orderLine" in web browser within $max_response seconds
+		And I type $ordlin in element "name:orderLine" in web browser within $max_response seconds
+		EndIf
 
-And I "select/Add the Destination Location"
-	Then I click element "name:destinationLocation" in web browser within $max_response seconds
-	And I type $dstloc in element "name:destinationLocation" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[text()='" $dstloc "']"
-    And I click element $elt in web browser within $max_response seconds
+		And I "select/Add the Item / Part"
+		Then I click element "name:itemNumber" in web browser within $max_response seconds
+		And I type $prtnum in element "name:itemNumber" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://div[contains(text(),'" $prtnum "')]"
+		And I click element $elt in web browser within $max_response seconds
 
-And I "select/Add the Reservation Priority"
-	Then I click element "name:reservationPriority" in web browser within $max_response seconds
-	And I type $res_pri in element "name:reservationPriority" in web browser within $max_response seconds
+		And I "select/Add the Order Quantity"
+		Then I click element "name:orderedQuantity" in web browser within $max_response seconds
+		And I type $untqty in element "name:orderedQuantity" in web browser within $max_response seconds
 
-And I "select/Add the Footprint Code"
-	Then I click element "name:footprintCode" in web browser within $max_response seconds
-	And I type $ftp_dtl in element "name:footprintCode" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[text()='" $ftp_dtl "']"
-    And I click element $elt in web browser within $max_response seconds
+		And I "select/Add the Allocation Profile"
+		Then I click element "name:inventoryStatusProgression" in web browser within $max_response seconds
+		And I type $alloc_profile in element "name:inventoryStatusProgression" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[text()='" $alloc_profile "']"
+		And I click element $elt in web browser within $max_response seconds
 
-And I "select/Add the Certificate or Origin Number"
-	Then I click element "name:certificateOfOriginNumber" in web browser within $max_response seconds
-	And I type $cert_origin in element "name:certificateOfOriginNumber" in web browser within $max_response seconds
-    
-And I "click to Save"
-	Then I assign variable "elt" by combining "xPath://span[text()='Save']/.."
-	And I click element $elt in web browser within $max_response seconds
-	And I wait $screen_wait seconds
+		And I "select/Add the Carrier"
+		Then I execute scenario "Get Carrier Name from Carrier Code"
+		And I click element "name:carrier" in web browser within $max_response seconds
+		And I type $carnam in element "name:carrier" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[text()='" $carcod "']"
+		And I click element $elt in web browser within $max_response seconds
 
-@wip @private
-Scenario: Web Process Order Tab
-#############################################################
-# Description: This scenario processes the inputs needed to create a new
-# order in the Order Tab. It will fill in all required inputs
-# and a random sampling of optional inputs.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		ordnum - order number
-#		ui_ordtyp - the Web representation of the order type
-#		cstnum - customer ID field value
-#		cust_po - customer PO field value
-#		create_ship_by - create shipment by field value
-#		deliver_num - delivery number field value
-#		ord_note - text for creating note for order
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		And I "select/Add the Project Number"
+		Then I click element "name:projectNumber" in web browser within $max_response seconds
+		And I type $project_number in element "name:projectNumber" in web browser within $max_response seconds
 
-Given I "process ordnum if defined"
-	If I verify variable "ordnum" is assigned
-	And I verify text $ordnum is not equal to ""
-		Then I click element "name:outboundOrderNumber" in web browser within $max_response seconds        
-        And I type $ordnum in element "name:outboundOrderNumber" in web browser within $max_response seconds
-	EndIf
+		And I "select/Add the Destination Location"
+		Then I click element "name:destinationLocation" in web browser within $max_response seconds
+		And I type $dstloc in element "name:destinationLocation" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[text()='" $dstloc "']"
+		And I click element $elt in web browser within $max_response seconds
 
-And I "select/Add the Order Type"
-	Then I click element "name:outboundOrderType" in web browser within $max_response seconds
-	And I type $ui_ordtyp in element "name:outboundOrderType" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[text()='" $ui_ordtyp "']"
-    And I click element $elt in web browser within $max_response seconds
+		And I "select/Add the Reservation Priority"
+		Then I click element "name:reservationPriority" in web browser within $max_response seconds
+		And I type $res_pri in element "name:reservationPriority" in web browser within $max_response seconds
 
-And I "select/Add the Client"
-	If I verify text $client_id is not equal to "----"
+		And I "select/Add the Footprint Code"
+		Then I click element "name:footprintCode" in web browser within $max_response seconds
+		And I type $ftp_dtl in element "name:footprintCode" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[text()='" $ftp_dtl "']"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "select/Add the Certificate or Origin Number"
+		Then I click element "name:certificateOfOriginNumber" in web browser within $max_response seconds
+		And I type $cert_origin in element "name:certificateOfOriginNumber" in web browser within $max_response seconds
+
+		And I "click to Save"
+		Then I assign variable "elt" by combining "xPath://span[text()='Save']/.."
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+
+	@wip @private
+	Scenario: Web Process Order Tab
+		#############################################################
+		# Description: This scenario processes the inputs needed to create a new
+		# order in the Order Tab. It will fill in all required inputs
+		# and a random sampling of optional inputs.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		ui_ordtyp - the Web representation of the order type
+		#		cstnum - customer ID field value
+		#		cust_po - customer PO field value
+		#		create_ship_by - create shipment by field value
+		#		deliver_num - delivery number field value
+		#		ord_note - text for creating note for order
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "process ordnum if defined"
+		If I verify variable "ordnum" is assigned
+		And I verify text $ordnum is not equal to ""
+		Then I click element "name:outboundOrderNumber" in web browser within $max_response seconds
+		And I type $ordnum in element "name:outboundOrderNumber" in web browser within $max_response seconds
+		EndIf
+
+		And I "select/Add the Order Type"
+		Then I click element "name:outboundOrderType" in web browser within $max_response seconds
+		And I type $ui_ordtyp in element "name:outboundOrderType" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[text()='" $ui_ordtyp "']"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "select/Add the Client"
+		If I verify text $client_id is not equal to "----"
 		Then I click element "name:clientId" in web browser within $max_response seconds
 		And I type $client_id in element "name:clientId" in web browser within $max_response seconds
 		And I press keys "ENTER" in web browser
 		And I assign variable "elt" by combining "xPath://li[text()='" $client_id "']"
-    	And I click element $elt in web browser within $max_response seconds
-	EndIf
-    
-And I "select/Add the Customer Ship To"
-	Then I click element "name:shipToCustomer" in web browser within $max_response seconds
-	And I type $cstnum in element "name:shipToCustomer" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[text()='" $cstnum "']"
-    And I click element $elt in web browser within $max_response seconds
-    
-And I "select/Add the Customer PO"
-	Then I click element "name:customerPONumber" in web browser within $max_response seconds
-	And I type $cust_po in element "name:customerPONumber" in web browser within $max_response seconds
-    
-And I "select/Add the Create Shipment By"
-	Then I click element "name:createShipmentBy" in web browser within $max_response seconds
-	And I type $create_ship_by in element "name:createShipmentBy" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[text()='" $create_ship_by "']"
-    And I click element $elt in web browser within $max_response seconds
-    
-And I "select/Add the Delivery Number"
-	Then I click element "name:deliveryNumber" in web browser within $max_response seconds
-	And I type $deliver_num in element "name:deliveryNumber" in web browser within $max_response seconds
-    
-And I "select the Notes, click Add Button and add Note"
-	Then I assign $ord_note to variable "input_note"
-	And I assign "Shipping Notes" to variable "note_type"
-	And I assign "0001" to variable "note_line_number"
-	And I execute scenario "Web Add Order Note"
-	And I wait $screen_wait seconds
+		And I click element $elt in web browser within $max_response seconds
+		EndIf
 
-And I "complete the order by clicking on Save Button"
-	Then I assign variable "elt" by combining "xPath://span[text()='Save']/.."
-	When I click element $elt in web browser within $max_response seconds
-    And I wait $screen_wait seconds
-    
-And I "am asked to save and generate order lines"
-	If I see "The order has been saved. Do you want to add lines to this order?" in web browser within $wait_med seconds
+		And I "select/Add the Customer Ship To"
+		Then I click element "name:shipToCustomer" in web browser within $max_response seconds
+		And I type $cstnum in element "name:shipToCustomer" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[text()='" $cstnum "']"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "select/Add the Customer PO"
+		Then I click element "name:customerPONumber" in web browser within $max_response seconds
+		And I type $cust_po in element "name:customerPONumber" in web browser within $max_response seconds
+
+		And I "select/Add the Create Shipment By"
+		Then I click element "name:createShipmentBy" in web browser within $max_response seconds
+		And I type $create_ship_by in element "name:createShipmentBy" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[text()='" $create_ship_by "']"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "select/Add the Delivery Number"
+		Then I click element "name:deliveryNumber" in web browser within $max_response seconds
+		And I type $deliver_num in element "name:deliveryNumber" in web browser within $max_response seconds
+
+		And I "select the Notes, click Add Button and add Note"
+		Then I assign $ord_note to variable "input_note"
+		And I assign "Shipping Notes" to variable "note_type"
+		And I assign "0001" to variable "note_line_number"
+		And I execute scenario "Web Add Order Note"
+		And I wait $screen_wait seconds
+
+		And I "complete the order by clicking on Save Button"
+		Then I assign variable "elt" by combining "xPath://span[text()='Save']/.."
+		When I click element $elt in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+
+		And I "am asked to save and generate order lines"
+		If I see "The order has been saved. Do you want to add lines to this order?" in web browser within $wait_med seconds
 		Then I assign variable "elt" by combining "xPath://span[text()='Yes']/.."
 		And I click element $elt in web browser within $max_response seconds
 		And I wait $screen_wait seconds
-    EndIf
-    
-And I unassign variables "input_note,note_type,note_line_number"
+		EndIf
 
-@wip @private
-Scenario: Web Add Order Note
-#############################################################
-# Description: This scenario wil add a new note in the
-# creation of a order or order line
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		input_note - text of the notes
-#		note_type - what note type should be used
-#		note_line_number - the line number of the note
-#	Optional:
-#		ordlin - order line id field input
-# Outputs:
-#	None            
-#############################################################
+		And I unassign variables "input_note,note_type,note_line_number"
 
-Given I "enter a note in the order"
-	Then I assign variable "elt" by combining "xPath://span[text()='Add']/.."
-	And I click element $elt in web browser within $max_response seconds
-	And I wait $wait_med seconds
+	@wip @private
+	Scenario: Web Add Order Note
+		#############################################################
+		# Description: This scenario wil add a new note in the
+		# creation of a order or order line
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		input_note - text of the notes
+		#		note_type - what note type should be used
+		#		note_line_number - the line number of the note
+		#	Optional:
+		#		ordlin - order line id field input
+		# Outputs:
+		#	None
+		#############################################################
 
-	Then I click element "name:noteType" in web browser within $max_response seconds
-	And I type $note_type in element "name:noteType" in web browser within $max_response seconds
-	And I press keys "ENTER" in web browser
-	And I assign variable "elt" by combining "xPath://li[text()='" $note_type "']"
-    And I click element $elt in web browser within $max_response seconds
+		Given I "enter a note in the order"
+		Then I assign variable "elt" by combining "xPath://span[text()='Add']/.."
+		And I click element $elt in web browser within $max_response seconds
+		And I wait $wait_med seconds
 
-	And I double click element "name:noteLineNumber" in web browser within $max_response seconds
-	And I type $note_line_number in element "name:noteLineNumber" in web browser within $max_response seconds
+		Then I click element "name:noteType" in web browser within $max_response seconds
+		And I type $note_type in element "name:noteType" in web browser within $max_response seconds
+		And I press keys "ENTER" in web browser
+		And I assign variable "elt" by combining "xPath://li[text()='" $note_type "']"
+		And I click element $elt in web browser within $max_response seconds
 
-	Then I click element "name:noteText" in web browser within $max_response seconds        
-	And I type $input_note in element "name:noteText" in web browser within $max_response seconds
+		And I double click element "name:noteLineNumber" in web browser within $max_response seconds
+		And I type $note_line_number in element "name:noteLineNumber" in web browser within $max_response seconds
 
-	Then I assign variable "elt" by combining "xPath://span[text()='OK']/.."
-	And I click element $elt in web browser within $max_response seconds
-    
-@wip @private
-Scenario: Web Validate Copy and Delete Options
-#############################################################
-# Description: This scenario wil click on add and delete from
-# order line tab and simply dismiss the dialogs that are popped up.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		None
-#	Optional:
-#		None
-# Outputs:
-#	None            
-#############################################################
+		Then I click element "name:noteText" in web browser within $max_response seconds
+		And I type $input_note in element "name:noteText" in web browser within $max_response seconds
 
-Given I "select checkbox"
-    Then I assign variable "elt" by combining "xPath://tr[starts-with(@id,'gridview') and contains(@id,'" $ordnum "')]//div[@class='x-grid-row-checker']"
-	And I click element $elt in web browser within $max_response seconds
+		Then I assign variable "elt" by combining "xPath://span[text()='OK']/.."
+		And I click element $elt in web browser within $max_response seconds
 
-And I "click on copy button, cancel operation"
-	Then I click element "xPath://span[text()='Copy']/.." in web browser within $max_response seconds
-	And I click element "xPath://span[text()='Cancel']/.." in web browser within $max_response seconds
-	And I click element "xPath://span[text()='No']/.." in web browser within $max_response seconds
+	@wip @private
+	Scenario: Web Validate Copy and Delete Options
+		#############################################################
+		# Description: This scenario wil click on add and delete from
+		# order line tab and simply dismiss the dialogs that are popped up.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		None
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-And I "click on delete operation, see dialog about deleting row, cancel"
-	Then I click element "xPath://span[text()='Delete']/.." in web browser within $max_response seconds
-	Once I see "Are you sure you want to delete the selected record(s)?" in web browser
-	And I press keys TAB in web browser
-    And I press keys "ENTER" in web browser
+		Given I "select checkbox"
+		Then I assign variable "elt" by combining "xPath://tr[starts-with(@id,'gridview') and contains(@id,'" $ordnum "')]//div[@class='x-grid-row-checker']"
+		And I click element $elt in web browser within $max_response seconds
 
-@wip @private
-Scenario: Web Outbound Search Assign Shipments 
-#############################################################
-# Description: Use Search Box to search for component shipment assignment screen
-# associated with a load.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		component_to_search_for - component to search for (i.e. shipment, load, order)
-#		string_to_search_for - string to search for relative to component_to_search_for
-#	Optional:
-#		None
-# Outputs:
-#	None
-#############################################################
+		And I "click on copy button, cancel operation"
+		Then I click element "xPath://span[text()='Copy']/.." in web browser within $max_response seconds
+		And I click element "xPath://span[text()='Cancel']/.." in web browser within $max_response seconds
+		And I click element "xPath://span[text()='No']/.." in web browser within $max_response seconds
 
-Given I "filter by the order provided"
-	Given I assign variable "elt" by combining $xPath ""
-	And I assign variable "elt" by combining $elt "//div[starts-with(@id,'assign-shipments-grid')]/descendant::input[contains(@id,'rpFilterComboBox')]"
-	Then I assign $elt to variable "search_filter"
-	When I click element $search_filter in web browser within $max_response seconds 
+		And I "click on delete operation, see dialog about deleting row, cancel"
+		Then I click element "xPath://span[text()='Delete']/.." in web browser within $max_response seconds
+		Once I see "Are you sure you want to delete the selected record(s)?" in web browser
+		And I press keys TAB in web browser
+		And I press keys "ENTER" in web browser
 
-And I "select my shipment from the screen"
-	Given I assign variable "search_string" by combining $component_to_search_for " = " $string_to_search_for
-	Then I type $search_string in element $search_filter in web browser within $max_response seconds
-	And I wait $screen_wait seconds 
-	Then I press keys "ENTER" in web browser
+	@wip @private
+	Scenario: Web Outbound Search Assign Shipments
+		#############################################################
+		# Description: Use Search Box to search for component shipment assignment screen
+		# associated with a load.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		component_to_search_for - component to search for (i.e. shipment, load, order)
+		#		string_to_search_for - string to search for relative to component_to_search_for
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-And I unassign variables "search_filter,search_string"
+		Given I "filter by the order provided"
+		Given I assign variable "elt" by combining $xPath ""
+		And I assign variable "elt" by combining $elt "//div[starts-with(@id,'assign-shipments-grid')]/descendant::input[contains(@id,'rpFilterComboBox')]"
+		Then I assign $elt to variable "search_filter"
+		When I click element $search_filter in web browser within $max_response seconds
 
-@wip @private
-Scenario: Web Outbound Search Assign Orders 
-#############################################################
-# Description: Use Search Box to search for component on the order assignment screen
-# associated with a shipment.
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		component_to_search_for - component to search for (i.e. shipment, load, order)
-#		string_to_search_for - string to search for relative to component_to_search_for
-#	Optional:
-#		None
-# Outputs:
-#	None
-#############################################################
+		And I "select my shipment from the screen"
+		Given I assign variable "search_string" by combining $component_to_search_for " = " $string_to_search_for
+		Then I type $search_string in element $search_filter in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+		Then I press keys "ENTER" in web browser
 
-Given I "filter by the order provided"
-	Then I assign variable "elt" by combining $xPath ""
-    And I assign variable "elt" by combining $elt "//div[contains(@id,'availableOrderLines')]/descendant::input[contains(@id,'rpFilterComboBox')]"
-	Then I assign $elt to variable "search_filter"
-	When I click element $search_filter in web browser within $max_response seconds 
+		And I unassign variables "search_filter,search_string"
 
-And I "select my shipment from the screen"
-	Given I assign variable "search_string" by combining $component_to_search_for " = " $string_to_search_for
-	Then I type $search_string in element $search_filter in web browser within $max_response seconds
-	And I wait $screen_wait seconds 
-	Then I press keys "ENTER" in web browser
-	And I wait $screen_wait seconds
+	@wip @private
+	Scenario: Web Outbound Search Assign Orders
+		#############################################################
+		# Description: Use Search Box to search for component on the order assignment screen
+		# associated with a shipment.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		component_to_search_for - component to search for (i.e. shipment, load, order)
+		#		string_to_search_for - string to search for relative to component_to_search_for
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-And I unassign variables "search_filter,search_string"
+		Given I "filter by the order provided"
+		Then I assign variable "elt" by combining $xPath ""
+		And I assign variable "elt" by combining $elt "//div[contains(@id,'availableOrderLines')]/descendant::input[contains(@id,'rpFilterComboBox')]"
+		Then I assign $elt to variable "search_filter"
+		When I click element $search_filter in web browser within $max_response seconds
 
-@wip @private
-Scenario: Create Outbound local xPaths
-#############################################################
-# Description: Create xpath variables for use in this utility
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		move_id - Move ID
-#	Optional:
-#		None
-# Outputs:
-#	None
-#############################################################
-    
-Given I "create an xPath to Select the Outbound Load"
-	And I assign variable "elt" by combining $xPath ""
-	And I assign variable "elt" by combining $elt "//tr[starts-with(@id,'rpMultiLevelGridView') and contains(@data-recordid,'"
-	And I assign variable "elt" by combining $elt $move_id
-	And I assign variable "elt" by combining $elt "')]"
-	When I assign $elt to variable "select_load" 
- 
-And I "create an xPath to Outbound Load"
-	Given I assign variable "elt" by combining $xPath ""
-	And I assign variable "elt" by combining $elt "//a[starts-with(@class,'x-component x-box-item x-component-default') and text()='"
-	And I assign variable "elt" by combining $elt $move_id
-	And I assign variable "elt" by combining $elt "']"
-	When I assign $elt to variable "click_load"
-	
-@wip @public
-Scenario: Web Delete Load
-#############################################################
-# Description: This scenario will delete a Load in the Web
-# MSQL Files:
-#	None
-# Inputs:
-#	Required:
-#		move_id - load/carrier move id
-#	Optional:
-#		None
-# Outputs:
-#	None         
-#############################################################
+		And I "select my shipment from the screen"
+		Given I assign variable "search_string" by combining $component_to_search_for " = " $string_to_search_for
+		Then I type $search_string in element $search_filter in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+		Then I press keys "ENTER" in web browser
+		And I wait $screen_wait seconds
 
-Given I "verify we are on Outbound Screen"
-	Once I see "Loads" in web browser
+		And I unassign variables "search_filter,search_string"
 
-Then I "click on the Loads Tab"
-	And I assign variable "elm_ship_id" by combining "xPath://span[text()='Loads']/../.."
-	Then I click element $elm_ship_id in web browser within $max_response seconds
+	@wip @private
+	Scenario: Create Outbound local xPaths
+		#############################################################
+		# Description: Create xpath variables for use in this utility
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		move_id - Move ID
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-And I "search for load"
-	Then I assign "load" to variable "component_to_search_for"
-	And I assign $move_id to variable "string_to_search_for"
-	And I execute scenario "Web Component Search"
+		Given I "create an xPath to Select the Outbound Load"
+		And I assign variable "elt" by combining $xPath ""
+		And I assign variable "elt" by combining $elt "//tr[starts-with(@id,'rpMultiLevelGridView') and contains(@data-recordid,'"
+		And I assign variable "elt" by combining $elt $move_id
+		And I assign variable "elt" by combining $elt "')]"
+		When I assign $elt to variable "select_load"
 
-And I "select the Load from the grid"
-	Then I assign variable "elt" by combining "xPath://tr[starts-with(@id,'gridview') and contains(@id,'" $move_id "')]"
-	And I click element $elt in web browser within $max_response seconds
+		And I "create an xPath to Outbound Load"
+		Given I assign variable "elt" by combining $xPath ""
+		And I assign variable "elt" by combining $elt "//a[starts-with(@class,'x-component x-box-item x-component-default') and text()='"
+		And I assign variable "elt" by combining $elt $move_id
+		And I assign variable "elt" by combining $elt "']"
+		When I assign $elt to variable "click_load"
 
-And I "select the 'Actions' drop-down"
-	Then I click element "xPath://span[contains(@id,'MultiViewActionButton-') and text()='Actions']/.." in web browser within $max_response seconds 
+	@wip @public
+	Scenario: Web Delete Load
+		#############################################################
+		# Description: This scenario will delete a Load in the Web
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		move_id - load/carrier move id
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
 
-And I "select the Delete Load from Actions drop-down"
-	Then I click element "xPath://span[text()='Delete Load']" in web browser within $max_response seconds 
+		Given I "verify we are on Outbound Screen"
+		Once I see "Loads" in web browser
 
-And I "confirm I want to delete the Load"
-	Once I see "Are you sure you want to delete the selected records?" in web browser
-	Then I assign variable "elt" by combining "xPath://div[starts-with(@id,'messagebox-') "
-	And I assign variable "elt" by combining $elt "and contains(@id,'-toolbar-targetEl')]/a[1]/descendant::span[text()='OK']/../span[2]"
-	Then I click element $elt in web browser within $max_response seconds
-	And I wait $wait_med seconds
-    
-@wip @public
-Scenario: Validate Load Deleted
-#############################################################
-# Description: This scenario validates the load has been deleted
-# MSQL Files:
-#	check_load_deleted.msql
-# Inputs:
-#	Required:
-#		move_id - load / carrier move id
-#	Optional:
-#		None
-# Outputs:
-#	None              
-#############################################################
+		Then I "click on the Loads Tab"
+		And I assign variable "elm_ship_id" by combining "xPath://span[text()='Loads']/../.."
+		Then I click element $elm_ship_id in web browser within $max_response seconds
 
-Given I "validate the load is deleted"
-	Then I assign "check_load_deleted.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	Then I verify MOCA status is 510
+		And I "search for load"
+		Then I assign "load" to variable "component_to_search_for"
+		And I assign $move_id to variable "string_to_search_for"
+		And I execute scenario "Web Component Search"
+
+		And I "select the Load from the grid"
+		Then I assign variable "elt" by combining "xPath://tr[starts-with(@id,'gridview') and contains(@id,'" $move_id "')]"
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "select the 'Actions' drop-down"
+		Then I click element "xPath://span[contains(@id,'MultiViewActionButton-') and text()='Actions']/.." in web browser within $max_response seconds
+
+		And I "select the Delete Load from Actions drop-down"
+		Then I click element "xPath://span[text()='Delete Load']" in web browser within $max_response seconds
+
+		And I "confirm I want to delete the Load"
+		Once I see "Are you sure you want to delete the selected records?" in web browser
+		Then I assign variable "elt" by combining "xPath://div[starts-with(@id,'messagebox-') "
+		And I assign variable "elt" by combining $elt "and contains(@id,'-toolbar-targetEl')]/a[1]/descendant::span[text()='OK']/../span[2]"
+		Then I click element $elt in web browser within $max_response seconds
+		And I wait $wait_med seconds
+
+	@wip @public
+	Scenario: Validate Load Deleted
+		#############################################################
+		# Description: This scenario validates the load has been deleted
+		# MSQL Files:
+		#	check_load_deleted.msql
+		# Inputs:
+		#	Required:
+		#		move_id - load / carrier move id
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "validate the load is deleted"
+		Then I assign "check_load_deleted.msql" to variable "msql_file"
+		When I execute scenario "Perform MSQL Execution"
+		Then I verify MOCA status is 510
+
+
+	@wip @public
+	Scenario: Web Create Load Multiple Orders
+		#############################################################
+		# Description: This scenario create a new load in the Web.
+		# It will also add assign the shipment to the load.
+		# MSQL Files:
+		#	None
+		# Inputs:
+		#	Required:
+		#		ordnum - order number
+		#		ship_id - shipment ID
+		#		carcod - carrier code
+		#		ui_move_id - load to create in the Web
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "verify we are on Outbound Screen"
+		Once I see "Orders" in web browser
+
+		And I "Click on the Shipments Tab"
+		Then I assign variable "elm_ship_id" by combining "xPath://span[text()='Shipments']/../.."
+		And I click element $elm_ship_id in web browser within $max_response seconds
+
+		And I "search for shipments"
+		Then I assign "shipment" to variable "component_to_search_for"
+		And I assign $shipment_list to variable "string_to_search_for"
+		And I execute scenario "Web Component Search"
+
+		And I "select all the shipments"
+		Then I assign variable "elt" by combining "xPath://div[starts-with(@id,'gridcolumn-')]/descendant::span[contains(@class,'x-column-header-text')]"
+		Once I see element $elt in web browser
+		And I click element $elt in web browser within $max_response seconds
+
+		And I "select the 'Actions' drop-down and select Add Shipment Menu Item"
+		Then I click element "xPath://span[starts-with(@id,'wmMultiViewActionButton-') and text()='Actions']/.." in web browser within $max_response seconds
+		And I click element "xPath://span[text()='Add Load']" in web browser within $max_response seconds
+		Once I see "Add Load" in web browser
+
+		And I "add a new load"
+		Then I execute scenario "Web Add Load Info Multiple Orders"
+
+
+
+	@wip @public
+	Scenario: Web Navigate to Change Carrier
+		#############################################################
+		# Description: Use Web Search to navigate to Order Payterm Maintenance screen
+		# MSQL Files:
+		#   None
+		# Inputs:
+		#   Required:
+		#       None
+		#   Optional:
+		#       None
+		# Outputs:
+		#   None
+		#############################################################
+
+		Given I "open the change carrier menu "
+		Then I assign variable "elt" by combining "xPath://td[contains(@class, 'x-grid-cell') and contains(., '" $ordnum "')]"
+		And I click element $elt  in web browser
+		And I click element "xPath://a[contains(@class, 'x-btn') and contains(@class, 'rp-menu-btn') and contains(., 'Actions')]" in web browser within $max_response seconds
+		And I click element "xPath://a[contains(@class, 'x-menu-item-link') and contains(@class, 'x-menu-item-indent-no-separator') and contains(., 'Edit')]" in web browser
+		And I click element "xPath:(//td[contains(@class, 'x-trigger-cell') and contains(@class, 'x-unselectable')])[4]" in web browser
+
+		Then I assign variable "elt" by combining "xPath://li[contains(@class, 'x-boundlist-item') and contains(., '" $new_carrier "')]"
+		And I click element $elt  in web browser
+
+		And I click element "xPath:(//td[contains(@class, 'x-trigger-cell') and contains(@class, 'x-unselectable')])[5]" in web browser
+		Then I assign variable "elt" by combining "xPath://li[contains(@class, 'x-boundlist-item') and contains(., '" $service_level "')]"
+		And I click element $elt  in web browser
+
+		And I click element "xPath://a[contains(@class, 'x-btn') and contains(@class, 'rp-important-btn') and contains(., 'Apply')]" in web browser
+		If I see element "xPath://a[contains(@class, 'x-btn') and contains(@class, 'rp-important-btn') and contains(@class, 'x-btn-default-small-noicon') and contains(., 'OK')]" in web browser within 5 seconds
+		Then I click element "xPath://a[contains(@class, 'x-btn') and contains(@class, 'rp-important-btn') and contains(@class, 'x-btn-default-small-noicon') and contains(., 'OK')]" in web browser
+	Endif
+
+	@wip @public
+	Scenario: Web Navigate to Order Payterm Maintenance NP6
+		#############################################################
+		# Description: Use Web Search to navigate to Order Payterm Maintenance screen
+		# MSQL Files:
+		#	None
+		# Inputs:
+		# 	Required:
+		#		None
+		#	Optional:
+		#		None
+		# Outputs:
+		#	None
+		#############################################################
+
+		Given I "open the Order Payterm Maintenance  screen"
+		And I click element "xPath:(//a[contains(@class, 'x-btn-default-toolbar-small')]/span/span/span[contains(@class, 'x-btn-icon-el')])[1]" in web browser
+		And I click element "xPath://span[@class='x-menu-item-text' and text()='ORDER MAINTENANCE']" in web browser within 5 seconds
+
+	@wip @private
+	Scenario: Assign Picks With MOCA Command
+
+		Given I "wait for tasks to show in work queue"
+		And I execute MOCA command "job pick release manager"
+		Then I wait $wait_med seconds
+		And I execute MOCA script "Scripts\MSQL_Files\Custom\assign_work_picking.msql"
+
+	@wip @private
+	Scenario: Outbound LTL Pt1
+		############################################################
+		# Description: Sets down the list to pallet LPN to a PND location
+		# with Set Down option. Handles logic to resume the list through
+		# directed work.
+		# MSQL Files:
+		#	get_pndloc_for_lpck_set_down.msql
+		# Inputs:
+		# 	Required:
+		#		process_name
+		# 	Optional:
+		#       None
+		# Outputs:
+		#	None
+		#############################################################
+
+		If I verify text $process_name is equal to "ltl"
+		And I execute scenario "Web Navigate to Outbound Planner Outbound Screen"
+		#Then I assign "MZSSTG-01 - Ship Staging 01 Move Zone" to variable "alc_destination_zone"
+		Then I echo "Destination Zone: '$alc_destination_zone'"
+
+		When I "validate the incoming shipment and screen/system information about the shipment"
+		Then I execute scenario "Web Validate Order"
+		And I execute scenario "Web Validate Order Info"
+
+		Then I "plan the wave"
+		If I verify text $process_type is equal to "more"
+		Then I execute scenario "Web Plan Wave Multiorder"
+		Else I execute scenario "Web Plan Wave"
+		EndIf
+
+		When I "create the load"
+		Given I execute MOCA script "Scripts/MSQL_Files/Base/get_ship_id.msql"
+		And I assign row 0 column "ship_id" to variable "ship_id"
+		Then I execute scenario "Web Navigate to Outbound Planner Outbound Screen"
+		When I assign "xPath://div[contains(@class, 'breadcrumb-button-container')]" to variable "back"
+		If I see element $back in web browser within $wait_med seconds
+		Then I click element $back in web browser
+		EndIf
+		If I verify text $process_type is equal to "more"
+		When I "get shipment list"
+		Given I execute scenario "Get Multiple Shipments For Search"
+		Then I execute scenario "Web Create Load Multiple Orders"
+		Else I execute scenario "Web Create Load"
+		EndIf
+
+		Then I "allocate the wave"
+		And I execute scenario "Navigate to Waves and Picks"
+		When I execute scenario "Web Allocate Wave"
+
+		And I "check for shorts and replenishments"
+		When I execute scenario "Web Navigate to Picking Waves and Picks"
+		Once I see "Waves" in web browser
+		Then I execute scenario "Web Wave info"
+		And I execute scenario "Check for shorts"
+		And I execute scenario "Move inventory in case of shorts"
+		And I execute scenario "Web Navigate to Picking Waves and Picks"
+		And I execute scenario "Check for replenishments"
+
+		Then I execute MOCA script "Scripts/MSQL_Files/Custom/job_release.msql"
+		And I verify MOCA status is 0
+
+		Then I "assign picks"
+	#When I execute scenario "Web Navigate to Outbound Planner Work Queue Screen"
+	#And I execute scenario "Web Assign Picks"
+	#When I execute scenario "Assign Picks With MOCA Command"
+	EndIf
+
+
+	@wip @private
+	Scenario: Outbound Parcel Pt1
+		############################################################
+		# Description: Sets down the list to pallet LPN to a PND location
+		# with Set Down option. Handles logic to resume the list through
+		# directed work.
+		# MSQL Files:
+		#	get_pndloc_for_lpck_set_down.msql
+		# Inputs:
+		# 	Required:
+		#		process_name
+		# 	Optional:
+		#       None
+		# Outputs:
+		#	None
+		#############################################################
+
+		If I verify text $process_name is equal to "parcel"
+		And I execute scenario "Web Navigate to Outbound Planner Outbound Screen"
+		And I assign "MZPARSTG-01 - Parcel Staging 01 Move Zone" to variable "alc_destination_zone"
+
+		When I "validate the incoming shipment and screen/system information about the shipment"
+		Then I execute scenario "Web Validate Order"
+		And I execute scenario "Web Validate Order Info"
+
+		Then I "plan the wave"
+		And I execute scenario "Web Plan Wave"
+
+		Then I "allocate the wave"
+		And I execute scenario "Navigate to Waves and Picks"
+		When I execute scenario "Web Allocate Wave"
+
+		And I "check for shorts and replenishments"
+		When I execute scenario "Web Navigate to Picking Waves and Picks"
+		Once I see "Waves" in web browser
+		Then I execute scenario "Web Wave info"
+		And I execute scenario "Check for shorts"
+		And I execute scenario "Move inventory in case of shorts"
+		And I execute scenario "Web Navigate to Picking Waves and Picks"
+		And I execute scenario "Check for replenishments"
+
+		Then I execute MOCA script "Scripts/MSQL_Files/Custom/job_release.msql"
+		And I verify MOCA status is 0
+
+		Then I "assign picks"
+	#When I execute scenario "Web Navigate to Outbound Planner Work Queue Screen"
+	#And I execute scenario "Web Assign Picks"
+	#When I execute scenario "Assign Picks With MOCA Command"
+	EndIf
+
+
+
+	@wip @private
+	Scenario: Outbound LTL Pt2
+		############################################################
+		# Description: Sets down the list to pallet LPN to a PND location
+		# with Set Down option. Handles logic to resume the list through
+		# directed work.
+		# MSQL Files:
+		#	get_pndloc_for_lpck_set_down.msql
+		# Inputs:
+		# 	Required:
+		#		process_name
+		# 	Optional:
+		#       None
+		# Outputs:
+		#	None
+		#############################################################
+
+		If I verify text $process_name is equal to "ltl"
+		When I "Create Equipment and check in"
+		#And I execute scenario "Web Create Outbound Trailer for Check In"
+		And I execute scenario "Web Open Check In Screen"
+		And I execute scenario "Web Select Check In Without Appointment"
+		Then I execute scenario "Web Search for Outbound Trailer"
+		And I execute scenario "Web Select Dock Door for Check In"
+		And I execute scenario "Web Check In Outbound Trailer"
+
+		Given I "Verify if I need to split shipment"
+		If I verify text $process_type is equal to "more"
+		Then I execute scenario "Web Navigate to Outbound Planner Outbound Screen"
+		And I execute scenario "Web Create Load for LTL More Than One Load"
+		EndIf
+
+		Given I "load equipment and dispatch"
+		And I "log into the Web and navigate to Outbound Screen"
+		Then I execute scenario "Web Navigate to Outbound Planner Outbound Screen"
+		And I "navigate to the load screen"
+		Given I assign $ui_move_id to variable "move_id"
+		Then I execute scenario "Web Validate Load"
+		And I execute scenario "Web Validate Load Info"
+
+		Then I "dispatch the trailer"
+		Given I assign $trlr_num to variable "trlr_id"
+		And I execute scenario "Web Open Door Activity Screen"
+		When I execute scenario "Validate Outbound Close Equipment"
+		Then I execute scenario "Web Dispatch Transport Equipment from Door Activity"
+	EndIf
+
+	@wip @private
+	Scenario: Outbound Parcel Pt2
+		############################################################
+		# Description: Sets down the list to pallet LPN to a PND location
+		# with Set Down option. Handles logic to resume the list through
+		# directed work.
+		# MSQL Files:
+		#	get_pndloc_for_lpck_set_down.msql
+		# Inputs:
+		# 	Required:
+		#		process_name
+		# 	Optional:
+		#       None
+		# Outputs:
+		#	None
+		#############################################################
+
+		If I verify text $process_name is equal to "parcel"
+		When I "pack and manifest close"
+		Given I execute scenario "Web Perform Packing and Manifest Close"
+EndIf

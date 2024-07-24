@@ -1,0 +1,9 @@
+publish data
+ where trknum = $trknum
+   and wh_id = $wh_id
+|
+[select count(*) as total_count
+   from (select rcvkey
+           from rcvlin
+          where trknum = @trknum 
+	and wh_id = @wh_id) as subquery]

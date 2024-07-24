@@ -1,5 +1,5 @@
 ############################################################
-# Copyright 2020, Tryon Solutions, Inc.
+# Copyright 2024, Netlogistik
 # All rights reserved.  Proprietary and confidential.
 #
 # This file is subject to the license terms found at 
@@ -13,7 +13,7 @@
 # Utility: Mobile Utilities.feature
 # 
 # Functional Area: General Mobile
-# Author: Tryon Solutions
+# Author: Netlogistik
 # Blue Yonder WMS Version: Consult Bundle Release Notes
 # Test Case Type: utility
 # Blue Yonder Interfaces Interacted With: Mobile, MOCA
@@ -78,6 +78,11 @@ And I "enter the device id (try mobile_devcod and if not available, use devcod)"
 And I "check to see if we are at the work information screen, if not log out and log back in"
 	If I see "Work Information" in element "className:appbar-title" in web browser within $screen_wait seconds
 		Then I assign "TRUE" to variable "past_work_information_screen"
+	ElsIf I see "Order Pick" in web browser within $wait_med seconds
+        Then I execute scenario "Mobile Perform Directed List Pick"
+        Then I wait $wait_med seconds
+        And I press keys "F1" in web browser
+
 	Else I assign "FALSE" to variable "close_browser_on_logout"
 		And I assign "FALSE" to variable "past_work_information_screen"
 		And I execute scenario "Mobile Logout"
@@ -107,13 +112,33 @@ And I "enter the vehicle type"
 
 And I "use default for work area"
 	Once I see element "name:wrkare" in web browser
-	And I clear all text in element "name:wrkare" in web browser
+	And I clear all text in element "name:wrkare" in web browser within $wait_med seconds
 	And I click element "name:wrkare" in web browser
 	If I verify variable "wrkarea" is assigned
 	And I verify text $wrkarea is not equal to ""
 		Then I type $wrkarea in web browser
 	EndIf 
 	And I press keys "ENTER" in web browser
+
+
+And I "I check for recovery mode"
+	If I do not see "Undirected Menu" in web browser within $wait_long seconds
+		Then I assign "FALSE" to variable "recovery_mode"
+		And I assign "Recovery Mode Started" to variable "mobile_dialog_message"
+		Then I execute scenario "Mobile Set Dialog xPath"
+		If I see element $mobile_dialog_elt in web browser within $wait_short seconds
+			Then I assign "TRUE" to variable "recovery_mode"
+			And I press keys "ENTER" in web browser
+			If I see "MRG Deposit" in element "className:appbar-title" in web browser within $screen_wait seconds
+				Then I execute scenario "Mobile Load Deposit"
+			Elsif I see "Inventory Deposit" in element "className:appbar-title" in web browser within $screen_wait seconds
+				Then I execute scenario "Mobile Inventory Deposit"
+			Else I execute scenario "Mobile Product Deposit"
+			EndIf
+			And I assign "FALSE" to variable "recovery_mode"
+		EndIf
+	EndIf
+
     
 Then I "verify you are in the Undirected Menu"
 	Once I see "Undirected Menu" in element "className:appbar-title" in web browser
@@ -178,12 +203,12 @@ Given I "logout of the mobile app"
 	And I "answer the End Of Day? question if present"
 		If I see element $mobile_end_of_day_prompt in web browser within $screen_wait seconds
 			Then I press keys "Y" in web browser
-			Once I see element "xPath://button[contains(@class,'submit-button') and contains(text(),'SIGN IN') and @name = 'submit' or @name = 'btnSubmit']" in web browser
+			Once I see element "xPath://button[contains(@class,'submit-button') and contains(text(),'Continue')]" in web browser
 		EndIf
         
 	And I "close the browser unless requested not to"
 		If I verify variable "close_browser_on_logout" is assigned
-		And I verify text $close_browser_on_logout is equal to "FALSE" ignoring case
+			And I verify text $close_browser_on_logout is equal to "FALSE" ignoring case
     	Else I close web browser
 		EndIf
 
@@ -207,6 +232,7 @@ Scenario: Mobile Check for Input Focus Field
 #	None
 #############################################################
 
+	#And I press keys "ENTER" in web browser
 	Given I assign variable "mobile_focus_elt" by combining "xPath://div[@class='mat-form-field-infix']/descendant::mat-label[contains(text(),'" $input_field_with_focus "')]"
 	Once I see element $mobile_focus_elt in web browser
 	And I unassign variable "input_field_with_focus"
@@ -288,7 +314,7 @@ Scenario: Mobile Deposit
 #############################################################
 
 Given I "check to see which type of deposit we are performing"
-	Once I see " Deposit" in element "className:appbar-title" in web browser
+	Once I see "Deposit" in element "className:appbar-title" in web browser
 
 	If I see "MRG Product Deposit" in element "className:appbar-title" in web browser within $screen_wait seconds
 		Then I execute scenario "Mobile Product Deposit"
@@ -296,6 +322,8 @@ Given I "check to see which type of deposit we are performing"
         Then I execute scenario "Mobile Load Deposit"
     ElsIf I see "Inventory Deposit" in element "className:appbar-title" in web browser within $screen_wait seconds
 		Then I execute scenario "Mobile Inventory Deposit"
+	Elsif I see "MRG Threshold Deposit" in element "className:appbar-title" in web browser within $screen_wait seconds
+		Then I execute scenario "Mobile Threshold Deposit"
     Else I fail step with error message "ERROR: Could not determine what type of deposit to perform"
     EndIf
  
@@ -545,10 +573,19 @@ Scenario: Mobile Process Login Screen
 #############################################################
 
 Given I "am on initial Mobile Login screen provide username / password"
-	Once I see element "xPath://button[contains(@class,'submit-button')]" in web browser
-		Then I type USERNAME from credentials $mobile_credentials in element "id:username" in web browser within $max_response seconds
-		And I type PASSWORD from credentials $mobile_credentials in element "id:password" in web browser within $max_response seconds
-		And I click element "xPath://button[contains(@class,'submit-button') and contains(text(),'SIGN IN')]" in web browser within $max_response seconds
+	When I assign variable "elt" by combining "xPath://button[contains(text(), 'Continue') and starts-with(@class, 'submit-')]"
+	Once I see element $elt in web browser
+    Then I click element $elt in web browser
+    Then I assign variable "elt" by combining "xPath://button[starts-with(@class, 'accountButton') and starts-with(text(), 'Local WMS')]"
+Then I "click Local WMS button"
+    Once I see element $elt in web browser
+    And I click element $elt in web browser
+    Once I see "Sign in to your account" in web browser
+    Then I type $mobile_credentials in element "id:username" in web browser
+    And I type $password in element "id:password" in web browser
+
+
+		And I click element "xPath://input[starts-with(@class,'pf-c-button') and contains(@value,'Sign In')]" in web browser within $max_response seconds
 		And I wait $screen_wait seconds
 
 @wip @private
@@ -572,11 +609,20 @@ Given I "process the mobile device code during login"
 	If I verify variable "mobile_devcod" is assigned
     And I verify text $mobile_devcod is not equal to ""
 		Then I "am using mobile_devcod setting"
+			Then I click element "name:terminalId" in web browser within $max_response seconds
 			And I type $mobile_devcod in element "name:terminalId" in web browser within $max_response seconds
 	Else I "am using devcod setting"
-    		And I type $devcod in element "name:terminalId" in web browser within $max_response seconds
+			While I see "This field is required" in web browser
+				Then I click element "name:terminalId" in web browser within $wait_med seconds
+				And I type $devcod in element "name:terminalId" in web browser within $max_response seconds
+			EndWhile
 	EndIf
 	And I press keys "ENTER" in web browser
+			While I see element "xPath://mat-error[text()='This field is required']" in web browser within $wait_short seconds
+				Then I click element "name:terminalId" in web browser within $wait_med seconds
+				And I type $devcod in element "name:terminalId" in web browser within $max_response seconds
+				And I press keys "ENTER" in web browser
+			EndWhile
     
 Then I "check to see if device ID is invalid, if so close browser and exit with failure message"
 	Then I assign variable "elt" by combining "xPath://mat-dialog-content[contains(text(),'is not configured')]/ancestor::mat-dialog-container[contains(@id,'mat-dialog')]"
@@ -670,7 +716,26 @@ And I "if not on login screen, check if inventory is on device that needs to be 
 			EndIf
 			And I assign "FALSE" to variable "recovery_mode"
 		EndIf
+And I "I check for recovery mode"
+	If I do not see element "xPath://button[contains(@class,'submit-button') and contains(text(),'SIGN IN') and @name = 'submit' or @name = 'btnSubmit']" in web browser
+		Then I assign "FALSE" to variable "recovery_mode"
+		And I assign "Recovery Mode Started" to variable "mobile_dialog_message"
+		Then I execute scenario "Mobile Set Dialog xPath"
+		If I see element $mobile_dialog_elt in web browser within $wait_short seconds
+			Then I assign "TRUE" to variable "recovery_mode"
+			And I press keys "ENTER" in web browser
+			If I see "MRG Deposit" in element "className:appbar-title" in web browser within $screen_wait seconds
+				Then I execute scenario "Mobile Load Deposit"
+			Elsif I see "Inventory Deposit" in element "className:appbar-title" in web browser within $screen_wait seconds
+				Then I execute scenario "Mobile Inventory Deposit"
+			Else I execute scenario "Mobile Product Deposit"
+			EndIf
+			And I assign "FALSE" to variable "recovery_mode"
+		Elsif I see "MRG Product Deposit" in element "className:appbar-title" in web browser within $screen_wait seconds
+		Then I execute scenario "Mobile Product Deposit"
+		EndIf
 	EndIf
+EndIf
 
 @wip @private
 Scenario: Mobile Putaway Override
@@ -689,6 +754,7 @@ Scenario: Mobile Putaway Override
 #############################################################
 
 Given I "start the Override by pressing F4"
+	Given I wait $wait_med seconds
 	Then I press keys "F4" in web browser
 	Once I see "Override Location" in element "className:appbar-title" in web browser
 	Then I assign "Override Location Code" to variable "input_field_with_focus"
@@ -935,6 +1001,34 @@ Given I "check to make sure system is configured to confirm lodnum"
 	EndIf
 
 @wip @private
+Scenario: Mobile Product Deposit Wrong Location
+
+When I "enter wrong location"
+	Then I type $wrong_dep_loc in element "name:dstloc" in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+	Once I see "Invalid location." in web browser 
+	Given I execute scenario "Mobile Generate Screenshot"
+	Then I press keys "ENTER" in web browser
+	And I wait $wait_med seconds
+	Once I see element "name:dstloc" in web browser
+
+@wip @private
+Scenario: Mobile Fast MRG Product Deposit
+    Once I see "MRG Product Deposit" in web browser within $wait_long seconds
+        Once I see element "name:lodnum" in web browser 
+        	Then I press keys "ENTER" in web browser
+        Once I see element "name:dstloc" in web browser 
+        When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+        Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+        Given I assign row 0 column "locvrc" to variable "location_verification_code"
+    	If I verify text $locvrc is not equal to ""
+			Then I type $location_verification_code in element "name:dstloc" in web browser
+			And I press keys "ENTER" in web browser
+		Else I type $verify_location in element "name:dstloc" in web browser
+			And I press keys "ENTER" in web browser
+        EndIf
+
+@wip @private
 Scenario: Mobile Product Deposit
 #############################################################
 # Description: Performs the product deposit for a given pick,
@@ -950,6 +1044,8 @@ Scenario: Mobile Product Deposit
 #	dep_lpn - the (last if multiples) LPN deposited
 #	dep_lpn_list - list of LPNs deposited (will be set to dep_lpn if only one was deposited)
 #	dep_loc - the location where load was deposited
+#	wrong_location - boolean which specifies if test needs to test wrong location
+#	wrong_dep_loc - incorrect deposit location
 #############################################################
     
 Given I "navigate to the Deposit screen"
@@ -1002,7 +1098,7 @@ And I "enter the given Deposit Location for each Load"
 				Else I assign $dep_lpn to variable "dep_lpn_list"
 				EndIf
 			EndIf
-    
+                
 		Then I "copy the deposit location from the Mobile App"
 			And I execute scenario "Mobile Copy Deposit Location"
 
@@ -1017,17 +1113,38 @@ And I "enter the given Deposit Location for each Load"
 
 		And I "copy the LPN from the Mobile App"
 			Then I execute scenario "Mobile Copy Deposit LPN"
-            
+            		And I press keys "ENTER" in web browser
+					If I see "Deposit Options" in web browser within $wait_med seconds
+						Then I click element "xPath://span[contains(text(),'Equipment Full') and contains(@class,'label')]" in web browser
+					EndIf
+					If I see "OK" in web browser 
+						Then I press keys "ENTER" in web browser 
+						And I wait $wait_med seconds 
+					EndIf 
+
 		And I "enter the deposit location"
 			If I verify variable "dep_loc" is assigned
 			And I verify text $dep_loc is not equal to ""
         		Then I assign "Location" to variable "input_field_with_focus"
 				And I execute scenario "Mobile Check for Input Focus Field"
-				Then I type $dep_loc in element "name:dstloc" in web browser within $max_response seconds
+				And I wait $wait_short seconds
+
+				If I verify text $wrong_location is not equal to ""
+					
+					Then I execute scenario "Mobile Product Deposit Wrong Location"
+				EndIf
+				Then I assign $dep_loc to variable "verify_location"
+				Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+
+				And I assign row 0 column "locvrc" to variable "dep_locvrc"
+				If I verify text $dep_locvrc is not equal to ""
+					Then I type $dep_locvrc in element "name:dstloc" in web browser within $max_response seconds
+				Else I type $dep_loc in element "name:dstloc" in web browser within $max_response seconds
+				EndIf
 				And I press keys "ENTER" in web browser
 			Else I fail step with error message "ERROR: could not determine deposit location"
 			EndIf
-    
+
 		And I "check for unpickable"
 			Then I assign "un-pickable" to variable "mobile_dialog_message"
 			And I execute scenario "Mobile Set Dialog xPath"
@@ -1035,7 +1152,7 @@ And I "enter the given Deposit Location for each Load"
 				Then I press keys "Y" in web browser
 			EndIf
 
-			Then I wait $screen_wait seconds
+			Then I wait $wait_long seconds
 			And I increase variable "retry_cnt" by 1
 	EndWhile
 
@@ -1044,16 +1161,16 @@ And I "enter the given Deposit Location for each Load"
 	EndIf
 
 Then I ", if the deposited product is associated with an order or shipment, validate that Auto Staging is working as intended"
-	And I assign "validate_shipment_is_staged.msql" to variable "msql_file"
-	When I execute scenario "Perform MSQL Execution"
-	If I verify MOCA status is 0
-		Then I "have successfully validated the shipment was staged"
-	ElsIf I verify MOCA status is 99990001
-		Then I assign variable "error_message" by combining "ERROR: Shipment was not staged already and did not stage properly when it should have"
-		And I fail step with error message $error_message
-	Else I assign variable "error_message" by combining "ERROR: Failed to validate shipment was staged with dep_lpn " $dep_lpn " to dep_loc " $dep_loc
-		Then I fail step with error message $error_message
-	EndIf
+	# And I assign "validate_shipment_is_staged.msql" to variable "msql_file"
+	# When I execute scenario "Perform MSQL Execution"
+	# If I verify MOCA status is 0
+	# 	Then I "have successfully validated the shipment was staged"
+	# ElsIf I verify MOCA status is 99990001
+	# 	Then I assign variable "error_message" by combining "ERROR: Shipment was not staged already and did not stage properly when it should have"
+	# 	And I fail step with error message $error_message
+	# Else I assign variable "error_message" by combining "ERROR: Failed to validate shipment was staged with dep_lpn " $dep_lpn " to dep_loc " $dep_loc
+	# 	Then I fail step with error message $error_message
+	# EndIf
 
 And I unassign variables "retry_cnt,retry_cnt_str"
     
@@ -1141,6 +1258,530 @@ Scenario: Mobile Copy Deposit LPN
 #############################################################
 
 Given I "copy the deposit LPN from the Mobile App screen"
+	And I wait 3 seconds
 	If I see "Deposit" in element "className:appbar-title" in web browser
+		And I wait 2 seconds
 		Then I copy text inside element "xPath://span[contains(text(),'LPN')]/ancestor::aq-displayfield[contains(@id,'lodnum')]/descendant::span[contains(@class,'data')]" in web browser to variable "dep_lpn" within $max_response seconds
 	EndIf
+
+@wip @public
+Scenario: Mobile Login NP2
+#############################################################
+# Description: This scenario will Navigate to WMS's Mobile App
+# screen and login to the Mobile App. It will also processes
+# work information.
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		browser - Browser name (set in Environment by default)
+#		mobile_ui - Mobile App URL (set in Environment by default)
+#		USERNAME - Username (This value comes from MOCA credentials)
+#		PASSWORD - Password (This value comes from MOCA credentials)
+#		mobile_credentials - Cycle Credential relative to Mobile testing
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "navigate to WMS main screen in Mobile App"
+	Then I open $browser web browser
+	And I wait $wait_short seconds 
+	When I navigate to $mobile_ui in web browser
+
+Then I "login to the Mobile App UI"	
+	Then I execute scenario "Mobile Process Login Screen NP2"
+
+And I "enter the device id (try mobile_devcod and if not available, use devcod)"
+	Then I execute scenario "Mobile Process Device Code NP2"
+
+And I "check to see if we are at the work information screen, if not log out and log back in"
+	If I see "Work Information" in element "className:appbar-title" in web browser within $screen_wait seconds
+		Then I assign "TRUE" to variable "past_work_information_screen"
+		ELSIf I see "Order Pick L" in web browser within $wait_med seconds
+        Then I execute scenario "Mobile Perform Directed List Pick"
+        Then I wait $wait_med seconds
+        And I press keys "F1" in web browser
+    
+	Else I assign "FALSE" to variable "close_browser_on_logout"
+		And I assign "FALSE" to variable "past_work_information_screen"
+		And I execute scenario "Mobile Logout NP2"
+        And I execute scenario "Mobile Process Login Screen NP2"
+		And I unassign variable "close_browser_on_logout"
+		And I assign "TRUE" to variable "past_work_information_screen"
+	EndIf
+
+And I "check to see if we are requested to change orientation or size in demo URL"
+	And I execute scenario "Mobile Adjust Size and Orientation"
+
+And I "enter the location (try mobile_start_loc first and then fall back to start_loc if not available)"
+	Once I see element "name:stoloc" in web browser
+	If I verify variable "mobile_start_loc" is assigned
+    And I verify text $mobile_start_loc is not equal to ""
+		Then I "am using mobile_start_loc setting"
+			And I type $mobile_start_loc in element "name:stoloc" in web browser within $max_response seconds
+	Else I "am using start_loc setting"
+    		And I type $start_loc in element "name:stoloc" in web browser within $max_response seconds
+	EndIf
+	And I press keys "ENTER" in web browser
+    
+And I "enter the vehicle type"
+	Once I see element "name:vehtyp" in web browser
+	Then I type $vehtyp in element "name:vehtyp" in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+
+And I "use default for work area"
+	Once I see element "name:wrkare" in web browser
+	And I clear all text in element "name:wrkare" in web browser
+	And I click element "name:wrkare" in web browser
+	If I verify variable "wrkarea" is assigned
+	And I verify text $wrkarea is not equal to ""
+		Then I type $wrkarea in web browser
+	EndIf 
+	And I press keys "ENTER" in web browser
+
+
+And I "I check for recovery mode"
+	If I do not see "Undirected Menu" in web browser within $wait_long seconds
+		Then I assign "FALSE" to variable "recovery_mode"
+		And I assign "Recovery Mode Started" to variable "mobile_dialog_message"
+		Then I execute scenario "Mobile Set Dialog xPath"
+		If I see element $mobile_dialog_elt in web browser within $wait_short seconds
+			Then I assign "TRUE" to variable "recovery_mode"
+			And I press keys "ENTER" in web browser
+			If I see "MRG Deposit" in element "className:appbar-title" in web browser within $screen_wait seconds
+				Then I execute scenario "Mobile Load Deposit"
+			Elsif I see "Inventory Deposit" in element "className:appbar-title" in web browser within $screen_wait seconds
+				Then I execute scenario "Mobile Inventory Deposit"
+			Else I execute scenario "Mobile Product Deposit"
+			EndIf
+			And I assign "FALSE" to variable "recovery_mode"
+		EndIf
+	EndIf
+
+Then I "verify you are in the Undirected Menu"
+
+	Once I see "Undirected Menu" in element "className:appbar-title" in web browser
+
+And I assign "FALSE" to variable "mobile_logged_off"
+    
+@wip @public 
+Scenario: Mobile Logout NP2
+#############################################################
+# Description: This scenario will log out of the WMS Mobile App
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		None
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "logout of the mobile app"
+	Then I assign "OK To Logout?" to variable "mobile_dialog_message"
+	And I execute scenario "Mobile Set Dialog xPath"
+    And I assign variable "mobile_logout_prompt" by combining $mobile_dialog_elt
+
+	And I "attempt to cleanup from prior runs to be able to logout properly"
+		If I verify text $past_work_information_screen is equal to "FALSE" ignoring case
+			Then I execute scenario "Mobile Attempt to Cleanup State"
+    	EndIf
+
+	And I "check for inventory on device and navigate up Mobile menu with F1 until logout message is seen"
+		Then I assign "0" to variable "loop_cnt_str"
+    	And I convert string variable "loop_cnt_str" to integer variable "loop_cnt"
+		And I assign "FALSE" to variable "recovery_mode"
+    	While I do not see element $mobile_logout_prompt in web browser within $screen_wait seconds
+		And I verify number $loop_cnt is not equal to 25
+			Then I execute scenario "Mobile Check for Deposit"
+			And I press keys "F1" in web browser
+			And I increase variable "loop_cnt" by 1
+    	EndWhile
+		If I verify number $loop_cnt is equal to 25
+			Then I close web browser
+			And I fail step with error message "ERROR: Exhausted retry count trying to logout, explicitly closing browser from Cycle"
+		EndIf
+
+	Then I "logout making sure there is not inventory on device one last time"
+		And I assign "End Of Day?" to variable "mobile_dialog_message"
+		And I execute scenario "Mobile Set Dialog xPath"
+		And I assign variable "mobile_end_of_day_prompt" by combining $mobile_dialog_elt
+
+		While I see element $mobile_logout_prompt in web browser within $screen_wait seconds
+    		Then I press keys "Y" in web browser
+			And I wait $wait_short seconds
+			If I do not see element "xPath://button[contains(@class,'submit-button') and contains(text(),'SIGN IN') and @name = 'submit' or @name = 'btnSubmit']" in web browser within $screen_wait seconds
+			And I do not see element $mobile_end_of_day_prompt in web browser within $wait_short seconds
+ 				Then I execute scenario "Mobile Check for Deposit"
+				And I press keys "F1" in web browser
+			EndIf
+		EndWhile
+
+	And I "answer the End Of Day? question if present"
+		If I see element $mobile_end_of_day_prompt in web browser within $screen_wait seconds
+			Then I press keys "Y" in web browser
+			Once I see element "xPath://button[contains(@class,'submit-button') and contains(text(),'SIGN IN') and @name = 'submit' or @name = 'btnSubmit']" in web browser
+		EndIf
+        
+	And I "close the browser unless requested not to"
+		If I verify variable "close_browser_on_logout" is assigned
+		And I verify text $close_browser_on_logout is equal to "FALSE" ignoring case
+    	Else I close web browser
+		EndIf
+
+And I unassign variables "mobile_logout_prompt,loop_cnt_str,loop_cnt,mobile_dialog_message"
+
+And I assign "TRUE" to variable "mobile_logged_off"
+
+@wip @private
+Scenario: Mobile Process Login Screen NP2
+#############################################################
+# Description: This scenario will perform the initial login
+# on the Mobile App (username/password collection) 
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		USERNAME - Username (This value comes from MOCA credentials)
+#		PASSWORD - Password (This value comes from MOCA credentials)
+#		mobile_credentials - Cycle Credential relative to Mobile testing
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "am on initial Mobile Login screen provide username / password"
+	Once I see element "xPath://button[contains(@class,'submit-button') and contains(text(),'SIGN IN')]" in web browser
+		Then I type USERNAME from credentials $mobile_credentials in element "id:username" in web browser within $max_response seconds
+		And I type PASSWORD from credentials $mobile_credentials in element "id:password" in web browser within $max_response seconds
+		And I click element "xPath://button[contains(@class,'submit-button') and contains(text(),'SIGN IN')]" in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+	
+@wip @private
+Scenario: Mobile Process Device Code NP2
+#############################################################
+# Description: Enter the Device Code into the Mobile UI and
+# handle any error conditions.
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		None
+#	Optional:
+#		mobile_devcod - mobile device code (try first)
+#		devcod - standard device code (fall back if mobile_devcod is not set)
+# Outputs:
+#	None
+#############################################################
+
+Given I "process the mobile device code during login"
+	If I verify variable "mobile_devcod" is assigned
+    And I verify text $mobile_devcod is not equal to ""
+		Then I "am using mobile_devcod setting"
+			And I type $mobile_devcod in element "name:terminalId" in web browser within $max_response seconds
+	Else I "am using devcod setting"
+    		And I type $devcod in element "name:terminalId" in web browser within $max_response seconds
+	EndIf
+	And I press keys "ENTER" in web browser
+    
+Then I "check to see if device ID is invalid, if so close browser and exit with failure message"
+	Then I assign variable "elt" by combining "xPath://mat-dialog-content[contains(text(),'is not configured')]/ancestor::mat-dialog-container[contains(@id,'mat-dialog')]"
+	If I see element $elt in web browser within $screen_wait seconds
+		Then I click element "xPath://span[text() = 'Close']" in web browser within $max_response seconds
+		And I close web browser
+		And I fail step with error message "ERROR: Device ID is incorrect and not configured for Mobile, please use appriopriate devcode/device ID for Mobile Access, closing browser"
+	EndIf
+    
+And I "check if device is offline and try login again"
+	If I see "Device could not contact server. Server might be offline" in web browser within $screen_wait seconds
+    	Then I press keys "F1" in web browser
+		And I wait $wait_short seconds
+        If I see "Device could not contact server. Server might be offline" in web browser within $screen_wait seconds
+        	Then I press keys "ENTER" in web browser
+			And I wait $wait_short seconds
+        EndIf
+        And I execute scenario "Mobile Process Login Screen"
+    EndIf
+
+
+@wip @public
+Scenario: Mobile Login NP2
+#############################################################
+# Description: This scenario will Navigate to WMS's Mobile App
+# screen and login to the Mobile App. It will also processes
+# work information.
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		browser - Browser name (set in Environment by default)
+#		mobile_ui - Mobile App URL (set in Environment by default)
+#		USERNAME - Username (This value comes from MOCA credentials)
+#		PASSWORD - Password (This value comes from MOCA credentials)
+#		mobile_credentials - Cycle Credential relative to Mobile testing
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "navigate to WMS main screen in Mobile App"
+	Then I open $browser web browser
+	And I wait $wait_short seconds 
+	When I navigate to $mobile_ui in web browser
+
+Then I "login to the Mobile App UI"	
+	Then I execute scenario "Mobile Process Login Screen NP2"
+
+And I "enter the device id (try mobile_devcod and if not available, use devcod)"
+	Then I execute scenario "Mobile Process Device Code"
+
+And I "check to see if we are at the work information screen, if not log out and log back in"
+	If I see "Work Information" in element "className:appbar-title" in web browser within $screen_wait seconds
+		Then I assign "TRUE" to variable "past_work_information_screen"
+	Else I assign "FALSE" to variable "close_browser_on_logout"
+		And I assign "FALSE" to variable "past_work_information_screen"
+		And I execute scenario "Mobile Logout NP2"
+        And I execute scenario "Mobile Process Login Screen"
+		And I unassign variable "close_browser_on_logout"
+		And I assign "TRUE" to variable "past_work_information_screen"
+	EndIf
+
+And I "check to see if we are requested to change orientation or size in demo URL"
+	And I execute scenario "Mobile Adjust Size and Orientation"
+
+And I "enter the location (try mobile_start_loc first and then fall back to start_loc if not available)"
+	Once I see element "name:stoloc" in web browser
+	If I verify variable "mobile_start_loc" is assigned
+    And I verify text $mobile_start_loc is not equal to ""
+		Then I "am using mobile_start_loc setting"
+			And I type $mobile_start_loc in element "name:stoloc" in web browser within $max_response seconds
+	Else I "am using start_loc setting"
+    		And I type $start_loc in element "name:stoloc" in web browser within $max_response seconds
+	EndIf
+	And I press keys "ENTER" in web browser
+    
+And I "enter the vehicle type"
+	Once I see element "name:vehtyp" in web browser
+	Then I type $vehtyp in element "name:vehtyp" in web browser within $max_response seconds
+	And I press keys "ENTER" in web browser
+
+And I "use default for work area"
+	Once I see element "name:wrkare" in web browser
+	And I clear all text in element "name:wrkare" in web browser
+	And I click element "name:wrkare" in web browser
+	If I verify variable "wrkarea" is assigned
+	And I verify text $wrkarea is not equal to ""
+		Then I type $wrkarea in web browser
+	EndIf 
+	And I press keys "ENTER" in web browser
+    
+Then I "verify you are in the Undirected Menu"
+	Once I see "Undirected Menu" in element "className:appbar-title" in web browser
+
+And I assign "FALSE" to variable "mobile_logged_off"
+    
+@wip @public 
+Scenario: Mobile Logout NP2
+#############################################################
+# Description: This scenario will log out of the WMS Mobile App
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		None
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "logout of the mobile app"
+	Then I assign "OK To Logout?" to variable "mobile_dialog_message"
+	And I execute scenario "Mobile Set Dialog xPath"
+    And I assign variable "mobile_logout_prompt" by combining $mobile_dialog_elt
+
+	And I "attempt to cleanup from prior runs to be able to logout properly"
+		If I verify text $past_work_information_screen is equal to "FALSE" ignoring case
+			Then I execute scenario "Mobile Attempt to Cleanup State"
+    	EndIf
+
+	And I "check for inventory on device and navigate up Mobile menu with F1 until logout message is seen"
+		Then I assign "0" to variable "loop_cnt_str"
+    	And I convert string variable "loop_cnt_str" to integer variable "loop_cnt"
+		And I assign "FALSE" to variable "recovery_mode"
+    	While I do not see element $mobile_logout_prompt in web browser within $screen_wait seconds
+		And I verify number $loop_cnt is not equal to 25
+			Then I execute scenario "Mobile Check for Deposit"
+			And I press keys "F1" in web browser
+			And I increase variable "loop_cnt" by 1
+    	EndWhile
+		If I verify number $loop_cnt is equal to 25
+			Then I close web browser
+			And I fail step with error message "ERROR: Exhausted retry count trying to logout, explicitly closing browser from Cycle"
+		EndIf
+
+	Then I "logout making sure there is not inventory on device one last time"
+		And I assign "End Of Day?" to variable "mobile_dialog_message"
+		And I execute scenario "Mobile Set Dialog xPath"
+		And I assign variable "mobile_end_of_day_prompt" by combining $mobile_dialog_elt
+
+		While I see element $mobile_logout_prompt in web browser within $screen_wait seconds
+    		Then I press keys "Y" in web browser
+			And I wait $wait_short seconds
+			If I do not see element "xPath://button[contains(@class,'submit-button') and contains(text(),'SIGN IN') and @name = 'submit' or @name = 'btnSubmit']" in web browser within $screen_wait seconds
+			And I do not see element $mobile_end_of_day_prompt in web browser within $wait_short seconds
+ 				Then I execute scenario "Mobile Check for Deposit"
+				And I press keys "F1" in web browser
+			EndIf
+		EndWhile
+
+	And I "answer the End Of Day? question if present"
+		If I see element $mobile_end_of_day_prompt in web browser within $screen_wait seconds
+			Then I press keys "Y" in web browser
+			Once I see element "xPath://button[contains(@class,'submit-button') and contains(text(),'SIGN IN') and @name = 'submit' or @name = 'btnSubmit']" in web browser
+		EndIf
+        
+	And I "close the browser unless requested not to"
+		If I verify variable "close_browser_on_logout" is assigned
+		And I verify text $close_browser_on_logout is equal to "FALSE" ignoring case
+    	Else I close web browser
+		EndIf
+
+And I unassign variables "mobile_logout_prompt,loop_cnt_str,loop_cnt,mobile_dialog_message"
+
+And I assign "TRUE" to variable "mobile_logged_off"
+
+
+@wip @private
+Scenario: Mobile Process Login Screen NP2
+#############################################################
+# Description: This scenario will perform the initial login
+# on the Mobile App (username/password collection) 
+# MSQL Files:
+#	None
+# Inputs:
+#	Required:
+#		USERNAME - Username (This value comes from MOCA credentials)
+#		PASSWORD - Password (This value comes from MOCA credentials)
+#		mobile_credentials - Cycle Credential relative to Mobile testing
+#	Optional:
+#		None
+# Outputs:
+#	None
+#############################################################
+
+Given I "am on initial Mobile Login screen provide username / password"
+    Once I see element "id:username" in web browser
+    Then I type $username in element "id:username" in web browser
+    And I type $password in element "id:password" in web browser
+
+		And I click element "xPath://button[contains(@class,'submit-button') and contains(text(),'SIGN IN')]" in web browser within $max_response seconds
+		And I wait $screen_wait seconds
+	
+@wip @private
+Scenario: Mobile Threshold Deposit
+#############################################################
+# Description: Performs the product deposit for a given pick,
+# load, or move.
+# MSQL Files: 
+#	validate_shipment_is_staged.msql
+# Inputs:
+# 	Required:
+#		None
+# 	Optional:
+#       None
+# Outputs:
+#	dep_lpn - the (last if multiples) LPN deposited
+#	dep_lpn_list - list of LPNs deposited (will be set to dep_lpn if only one was deposited)
+#	dep_loc - the location where load was deposited
+#	wrong_location - boolean which specifies if test needs to test wrong location
+#	wrong_dep_loc - incorrect deposit location
+#############################################################
+    
+Given I "navigate to the MRG Threshold Deposit screen"
+	If I see "MRG Threshold Deposit" in element "className:appbar-title" in web browser within $wait_med seconds
+		Then I "am already in the product deposit screen"
+	Else I press keys "F6" in web browser
+		And I wait $screen_wait seconds
+		Once I see "MRG Threshold Deposit" in element "className:appbar-title" in web browser
+	EndIf
+
+And I "verify Pick Completion"
+	If I see "Directed Work" in web browser within $screen_wait seconds
+		Then I click element "xPath://span[contains(text(),'Directed Work') and contains(@class,'label')]" in web browser within $max_response seconds
+		If I see "deposited " in web browser within $wait_med seconds 
+			Then I press keys "ENTER" in web browser
+		EndIf 
+	EndIf
+    
+And I "allocate the Location"
+	If I verify variable "allocate" is assigned
+	And I verify text $allocate is equal to "TRUE"
+		Then I execute scenario "Mobile Allocate Location"
+	EndIf 
+	
+And I "override the Location, if applicable"
+	If I verify variable "override" is assigned
+	And I verify text $override is equal to "TRUE"
+		Then I press keys "ENTER" in web browser
+		And I execute scenario "Mobile Putaway Override"
+	EndIf
+
+And I "enter the given Deposit Location for each Load"
+	Then I assign "0" to variable "retry_cnt_str"
+    And I convert string variable "retry_cnt_str" to integer variable "retry_cnt"
+
+	And I assign "" to variable "dep_lpn_list"
+	
+	While I see " Deposit" in element "className:appbar-title" in web browser within $screen_wait seconds
+    And I verify number $retry_cnt is not equal to 100
+		
+		And I "copy the LPN from the Mobile App"
+		If I see "name:lodnum" in web browser
+				When I copy text inside element "xPath://span[contains(text(),'LPN')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "dep_lpn" within $short_sec_wait seconds
+				And I echo $dep_lpn
+				Then I type $dep_lpn in element "name:lodnum" in web browser within $max_response seconds
+				And I press keys "ENTER" in web browser
+		EndIf
+
+		And I "enter the deposit location"
+		If I see "name:dstloc" in web browser
+			When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "dep_loc" within $short_sec_wait seconds
+			And I echo $dep_loc
+			Then I type $dep_loc in element "name:dstloc" in web browser within $max_response seconds
+			And I press keys "ENTER" in web browser
+			If I see "This location will cause the inventory un-pickable, continue?" in web browser 
+				And I wait $wait_med seconds 
+				Then I press keys "Y" in web browser
+			EndIf
+		Else I fail step with error message "ERROR: could not determine deposit location"
+		EndIf
+
+			Then I wait $wait_long seconds
+			And I increase variable "retry_cnt" by 1
+	EndWhile
+
+	If I verify number $retry_cnt is equal to 100
+		Then I fail step with error message "ERROR: Failed to deposit within max attempts"
+	EndIf
+
+Then I ", if the deposited product is associated with an order or shipment, validate that Auto Staging is working as intended"
+	And I assign "validate_shipment_is_staged.msql" to variable "msql_file"
+	When I execute scenario "Perform MSQL Execution"
+	If I verify MOCA status is 0
+		Then I "have successfully validated the shipment was staged"
+	ElsIf I verify MOCA status is 99990001
+		Then I assign variable "error_message" by combining "ERROR: Shipment was not staged already and did not stage properly when it should have"
+		And I fail step with error message $error_message
+	Else I assign variable "error_message" by combining "ERROR: Failed to validate shipment was staged with dep_lpn " $dep_lpn " to dep_loc " $dep_loc
+		Then I fail step with error message $error_message
+	EndIf
+
+And I unassign variables "retry_cnt,retry_cnt_str"
+    

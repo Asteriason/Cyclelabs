@@ -1,0 +1,29 @@
+[ {
+  "resources" : "..",
+  "classes" : [ ],
+  "namespaces" : [ ]
+}, {
+  "name" : "W1",
+  "feature" : "ABB Test Cases NP5\\Inventory\\ABB-INV-05 Generate and Assign Counts NP5.feature",
+  "devices" : "..\\Test Case Inputs\\ABB INPUTS NP5\\ABB-INV-05_1.csv",
+  "tags" : "",
+  "enabled" : "true"
+}, {
+  "name" : "W2",
+  "feature" : "ABB Test Cases NP5\\Inventory\\ABB-INV-05 Generate and Assign Counts NP5.feature",
+  "devices" : "..\\Test Case Inputs\\ABB INPUTS NP5\\ABB-INV-05_2.csv",
+  "tags" : "",
+  "enabled" : "true"
+}, {
+  "name" : "W3",
+  "feature" : "ABB Test Cases NP5\\Inventory\\ABB-INV-05 Generate and Assign Counts NP5.feature",
+  "devices" : "..\\Test Case Inputs\\ABB INPUTS NP5\\ABB-INV-05_3.csv",
+  "tags" : "",
+  "enabled" : "true"
+}, {
+  "name" : "W4",
+  "feature" : "ABB Test Cases NP5\\Inventory\\ABB-INV-05 Generate and Assign Counts NP5.feature",
+  "devices" : "..\\Test Case Inputs\\ABB INPUTS NP5\\ABB-INV-05_4.csv",
+  "tags" : "",
+  "enabled" : "true"
+} ]

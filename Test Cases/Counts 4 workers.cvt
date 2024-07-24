@@ -1,0 +1,11 @@
+[ {
+  "resources" : "..",
+  "classes" : [ ],
+  "namespaces" : [ ]
+}, {
+  "name" : "Worker1",
+  "feature" : "ABB Test Cases NP5\\Inventory\\ABB-CNT- Mobile Count Directed.feature",
+  "devices" : "..\\Test Case Inputs\\ABB INPUTS NP5\\ABB-CNT-4031_1.csv",
+  "tags" : "",
+  "enabled" : "true"
+} ]

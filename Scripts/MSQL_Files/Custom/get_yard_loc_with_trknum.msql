@@ -1,0 +1,11 @@
+publish data
+ where trknum = $trknum
+|
+[select trlr_id
+   from rcvtrk
+  where trknum = @trknum]
+|
+[select yard_loc,
+        trlr_num
+   from trlr
+  where trlr_id = @trlr_id]

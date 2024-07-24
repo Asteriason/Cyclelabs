@@ -1,0 +1,23 @@
+/*
+   MSQL File: get_move_lod.msql
+   Description: This MSQL checks if the system is configured to confirm lod
+*/
+
+publish data
+where wh_id = $wh_id
+   and ordnum = $ordnum
+|
+[select distinct inventory_pckwrk_view.lodnum,
+        inventory_pckwrk_view.ordnum,
+        pckmov.stoloc,
+        pckmov.seqnum
+   from inventory_pckwrk_view
+   join pckmov
+     on inventory_pckwrk_view.cmbcod = pckmov.cmbcod
+  where inventory_pckwrk_view.wh_id = @wh_id
+    and inventory_pckwrk_view.ordnum = @ordnum
+    and pckmov.seqnum > 0
+  order by pckmov.seqnum asc]
+|
+publish data
+where lodnum = @lodnum

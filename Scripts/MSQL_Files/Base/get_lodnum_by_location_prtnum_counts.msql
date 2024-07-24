@@ -1,0 +1,16 @@
+/*
+MSQL File: get_lodnum_by_location_prtnum.msql
+Description: This MOCA script gets a single LPN from a given location based on prtnum, quantity, and location
+*/
+
+publish data
+  where wh_id = $wh_id
+    and prtnum = $prtnum
+    and stoloc = $stoloc
+|
+[select lodnum,
+        prtnum
+   from inventory_view
+  where wh_id = @wh_id
+    and stoloc = @stoloc
+    and prtnum = @prtnum];

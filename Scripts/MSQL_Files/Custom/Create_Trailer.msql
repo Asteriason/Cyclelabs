@@ -1,0 +1,17 @@
+/*
+Dataset Name: Create_Trailer/load
+Description: This dataset will Create a new trailer.
+*/
+
+/* Create a new trailer */
+publish data
+ where wh_id = $wh_id
+   and trlr_num = $trlr_num
+   and carcod = $carcod
+   and trlr_cod = $trlr_cod
+|   
+create trailer
+ where carcod = @carcod
+   and trlr_num = @trlr_num
+   and stoloc_wh_id = @wh_id
+   and trlr_cod = @trlr_cod

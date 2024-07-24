@@ -1,0 +1,16 @@
+publish data
+ where trknum = $trknum
+   and wh_id = $wh_id
+|
+[select rcvlin.prtnum,
+        rcvlin.rcvsts,
+        rcvlin.expqty
+   from rcvinv
+   join rcvlin
+     on rcvlin.trknum = rcvinv.trknum
+    and rcvlin.client_id = rcvinv.client_id
+    and rcvlin.supnum = rcvinv.supnum
+    and rcvlin.invnum = rcvinv.invnum
+    and rcvlin.wh_id = rcvinv.wh_id
+  WHERE rcvinv.trknum = @trknum
+  order by rcvlin.prtnum]

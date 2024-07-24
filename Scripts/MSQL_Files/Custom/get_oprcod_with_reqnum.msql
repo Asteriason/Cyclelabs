@@ -1,0 +1,10 @@
+publish data
+ where srcloc = $srcloc
+   and wh_id = $wh_id
+   and reqnum = $reqnum
+|
+[select oprcod
+   from wrkque
+  where reqnum = @reqnum
+    and srcloc = @srcloc
+  order by adddte desc]
