@@ -368,6 +368,174 @@ EndWhile
 
 
 
+@wip @public
+Scenario: Mobile Perform Slotted Picking
+Given I assign 20 to variable "max_loop_counter"
+And I assign 0 to variable "current_count"
+#While I verify number "current_count" is less than "max_loop_counter"
+While I do not see "Looking for Work" in web browser within $wait_long seconds
+
+	If I see "Pick List At" in element "className:appbar-title" in web browser
+    	If I see "List ID" in web browser
+        When I copy text inside element "xPath://span[contains(text(),'List ID')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "list_id"
+        Then I press keys "ENTER" in web browser
+        EndIf
+		Given I execute scenario "Get Load Id for Work Assignment"
+            Then I assign "To ID" to variable "input_field_with_focus"
+			And I execute scenario "Mobile Check for Input Focus Field"
+            
+            Then I execute groovy "to_id = to_id[1..-1].padLeft(9, '0')"
+            If I verify text $wrong_dest_lpn is equal to "TRUE" ignoring case
+		Then I type $value_wrong_dest_lpn in element "name:to_id" in web browser 
+		Then I press keys "ENTER" in web browser
+		If I "take a web browser screen shot if requested"
+        And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+		Once I see "Provided LPN is not valid" in web browser
+        Then I save web browser screenshot
+    EndIf
+	Then I press keys "ENTER" in web browser
+	Then I execute scenario  "Test Completion" 
+	Endif
+			Then I type $to_id in element "name:to_id" in web browser within $max_response seconds
+			And I press keys "ENTER" in web browser
+			
+		If I see element "name:pos_id" in web browser within $wait_med seconds
+			Then I assign "Pos ID" to variable "input_field_with_focus"
+			And I execute scenario "Mobile Check for Input Focus Field"	
+			Then I press keys "ENTER" in web browser
+			And I wait $wait_med seconds
+		EndIf 
+    EndIf
+    
+    If I see "Build Batch" in element "className:appbar-title" in web browser  
+        And I press keys "ENTER" in web browser 2 times with $wait_short seconds delay
+	EndIf
+    
+	If I see "Order Pick L" in web browser
+		While I see "Order Pick L" in web browser within $wait_med seconds
+			If I verify variable "cancel_pick" is assigned
+			And I verify text $cancel_pick is equal to "YES" ignoring case
+				And I execute scenario "Mobile Cancel Pick from Tools Menu"
+				And I execute scenario "Mobile Logout"
+			EndIf
+				When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+				Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+				Given I assign row 0 column "locvrc" to variable "location_verification_code"
+				Once I see element "name:stoloc" in web browser
+				Then I type $location_verification_code in element "name:stoloc" in web browser within $wait_med seconds
+				And I press keys "ENTER" in web browser
+
+				And I "copy item number to input"
+					Once I see element "name:prtnum" in web browser
+					When I copy text inside element "xPath://span[contains(text(),'Item Number')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "prtnum" within $short_sec_wait seconds
+					If I verify text $sku_wrong is equal to "TRUE" ignoring case
+						Then I type $value_sku_wrong in element "name:prtnum" in web browser 
+						Then I press keys "ENTER" in web browser
+						If I "take a web browser screen shot if requested"
+							And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+							Once I see "Invalid Item Number" in web browser
+							Then I save web browser screenshot
+						EndIf
+						Then I press keys "ENTER" in web browser
+						Then I execute scenario  "Test Completion" 
+					Endif
+
+					Then I type $prtnum in element "name:prtnum" in web browser
+					And I press keys "ENTER" in web browser
+
+					And I "see element dspprtcli"
+						If I see element "name:dspprtcli" in web browser within $wait_short seconds
+							And I press keys "ENTER" in web browser
+						EndIf
+
+				Then I "press enter for Unit Quantity and UOM fields"
+					Once I see element "name:untqty" in web browser
+					If I verify text $extra_pick is equal to "TRUE" ignoring case
+						Then I copy text inside element "name:untqty" in web browser to variable "pick_qty"
+						And I convert string variable "pick_qty" to integer variable "pick_qty2"
+						And I increase variable "pick_qty2" by $extra_pick_qty
+						Then I type $pick_qty2 in element "name:untqty" in web browser within $wait_med seconds
+						And I press keys "ENTER" in web browser
+						Once I see element "name:uomcod" in web browser
+						Then I press keys "ENTER" in web browser
+						If I "take a web browser screen shot if requested"
+							And I verify text $generate_screenshot is equal to "TRUE" ignoring case
+							Once I see "Invalid Quantity" in web browser
+							Then I save web browser screenshot
+						Endif
+						And I press keys "ENTER" in web browser
+						Then I execute scenario  "Test Completion"
+					Endif
+					Then I press keys "ENTER" in web browser
+
+					Once I see element "name:uomcod" in web browser
+					Then I press keys "ENTER" in web browser
+					
+					And I "process Product Put screen by entering To ID"
+					Once I see element "name:to_id" in web browser
+					While I see element "name:to_id" in web browser within $wait_short seconds
+					And I see "Product Put" in web browser
+						Then I execute scenario "Check for Product Put Screen"
+					EndWhile
+		EndWhile
+    EndIf
+
+    If I see "Carton Is Complete" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+
+    If I see "Batch is Complete" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+    
+    If I see "No Picks Remaining in Batch" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_short seconds
+    EndIf
+    
+    If I see "List Pick Completed" in web browser
+    	Then I press keys "ENTER" in web browser
+        And I wait $wait_med seconds
+    EndIf
+    
+    If I see "Work Assignment" in web browser
+      If I see "List Pick Completed" in web browser
+          Then I press keys "ENTER" in web browser
+          And I press keys "F1" in web browser 2 times with $wait_short seconds delay
+      EndIf
+    EndIf
+
+    If I see "MRG Product Deposit" in web browser
+    	If I see element "name:lodnum" in web browser within $wait_short seconds
+        	Then I press keys "ENTER" in web browser
+        EndIf
+		If I see element "name:slot" in web browser within $wait_med seconds
+			Given I assign next value from sequence "lodnum" to "slot_id"
+			Then I execute groovy "slot_id = slot_id[1..-1].padLeft(9, '0')"
+			Then I type $slot_id in element "name:slot_id" in web browser within $max_response seconds
+			And I press keys "ENTER" in web browser
+
+			Once I see "OK to change Slot" in web browser 
+			Then I press keys "Y" in web browser
+		EndIf
+        If I see element "xPath://span[contains(text(), '1 Equipment Full')]" in web browser within $wait_short seconds
+        	Then I click element "xPath://span[contains(text(), '1 Equipment Full')]" in web browser
+        EndIf
+        If I see element "name:dstloc" in web browser within $wait_med seconds
+        When I copy text inside element "xPath://span[contains(text(),'Location')]/following-sibling::div/span[@class='data ng-star-inserted']" in web browser to variable "verify_location"
+        Then I execute MOCA script "Scripts\MSQL_Files\Base\get_location_verification_code.msql"
+        Given I assign row 0 column "locvrc" to variable "location_verification_code"
+        Then I type $location_verification_code in element "name:dstloc" in web browser
+        And I press keys "ENTER" in web browser
+        EndIf
+    EndIf
+    
+	And I wait $wait_med seconds
+EndWhile
+
+
 
 @wip @public
 Scenario: Mobile Perform Directed List Pick V1
@@ -1210,4 +1378,6 @@ When I "perform verify the type of pick and perform the pick"
     	Then I execute scenario "Mobile Perform Directed Carton Pick"
 	Elsif I verify text $oprcod is equal to "TPCK"
 		Then I execute scenario "Mobile Perform Threshold Picking"
+	Elsif I verify text $oprcod is equal to "SPCK"
+		Then I execute scenario "Mobile Perform Slotted Picking"
     EndIf
