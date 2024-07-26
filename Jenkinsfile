@@ -3,9 +3,13 @@ pipeline {
   stages {
     stage('Test') {
       steps {
-        powershell '& "C:\\\\Program Files (x86)\\\\CycleLabs\\\\Cycle\\\\cycle-cli" --token ${TOKEN} -u erick.mejia -p WMS-BUNDLE-3.1.0.cycproj "Test Cases\\\\ABB Test Cases NP7\\\\Cross-Dock\\\\Create_Shipment_With_Order.feature"'
-      }
-    }
-
-  }
+        sh '''withCredentials([string(credentialsId: \'cycle-cli-token\', variable: \'TOKEN\')]) {
+    echo "Credentials setup complete"
 }
+'''
+          powershell '& "C:\\\\Program Files (x86)\\\\CycleLabs\\\\Cycle\\\\cycle-cli" --token ${TOKEN} -u erick.mejia -p WMS-BUNDLE-3.1.0.cycproj "Test Cases\\\\ABB Test Cases NP7\\\\Cross-Dock\\\\Create_Shipment_With_Order.feature"'
+        }
+      }
+
+    }
+  }
