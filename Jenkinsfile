@@ -10,7 +10,7 @@ pipeline {
 
     stage('Execute Script') {
       steps {
-        powershell '& "C:\\\\Program Files (x86)\\\\CycleLabs\\\\Cycle\\\\cycle-cli" --token ${TOKEN} -u erick.mejia -p WMS-BUNDLE-3.1.0.cycproj "Test Cases\\ABB_Click_N_Win\\Outbound\\slotted_picks_only.feature"'
+        powershell '& "C:\\\\Program Files (x86)\\\\CycleLabs\\\\Cycle\\\\cycle-cli" --token ${env.TOKEN} -u erick.mejia -p WMS-BUNDLE-3.1.0.cycproj "Test Cases\\ABB_Click_N_Win\\Outbound\\slotted_picks_only.feature"'
       }
     }
 
