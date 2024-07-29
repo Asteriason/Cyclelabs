@@ -3,8 +3,8 @@ pipeline {
   stages {
     stage('Setup Environment Variables') {
       steps {
-        sh 'withCredentials([string(credentialsId: \'cycle-cli-token\', variable: \'TOKEN\')])'
         powershell 'Write-Output "Credentials setup complete. TOKEN: $env:TOKEN"'
+        powershell 'withCredentials([string(credentialsId: \'cycle-cli-token\', variable: \'TOKEN\')])'
       }
     }
 
