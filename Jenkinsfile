@@ -49,8 +49,7 @@ def processCsv(csvContent) {
     if (match) {
         def prefix = match[0][1]
         def number = match[0][2].toInteger() + 1
-        data[2] = "${prefix}${String.format('%04d', number)}"
-    }
+        data[2] = "${prefix}${String.format('%04d', number)}".toString() // Convert GString to String    }
 
-    return "${header}\n${data.join(',')}"
+    return "${header}\n${data.join(',')}".toString() // Convert GString to String
 }
