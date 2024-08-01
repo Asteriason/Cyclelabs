@@ -42,7 +42,7 @@ def processCsv(csvContent) {
     def data = lines[1].split(',')
 
     // Increment the first number
-    data[1] = (data[1].toBigInteger() + 1).toString()
+    data[1] = (data[1].toLong() + 1).toString()
 
     // Increment the second number (assuming the format remains consistent)
     def match = (data[2] =~ /(.*-XD)(\d+)/)
