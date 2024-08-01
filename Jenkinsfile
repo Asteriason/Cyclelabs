@@ -27,7 +27,7 @@ pipeline {
                     
                     // Run the PowerShell command
                     powershell """
-                    & "C:\\Program Files (x86)\\CycleLabs\\Cycle\\cycle-cli" --token ${env.TOKEN} -u erick.mejia -p WMS-BUNDLE-3.1.0.cycproj "Test Cases\\ABB Test Cases NP7\\Cross-Dock\\Create_Shipment_With_Order.feature"
+                    & "C:\\Program Files (x86)\\CycleLabs\\Cycle\\cycle-cli" --token ${env.TOKEN} -u erick.mejia -p WMS-BUNDLE-3.1.0.cycproj "Test Cases\\ABB Test Cases NP5\\Outbound E2E\\Outbound_1_web.feature"
                     """
                 }
             }
@@ -49,7 +49,8 @@ def processCsv(csvContent) {
     if (match) {
         def prefix = match[0][1]
         def number = match[0][2].toInteger() + 1
-        data[2] = "${prefix}${String.format('%04d', number)}".toString() // Convert GString to String    }
+        data[2] = "${prefix}${String.format('%04d', number)}".toString() // Convert GString to String
+    }
 
     return "${header}\n${data.join(',')}".toString() // Convert GString to String
 }
