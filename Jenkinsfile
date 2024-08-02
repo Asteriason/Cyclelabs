@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment { 
         TOKEN = credentials('cycle-cli-token')
-        GIT_CREDENTIALS_ID = 'your-git-credentials-id' // Replace with your Jenkins credential ID for Git
+        GIT_CREDENTIALS_ID = 'f93eec2c-f256-436a-9a96-d89489f5b6be' // Replace with your Jenkins credential ID for Git
     }
     triggers {
         cron('0 8 * * *')  // Trigger the pipeline every day at 8 AM
