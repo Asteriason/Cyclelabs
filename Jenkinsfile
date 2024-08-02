@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment { 
         TOKEN = credentials('cycle-cli-token')
+        GIT_CREDENTIALS_ID = 'f93eec2c-f256-436a-9a96-d89489f5b6be' // Replace with your Jenkins credential ID for Git
     }
     triggers {
         cron('0 8 * * *')  // Trigger the pipeline every day at 8 AM
@@ -29,6 +30,19 @@ pipeline {
                     powershell """
                     & "C:\\Program Files (x86)\\CycleLabs\\Cycle\\cycle-cli" --token ${env.TOKEN} -u erick.mejia -p WMS-BUNDLE-3.1.0.cycproj "Test Cases\\ABB Test Cases NP7\\Cross-Dock\\Create_Shipment_With_Order.feature"
                     """
+                }
+            }
+        }
+        stage('Commit and Push Changes') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    sh '''
+                        git config user.name "$GIT_USERNAME"
+                        git config user.email "your-email@example.com"  // Replace with your email
+                        git add Test\\ Case\\ Inputs/ABB\\ INPUTS\\ NP7/XDCK/create_inbound_shipment_and_order.csv
+                        git commit -m "Automated update of CSV values"
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Asteriason/Cyclelabs.git master
+                    '''
                 }
             }
         }
